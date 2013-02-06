@@ -1,13 +1,18 @@
 name: RedstoneSensor
-version: 1.6
+version: 1.9.0
 author: Ugleh
 main: com.ugleh.redstonesensor.RedstoneSensor
 description: Create redstone proximity sensor torches that creates a redstone current when a player is in range.
 permissions:
-  redstonesensor.*:
-    description: Gives access to all Redstone Sensor commands
-    children:
-      redstonesensor.use: true
   redstonesensor.use:
-    description: Gives access to use the plugin. Only permission, for now.
+    description: Gives access to dropping the torch. Without this the torch will not drop.
     default: true
+  redstonesensor.create:
+    description: Gives access to crafting both Redstone Proximity Sensors.
+    default: true
+commands:
+  rps:
+    description: Redstone Sensor config command
+    aliases: [redstonesensor, rpsensor]
+    permission: redstonesensor.commands
+    default: op

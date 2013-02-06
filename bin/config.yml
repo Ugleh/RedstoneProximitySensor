@@ -1,0 +1,7 @@
+Config:
+  max-range: 10
+  default-range: 3
+  proximity-sensor-name: Redstone Proximity Sensor
+  not-proximity-sensor-name: NOT Redstone Proximity Sensor
+  proximity-range-notify-text: Proximity Range
+Redstones: {}
