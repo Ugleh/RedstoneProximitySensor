@@ -1,9 +1,13 @@
 package com.ugleh.redstonesensor;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,7 +24,11 @@ public class RedstoneSensor extends JavaPlugin{
 	public static String redstoneProximityRangeText = null;
 	public static String redstoneProximityRangeNotifyText = null;
 	public static String notRedstoneProximityRangeText = null;
-	
+	public Boolean updatechecker;
+	public static Boolean outdated = false;
+	private String currentVersion = "1.9.2";
+	private String readurl = "https://raw.github.com/Ugleh/RedstoneSensor/master/version.txt";
+
 	public static HashMap<Location, ArrayList<String>> redstoneList = new HashMap<Location, 	ArrayList<String>>();
 	public static HashMap<Location, ArrayList<String>> notRedstoneList = new HashMap<Location, ArrayList<String>>();
 public void onEnable(){
@@ -37,9 +45,13 @@ public void onEnable(){
 	redstoneProximityRangeText = getConfig().getString("Config.proximity-sensor-name");
 	notRedstoneProximityRangeText = getConfig().getString("Config.not-proximity-sensor-name");
 	redstoneProximityRangeNotifyText = getConfig().getString("Config.proximity-range-notify-text");
-
+	updatechecker = getConfig().getBoolean("Config.update-checker");
     ArrayList<String> keys = new ArrayList<String>();
     keys.addAll(getConfig().getConfigurationSection("Config").getKeys(false));
+	if(!keys.contains("update-checker")){
+		updatechecker = true;
+		getConfig().set("Config.update-checker", true);
+	}
 	if(!keys.contains("max-range")){
 		maxRange = 10;
 		getConfig().set("Config.max-range", 10);
@@ -106,9 +118,34 @@ for(String key : getConfig().getConfigurationSection("Redstones").getKeys(false)
 		rpsRecipe2.shape("   ","RRR","   ");
 		rpsRecipe2.setIngredient('R', Material.REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe2);
+	
+outdated = true;
+startUpdateCheck();
+if(outdated){
+	Bukkit.broadcastMessage("[RPS] "+ "Your version of Redstone Proximity Sensor is outdated");	
+}
+}
 
-		
-    }
+
+ 
+public void startUpdateCheck() {
+if (updatechecker) {
+try {
+URL url = new URL(readurl);
+BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+String str;
+while ((str = br.readLine()) != null) {
+if(str.startsWith(currentVersion)){
+	outdated = false;
+}
+}
+br.close();
+} catch (IOException e) {
+	Bukkit.broadcastMessage("The Update Checker URL is Invalid. Please let Ugleh know.");
+}
+}
+}
+
 
 }
 

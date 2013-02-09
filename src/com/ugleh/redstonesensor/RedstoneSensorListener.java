@@ -25,6 +25,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -467,5 +468,11 @@ public class RedstoneSensorListener implements Listener{
 		return true;
 	}
 	
+	@EventHandler
+	public void PlayerJoin(PlayerJoinEvent event){
+		if(event.getPlayer().isOp() && RedstoneSensor.outdated){
+			event.getPlayer().sendMessage(ChatColor.DARK_PURPLE+"The version of "+ChatColor.DARK_RED+"Redstone Proximity Sensor"+ChatColor.DARK_PURPLE+" that this server is running is out of date. Please consider updating to the latest version at "+ChatColor.ITALIC + ChatColor.GREEN +"http://dev.bukkit.org/server-mods/redstonesensor/");
+		}
+	}
 
 	}
