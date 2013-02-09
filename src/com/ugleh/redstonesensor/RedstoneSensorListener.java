@@ -62,10 +62,14 @@ public class RedstoneSensorListener implements Listener{
 		if(event.getPlayer().hasPermission("redstonesensor.use")){
 			Block bk = event.getBlock();
 			if((ChatColor.RED + RedstoneSensor.redstoneProximityRangeText).equals(event.getPlayer().getItemInHand().getItemMeta().getDisplayName())){
-				 RedstoneSensor.redstoneList.put(bk.getLocation(), RedstoneSensor.defaultRange);
+		    	ArrayList<String> list = new ArrayList<String>();
+		    	list.add(String.valueOf(RedstoneSensor.defaultRange));
+		    	list.add(event.getPlayer().getName());
+				RedstoneSensor.redstoneList.put(bk.getLocation(), list);
 				String setname = "Redstones."+bk.getLocation().getWorld().getName() + "-" + bk.getLocation().getBlockX() + "" + bk.getLocation().getBlockY() + "" + bk.getLocation().getBlockZ();
 				 plugin.getConfig().set(setname, null);
 				 plugin.getConfig().set(setname+".Range", (int)3);
+				 plugin.getConfig().set(setname+".Owner", event.getPlayer().getName());
 				 plugin.getConfig().set(setname+".X", bk.getLocation().getBlockX());
 				 plugin.getConfig().set(setname+".Y", bk.getLocation().getBlockY());
 				 plugin.getConfig().set(setname+".Z", bk.getLocation().getBlockZ());
@@ -76,11 +80,15 @@ public class RedstoneSensorListener implements Listener{
 					e.printStackTrace();
 				}
 			}else if((ChatColor.RED + RedstoneSensor.notRedstoneProximityRangeText).equals(event.getPlayer().getItemInHand().getItemMeta().getDisplayName())){
+		    	ArrayList<String> list = new ArrayList<String>();
+		    	list.add(String.valueOf(RedstoneSensor.defaultRange));
+		    	list.add(event.getPlayer().getName());
 
-				RedstoneSensor.notRedstoneList.put(bk.getLocation(), RedstoneSensor.defaultRange);
+				RedstoneSensor.notRedstoneList.put(bk.getLocation(), list);
 				String setname = "Redstones."+bk.getLocation().getWorld().getName() + "-" + bk.getLocation().getBlockX() + "" + bk.getLocation().getBlockY() + "" + bk.getLocation().getBlockZ();
 				 plugin.getConfig().set(setname, null);
 				 plugin.getConfig().set(setname+".Range", (int)3);
+				 plugin.getConfig().set(setname+".Owner", event.getPlayer().getName());
 				 plugin.getConfig().set(setname+".Type", "NOT");
 				 plugin.getConfig().set(setname+".X", bk.getLocation().getBlockX());
 				 plugin.getConfig().set(setname+".Y", bk.getLocation().getBlockY());
@@ -98,15 +106,15 @@ public class RedstoneSensorListener implements Listener{
 	@EventHandler
 	public void PlayerMove(PlayerMoveEvent event){
 		String worldname = event.getPlayer().getWorld().getName();
-		Iterator<Entry<Location, Integer>> it = RedstoneSensor.redstoneList.entrySet().iterator();
+		Iterator<Entry<Location, ArrayList<String>>> it = RedstoneSensor.redstoneList.entrySet().iterator();
 		
 		while (it.hasNext())
 		{
-		   Entry<Location, Integer> entry = it.next();
+		   Entry<Location, ArrayList<String>> entry = it.next();
 			Location key = entry.getKey();
 			Block blk = key.getBlock();
 			if(blk.getType() == Material.REDSTONE_TORCH_ON || blk.getType() == Material.REDSTONE_TORCH_OFF){
-			Integer value = entry.getValue();
+			Integer value = Integer.valueOf(entry.getValue().get(0));
 		    if(worldname == key.getWorld().getName()){
 		    	Boolean towel = false; 
 		    	for(Player player : Bukkit.getServer().getOnlinePlayers()){
@@ -137,14 +145,16 @@ public class RedstoneSensorListener implements Listener{
 	
 	    }
 	    }
-		Iterator<Entry<Location, Integer>> it2 = RedstoneSensor.notRedstoneList.entrySet().iterator();
+		Iterator<Entry<Location, ArrayList<String>>> it2 = RedstoneSensor.notRedstoneList.entrySet().iterator();
+		
 		while (it2.hasNext())
 		{
-		   Entry<Location, Integer> entry = it2.next();
+		   Entry<Location, ArrayList<String>> entry = it2.next();
 			Location key = entry.getKey();
 			Block blk = key.getBlock();
 			if(blk.getType() == Material.REDSTONE_TORCH_ON || blk.getType() == Material.REDSTONE_TORCH_OFF){
-			Integer value = entry.getValue();
+				ArrayList<String> mappie = entry.getValue();
+				Integer value =Integer.valueOf(mappie.get(0));
 		    if(worldname == key.getWorld().getName()){
 		    	Boolean towel = false; 
 		    	for(Player player : Bukkit.getServer().getOnlinePlayers()){
@@ -181,13 +191,13 @@ public class RedstoneSensorListener implements Listener{
 	@EventHandler
 	public void RedEvent(BlockRedstoneEvent event){
 		Block blk = event.getBlock();
-		for (Entry<Location, Integer> entry : RedstoneSensor.redstoneList.entrySet()) {
+		for (Entry<Location, ArrayList<String>> entry : RedstoneSensor.redstoneList.entrySet()) {
 			Location key = entry.getKey();
 		if((blk.getLocation().getBlockX() == key.getBlockX()) && (blk.getLocation().getBlockY() == key.getBlockY()) && (blk.getLocation().getBlockZ() == key.getBlockZ())){
 		event.setNewCurrent(event.getOldCurrent());
 		}
 }
-		for (Entry<Location, Integer> entry : RedstoneSensor.notRedstoneList.entrySet()) {
+		for (Entry<Location, ArrayList<String>> entry : RedstoneSensor.notRedstoneList.entrySet()) {
 			Location key = entry.getKey();
 		if((blk.getLocation().getBlockX() == key.getBlockX()) && (blk.getLocation().getBlockY() == key.getBlockY()) && (blk.getLocation().getBlockZ() == key.getBlockZ())){
 		event.setNewCurrent(event.getOldCurrent());
@@ -199,33 +209,30 @@ public class RedstoneSensorListener implements Listener{
 	public void RemoveRedstone(BlockBreakEvent event) throws IOException{
 		Block blk = event.getBlock();
 		if((blk.getType() == Material.REDSTONE_TORCH_ON) || (blk.getType() == Material.REDSTONE_TORCH_OFF)){
-			Iterator<Entry<Location, Integer>> it = RedstoneSensor.redstoneList.entrySet().iterator();
+			Iterator<Entry<Location, ArrayList<String>>> it = RedstoneSensor.redstoneList.entrySet().iterator();
 			
 			while (it.hasNext())
 			{
-			   Entry<Location, Integer> item = it.next();
+			   Entry<Location, ArrayList<String>> item = it.next();
 			   Location key = item.getKey();
 				if((blk.getLocation().getBlockX() == key.getBlockX()) && (blk.getLocation().getBlockY() == key.getBlockY()) && (blk.getLocation().getBlockZ() == key.getBlockZ())){
 					it.remove();
 					 String setname = "Redstones." + blk.getLocation().getWorld().getName() + "-" + blk.getLocation().getBlockX() + "" + blk.getLocation().getBlockY() + "" + blk.getLocation().getBlockZ();
 					 plugin.getConfig().set(setname, null);
 					 plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
-					 //event.getBlock().setType(Material.AIR);
 					 ItemStack rps = new ItemStack(Material.REDSTONE_TORCH_OFF, 1);
 						ItemMeta rpsmeta = rps.getItemMeta();
 						rpsmeta.setDisplayName(ChatColor.RED + RedstoneSensor.redstoneProximityRangeText);
 						rps.setItemMeta(rpsmeta);
-						//key.getBlock().getWorld().dropItem(key, rps);
-						blk.setType(Material.AIR);//because you canceled it, you have to do it manually
-						blk.getWorld().dropItemNaturally(blk.getLocation(), rps);//drops custom item
-						event.setCancelled(true); // Cancel the event because you've done it yourself.
-					 //event.setCancelled(true);
+						blk.setType(Material.AIR);
+						blk.getWorld().dropItemNaturally(blk.getLocation(), rps);
+						event.setCancelled(true);
 				}
 			}
-			Iterator<Entry<Location, Integer>> it2 = RedstoneSensor.notRedstoneList.entrySet().iterator();
+			Iterator<Entry<Location, ArrayList<String>>> it2 = RedstoneSensor.notRedstoneList.entrySet().iterator();
 			while (it2.hasNext())
 			{
-			   Entry<Location, Integer> item = it2.next();
+			   Entry<Location, ArrayList<String>> item = it2.next();
 			   Location key = item.getKey();
 				if((blk.getLocation().getBlockX() == key.getBlockX()) && (blk.getLocation().getBlockY() == key.getBlockY()) && (blk.getLocation().getBlockZ() == key.getBlockZ())){
 					it2.remove();
@@ -253,17 +260,26 @@ public class RedstoneSensorListener implements Listener{
 		if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
 		Block blk = event.getClickedBlock();
 		if((blk.getType() == Material.REDSTONE_TORCH_ON) || (blk.getType() == Material.REDSTONE_TORCH_OFF)){
-			for (Entry<Location, Integer> entry : RedstoneSensor.redstoneList.entrySet()) {
+			for (Entry<Location, ArrayList<String>> entry : RedstoneSensor.redstoneList.entrySet()) {
 				Location key = entry.getKey();
-				Integer value = entry.getValue();
-			if((blk.getLocation().getBlockX() == key.getBlockX()) && (blk.getLocation().getBlockY() == key.getBlockY()) && (blk.getLocation().getBlockZ() == key.getBlockZ())){
+				Integer value = Integer.valueOf(entry.getValue().get(0));
+				String playername = entry.getValue().get(1);
+				if(((RedstoneSensor.onlyOwner)&&(playername.equals(event.getPlayer().getName()))) || (!RedstoneSensor.onlyOwner) || (playername.equals("null"))){
+				if((blk.getLocation().getBlockX() == key.getBlockX()) && (blk.getLocation().getBlockY() == key.getBlockY()) && (blk.getLocation().getBlockZ() == key.getBlockZ())){
 				Integer newvalue = RedstoneSensor.defaultRange;
 				if(value == RedstoneSensor.maxRange){
 					newvalue = 1;
-					entry.setValue(newvalue);
+			    	ArrayList<String> list = new ArrayList<String>();
+			    	list.add(String.valueOf(newvalue));
+			    	list.add(entry.getValue().get(1));
+					entry.setValue(list);
 					}else{
 					newvalue = value+1;
-						entry.setValue(newvalue);
+			    	ArrayList<String> list = new ArrayList<String>();
+			    	list.add(String.valueOf(newvalue));
+			    	list.add(entry.getValue().get(1));
+					entry.setValue(list);
+					entry.setValue(list);
 				}
 				 String setname = "Redstones." + blk.getLocation().getWorld().getName() + "-" + blk.getLocation().getBlockX() + "" + blk.getLocation().getBlockY() + "" + blk.getLocation().getBlockZ();
 				 plugin.getConfig().set(setname+".Range", newvalue);
@@ -271,18 +287,26 @@ public class RedstoneSensorListener implements Listener{
 
 				event.getPlayer().sendMessage(ChatColor.GOLD + RedstoneSensor.redstoneProximityRangeNotifyText +": " + ChatColor.RED + newvalue.toString());
 			}
+				}
 			}
-			for (Entry<Location, Integer> entry : RedstoneSensor.notRedstoneList.entrySet()) {
+			for (Entry<Location, ArrayList<String>> entry : RedstoneSensor.notRedstoneList.entrySet()) {
 				Location key = entry.getKey();
-				Integer value = entry.getValue();
+				Integer value = Integer.valueOf(entry.getValue().get(0));
 			if((blk.getLocation().getBlockX() == key.getBlockX()) && (blk.getLocation().getBlockY() == key.getBlockY()) && (blk.getLocation().getBlockZ() == key.getBlockZ())){
 				Integer newvalue = RedstoneSensor.defaultRange;
 				if(value == RedstoneSensor.maxRange){
 					newvalue = 1;
-					entry.setValue(newvalue);
+			    	ArrayList<String> list = new ArrayList<String>();
+			    	list.add(String.valueOf(newvalue));
+			    	list.add(entry.getValue().get(1));
+					entry.setValue(list);
 					}else{
 					newvalue = value+1;
-						entry.setValue(newvalue);
+			    	ArrayList<String> list = new ArrayList<String>();
+			    	list.add(String.valueOf(newvalue));
+			    	list.add(entry.getValue().get(1));
+					entry.setValue(list);
+					entry.setValue(list);
 				}
 				 String setname = "Redstones." + blk.getLocation().getWorld().getName() + "-" + blk.getLocation().getBlockX() + "" + blk.getLocation().getBlockY() + "" + blk.getLocation().getBlockZ();
 				 plugin.getConfig().set(setname+".Range", newvalue);
@@ -353,7 +377,7 @@ public class RedstoneSensorListener implements Listener{
         if((arguments.get(0).matches("rps|redstonesensor|rsensor")) && (player.hasPermission("redstonesensor.commands"))){
         if(arguments.size() == 1){
         	
-        	player.sendMessage(ChatColor.RED+"[RPS] "+ ChatColor.GREEN + "/rps [maxrange/defaultrange/reload]");
+        	player.sendMessage(ChatColor.RED+"[RPS] "+ ChatColor.GREEN + "/rps [maxrange/defaultrange/onlyowner/reload]");
         }
         if(arguments.size() == 2){
         	if(("reload").equalsIgnoreCase(arguments.get(1))){
@@ -365,6 +389,8 @@ public class RedstoneSensorListener implements Listener{
         		player.sendMessage(ChatColor.RED+"[RPS] "+ ChatColor.GREEN +  "/rps defaultrange <number>");
         	}else if(("maxrange").equalsIgnoreCase(arguments.get(1))){
         		player.sendMessage(ChatColor.RED+"[RPS] "+ ChatColor.GREEN +  "/rps maxrange <number>");
+        	}else if(("onlyowner").equalsIgnoreCase(arguments.get(1))){
+        		player.sendMessage(ChatColor.RED+"[RPS] "+ ChatColor.GREEN + "/rps onlyowner <true/false>");
         	}
         }else if(arguments.size() == 3){
         	if(("defaultrange").equalsIgnoreCase(arguments.get(1))){
@@ -376,6 +402,11 @@ public class RedstoneSensorListener implements Listener{
         		RedstoneSensor.maxRange = Integer.valueOf(arguments.get(2));
         		player.sendMessage(ChatColor.RED+"[RPS] "+ ChatColor.GREEN +  "Max range set to "+ String.valueOf(Integer.valueOf(arguments.get(2))));
         		plugin.getConfig().set("Config.max-range", RedstoneSensor.maxRange);
+				plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
+        	}else if(("onlyowner").equalsIgnoreCase(arguments.get(1))){
+        		RedstoneSensor.onlyOwner = Boolean.valueOf(arguments.get(2));
+        		player.sendMessage(ChatColor.RED+"[RPS] "+ ChatColor.GREEN + "Owner Only Right Click set to "+ String.valueOf(Boolean.valueOf(arguments.get(2))));
+        		plugin.getConfig().set("Config.owner-only-change-range", RedstoneSensor.onlyOwner);
 				plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
         	
         	}
@@ -396,7 +427,7 @@ public class RedstoneSensorListener implements Listener{
         if(arguments.get(0).matches("rps|redstonesensor|rsensor")){
         if(arguments.size() == 1){
         	
-        	System.out.print("[RPS] "+ "/rps [maxrange/defaultrange/reload]");
+        	System.out.print("[RPS] "+ "/rps [maxrange/defaultrange/onlyowner/reload]");
         }
         if(arguments.size() == 2){
         	if(("reload").equalsIgnoreCase(arguments.get(1))){
@@ -408,7 +439,9 @@ public class RedstoneSensorListener implements Listener{
                 System.out.print("[RPS] "+ "/rps defaultrange <number>");
         	}else if(("maxrange").equalsIgnoreCase(arguments.get(1))){
                 System.out.print("[RPS] "+ "/rps maxrange <number>");
-        	}
+        	}else if(("onlyowner").equalsIgnoreCase(arguments.get(1))){
+            System.out.print("[RPS] "+ "/rps onlyowner <true/false>");
+    	}
         }else if(arguments.size() == 3){
         	if(("defaultrange").equalsIgnoreCase(arguments.get(1))){
         		RedstoneSensor.defaultRange = Integer.valueOf(arguments.get(2));
@@ -419,6 +452,12 @@ public class RedstoneSensorListener implements Listener{
         		RedstoneSensor.maxRange = Integer.valueOf(arguments.get(2));
                 System.out.print("[RPS] "+ "Max range set to "+ String.valueOf(Integer.valueOf(arguments.get(2))));
         		plugin.getConfig().set("Config.max-range", RedstoneSensor.maxRange);
+				plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
+        	
+        	}else if(("onlyowner").equalsIgnoreCase(arguments.get(1))){
+        		RedstoneSensor.onlyOwner = Boolean.valueOf(arguments.get(2));
+                System.out.print("[RPS] "+ "Only Owner Can Change Range set to "+ String.valueOf(Boolean.valueOf(arguments.get(2))));
+        		plugin.getConfig().set("Config.owner-only-change-range", RedstoneSensor.onlyOwner);
 				plugin.getConfig().save(new File(plugin.getDataFolder(), "config.yml"));
         	
         	}
