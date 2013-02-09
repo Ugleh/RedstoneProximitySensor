@@ -104,7 +104,7 @@ public class RedstoneSensorListener implements Listener{
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void PlayerMove(PlayerMoveEvent event){
 		String worldname = event.getPlayer().getWorld().getName();
 		Iterator<Entry<Location, ArrayList<String>>> it = RedstoneSensor.redstoneList.entrySet().iterator();
@@ -255,7 +255,7 @@ public class RedstoneSensorListener implements Listener{
 			}
 		}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void PlayerRightClick(PlayerInteractEvent event) throws IOException{
 		if(event.getPlayer().hasPermission("redstonesensor.use")){
 		if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
