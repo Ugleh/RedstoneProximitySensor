@@ -1,2 +1,2 @@
 # This file is what runs the version checks in RedstoneSensor 1.9.2+
-1.9.3
+1.9.5

@@ -1,5 +1,5 @@
 name: RedstoneSensor
-version: 1.9.3
+version: 1.9.5
 author: Ugleh
 main: com.ugleh.redstonesensor.RedstoneSensor
 description: Create redstone proximity sensor torches that creates a redstone current when a player is in range.
@@ -10,6 +10,9 @@ permissions:
   redstonesensor.create:
     description: Gives access to crafting both Redstone Proximity Sensors.
     default: true
+  redstonesensor.customrange:
+    description: Gives access to using the RPS Wand and Setting the Custom range.
+    default: op
 commands:
   rps:
     description: Redstone Sensor config command

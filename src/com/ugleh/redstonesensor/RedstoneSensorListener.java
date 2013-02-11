@@ -4,14 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -33,6 +36,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class RedstoneSensorListener implements Listener {
 	private RedstoneSensor plugin;
+	public HashMap<String, ArrayList<Location>> playerLocationStorage = new HashMap<String, ArrayList<Location>>();
+	public Location nullLocation = new Location(Bukkit.getServer().getWorlds().get(0), 0, 0, 0);
+	public Boolean createnullLocation = false;
 
 	public RedstoneSensorListener(RedstoneSensor p) {
 		plugin = p;
@@ -71,6 +77,7 @@ public class RedstoneSensorListener implements Listener {
 				ArrayList<String> list = new ArrayList<String>();
 				list.add(String.valueOf(RedstoneSensor.defaultRange));
 				list.add(event.getPlayer().getName());
+				list.add("null");
 				RedstoneSensor.redstoneList.put(bk.getLocation(), list);
 				String setname = "Redstones."
 						+ bk.getLocation().getWorld().getName() + "-"
@@ -79,6 +86,7 @@ public class RedstoneSensorListener implements Listener {
 						+ bk.getLocation().getBlockZ();
 				plugin.getConfig().set(setname, null);
 				plugin.getConfig().set(setname + ".Range", (int) 3);
+				plugin.getConfig().set(setname + ".CustomRange", null);
 				plugin.getConfig().set(setname + ".Owner",
 						event.getPlayer().getName());
 				plugin.getConfig().set(setname + ".X",
@@ -101,6 +109,7 @@ public class RedstoneSensorListener implements Listener {
 				ArrayList<String> list = new ArrayList<String>();
 				list.add(String.valueOf(RedstoneSensor.defaultRange));
 				list.add(event.getPlayer().getName());
+				list.add("null");
 
 				RedstoneSensor.notRedstoneList.put(bk.getLocation(), list);
 				String setname = "Redstones."
@@ -110,6 +119,7 @@ public class RedstoneSensorListener implements Listener {
 						+ bk.getLocation().getBlockZ();
 				plugin.getConfig().set(setname, null);
 				plugin.getConfig().set(setname + ".Range", (int) 3);
+				plugin.getConfig().set(setname + ".CustomRange", null);
 				plugin.getConfig().set(setname + ".Owner",
 						event.getPlayer().getName());
 				plugin.getConfig().set(setname + ".Type", "NOT");
@@ -133,7 +143,6 @@ public class RedstoneSensorListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void PlayerMove(PlayerMoveEvent event) {
-
 		String worldname = event.getPlayer().getWorld().getName();
 		Player player = event.getPlayer();
 		Iterator<Entry<Location, ArrayList<String>>> it = RedstoneSensor.redstoneList
@@ -146,16 +155,25 @@ public class RedstoneSensorListener implements Listener {
 			if (blk.getType() == Material.REDSTONE_TORCH_ON
 					|| blk.getType() == Material.REDSTONE_TORCH_OFF) {
 				Integer value = Integer.valueOf(entry.getValue().get(0));
-				if (worldname == key.getWorld().getName()) {
-					if ((player.getWorld() == key.getWorld())
-							&& (key.distance(player.getLocation()) <= value)) {
+				Location l1 = nullLocation;
+				Location l2 = nullLocation;
+				String customrange = entry.getValue().get(2);
+				if(!customrange.equals("null")){
+
+				String[] firstloc = customrange.split(";")[0].split(":");
+				String[] secondloc = customrange.split(";")[1].split(":");
+				l1 = new Location(plugin.getServer().getWorld(firstloc[3]), Integer.valueOf(firstloc[0]), Integer.valueOf(firstloc[1]), Integer.valueOf(firstloc[2]));
+				l2 = new Location(plugin.getServer().getWorld(secondloc[3]), Integer.valueOf(secondloc[0]), Integer.valueOf(secondloc[1]), Integer.valueOf(secondloc[2]));
+				}
+				
+					if ((player.getWorld().getName() == key.getWorld().getName()) &&
+						(((value != -999) && (key.distance(player.getLocation()) <= value)) || ((value == -999) && playerWithin(l1,l2,player.getLocation())))) {
 						if (blk.getType() == Material.REDSTONE_TORCH_OFF)
 							blk.setType(Material.REDSTONE_TORCH_ON);
 					} else {
 						if (blk.getType() == Material.REDSTONE_TORCH_ON)
 							blk.setType(Material.REDSTONE_TORCH_OFF);
 					}
-				}
 
 			} else {
 				it.remove();
@@ -183,16 +201,24 @@ public class RedstoneSensorListener implements Listener {
 			Block blk = key.getBlock();
 			if (blk.getType() == Material.REDSTONE_TORCH_ON
 					|| blk.getType() == Material.REDSTONE_TORCH_OFF) {
-				ArrayList<String> mappie = entry.getValue();
-				Integer value = Integer.valueOf(mappie.get(0));
+				Integer value = Integer.valueOf(entry.getValue().get(0));
+				Location l1 = nullLocation;
+				Location l2 = nullLocation;
+				String customrange = entry.getValue().get(2);
+				if(!customrange.equals("null")){
+				String[] firstloc = customrange.split(";")[0].split(":");
+				String[] secondloc = customrange.split(";")[1].split(":");
+				l1 = new Location(plugin.getServer().getWorld(firstloc[3]), Integer.valueOf(firstloc[0]), Integer.valueOf(firstloc[1]), Integer.valueOf(firstloc[2]));
+				l2 = new Location(plugin.getServer().getWorld(secondloc[3]), Integer.valueOf(secondloc[0]), Integer.valueOf(secondloc[1]), Integer.valueOf(secondloc[2]));
+				}
 				if (worldname == key.getWorld().getName()) {
-					if ((player.getWorld() == key.getWorld())
-							&& (key.distance(player.getLocation()) <= value)) {
-						if (blk.getType() == Material.REDSTONE_TORCH_OFF)
-							blk.setType(Material.REDSTONE_TORCH_ON);
-					} else {
+					if (player.getWorld() == key.getWorld()
+							&& (((value != -999) && (key.distance(player.getLocation()) <= value)) || ((value == -999) && playerWithin(l1,l2,player.getLocation())))) {
 						if (blk.getType() == Material.REDSTONE_TORCH_ON)
 							blk.setType(Material.REDSTONE_TORCH_OFF);
+					} else {
+						if (blk.getType() == Material.REDSTONE_TORCH_OFF)
+							blk.setType(Material.REDSTONE_TORCH_ON);
 					}
 				}
 			} else {
@@ -317,40 +343,50 @@ public class RedstoneSensorListener implements Listener {
 								.equals(event.getPlayer().getName())))
 								|| (!RedstoneSensor.onlyOwner)
 								|| (playername.equals("null"))) {
-							if (blk.getLocation().equals(key)) {
-								Integer newvalue = RedstoneSensor.defaultRange;
-								if (value == RedstoneSensor.maxRange) {
-									newvalue = 1;
-									ArrayList<String> list = new ArrayList<String>();
-									list.add(String.valueOf(newvalue));
-									list.add(entry.getValue().get(1));
-									entry.setValue(list);
-								} else {
-									newvalue = value + 1;
-									ArrayList<String> list = new ArrayList<String>();
-									list.add(String.valueOf(newvalue));
-									list.add(entry.getValue().get(1));
-									entry.setValue(list);
-									entry.setValue(list);
-								}
-								String setname = "Redstones."
-										+ blk.getLocation().getWorld()
-												.getName() + "-"
-										+ blk.getLocation().getBlockX() + ""
-										+ blk.getLocation().getBlockY() + ""
-										+ blk.getLocation().getBlockZ();
-								plugin.getConfig().set(setname + ".Range",
-										newvalue);
-								plugin.getConfig().save(
-										new File(plugin.getDataFolder(),
-												"config.yml"));
+							if (!entry.getValue().get(0).equals("-999")) {
+								if (blk.getLocation().equals(key)) {
+									Integer newvalue = RedstoneSensor.defaultRange;
+									if (value == RedstoneSensor.maxRange) {
+										newvalue = 1;
+										ArrayList<String> list = new ArrayList<String>();
+										list.add(String.valueOf(newvalue));
+										list.add(entry.getValue().get(1));
+										list.add("null");
+										entry.setValue(list);
+									} else {
+										newvalue = value + 1;
+										ArrayList<String> list = new ArrayList<String>();
+										list.add(String.valueOf(newvalue));
+										list.add(entry.getValue().get(1));
+										list.add("null");
+										entry.setValue(list);
+										entry.setValue(list);
+									}
+									String setname = "Redstones."
+											+ blk.getLocation().getWorld()
+													.getName() + "-"
+											+ blk.getLocation().getBlockX()
+											+ ""
+											+ blk.getLocation().getBlockY()
+											+ ""
+											+ blk.getLocation().getBlockZ();
+									plugin.getConfig().set(setname + ".Range",
+											newvalue);
+									plugin.getConfig().save(
+											new File(plugin.getDataFolder(),
+													"config.yml"));
 
-								event.getPlayer()
-										.sendMessage(
-												ChatColor.GOLD
-														+ RedstoneSensor.redstoneProximityRangeNotifyText
-														+ ": " + ChatColor.RED
-														+ newvalue.toString());
+									event.getPlayer()
+											.sendMessage(
+													ChatColor.GOLD
+															+ RedstoneSensor.redstoneProximityRangeNotifyText
+															+ ": "
+															+ ChatColor.RED
+															+ newvalue
+																	.toString());
+								}
+							} else {
+								event.getPlayer().sendMessage(ChatColor.GOLD + "This RPS has a Custom Range and can not be changed via right clicking.");
 							}
 						}
 					}
@@ -359,6 +395,7 @@ public class RedstoneSensorListener implements Listener {
 						Location key = entry.getKey();
 						Integer value = Integer
 								.valueOf(entry.getValue().get(0));
+						if (!entry.getValue().get(0).equals("-999")) {
 						if (blk.getLocation().equals(key)) {
 							Integer newvalue = RedstoneSensor.defaultRange;
 							if (value == RedstoneSensor.maxRange) {
@@ -366,12 +403,14 @@ public class RedstoneSensorListener implements Listener {
 								ArrayList<String> list = new ArrayList<String>();
 								list.add(String.valueOf(newvalue));
 								list.add(entry.getValue().get(1));
+								list.add("null");
 								entry.setValue(list);
 							} else {
 								newvalue = value + 1;
 								ArrayList<String> list = new ArrayList<String>();
 								list.add(String.valueOf(newvalue));
 								list.add(entry.getValue().get(1));
+								list.add("null");
 								entry.setValue(list);
 								entry.setValue(list);
 							}
@@ -393,9 +432,55 @@ public class RedstoneSensorListener implements Listener {
 													+ ": " + ChatColor.RED
 													+ newvalue.toString());
 						}
+						} else {
+							event.getPlayer().sendMessage(ChatColor.GOLD + "This RPS has a Custom Range and can not be changed via right clicking.");
+						}
 					}
 				}
 			}
+		}
+
+		// Player Location Set Check
+		if(!(event.getPlayer().getItemInHand().getTypeId() == 0)){
+		if ((ChatColor.RED + "RPS Wand")
+				.equals(event.getPlayer().getItemInHand().getItemMeta()
+						.getDisplayName())) {
+			// User has RPS Wand out.
+			if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+				ArrayList<Location> locations = new ArrayList<Location>();
+				locations.add(event.getClickedBlock().getLocation()); // Left Click
+				if (playerLocationStorage.containsKey(event.getPlayer().getName()))
+					locations.add(playerLocationStorage.get(event.getPlayer().getName()).get(1)); // Right Click
+				else
+					locations.add(nullLocation); // Right Click
+				
+				event.getPlayer().sendMessage(ChatColor.RED + "[RPS] "
+						+ ChatColor.GREEN + "First corner set ("+event.getClickedBlock().getX()+","+event.getClickedBlock().getY()+","+event.getClickedBlock().getLocation().getBlockZ()+")");
+				playerLocationStorage.put(event.getPlayer().getName(), locations);
+			} else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+				ArrayList<Location> locations = new ArrayList<Location>();
+				if (playerLocationStorage.containsKey(event.getPlayer()
+						.getName()))
+					locations.add(playerLocationStorage.get(
+							event.getPlayer().getName()).get(0)); // Left Click
+				else
+					locations.add(nullLocation); // Right Click
+
+				locations.add(event.getClickedBlock().getLocation()); // Right
+																		// Click
+				event.getPlayer().sendMessage(ChatColor.RED + "[RPS] "
+						+ ChatColor.GREEN + "Second corner set ("+event.getClickedBlock().getX()+","+event.getClickedBlock().getY()+","+event.getClickedBlock().getLocation().getBlockZ()+")");
+				playerLocationStorage.put(event.getPlayer().getName(), locations);
+
+			}
+			if(playerLocationStorage.containsKey(event.getPlayer().getName())){
+			if((!playerLocationStorage.get(event.getPlayer().getName()).get(0).equals(nullLocation)) && (!playerLocationStorage.get(event.getPlayer().getName()).get(1).equals(nullLocation))){
+					event.getPlayer().sendMessage(ChatColor.RED + "[RPS] "
+						+ ChatColor.AQUA + "Both corners have been set. Aim at an RPS and type '/rps setrange' to set its new range to the current cuboid area.");
+			}
+			}
+			event.setCancelled(true);
+		}
 		}
 	}
 
@@ -472,7 +557,7 @@ public class RedstoneSensorListener implements Listener {
 
 					player.sendMessage(ChatColor.RED + "[RPS] "
 							+ ChatColor.GREEN
-							+ "/rps [maxrange/defaultrange/onlyowner/reload]");
+							+ "/rps [maxrange/defaultrange/onlyowner/reload/wand/setrange]");
 				}
 				if (arguments.size() == 2) {
 					if (("reload").equalsIgnoreCase(arguments.get(1))) {
@@ -495,6 +580,132 @@ public class RedstoneSensorListener implements Listener {
 						player.sendMessage(ChatColor.RED + "[RPS] "
 								+ ChatColor.GREEN
 								+ "/rps onlyowner <true/false>");
+					} else if (("wand").equalsIgnoreCase(arguments.get(1))) {
+						if(!player.hasPermission("redstonesensor.customrange")){
+							player.sendMessage(ChatColor.RED + "[RPS] "
+									+ ChatColor.GREEN
+									+ "You do not have permission to use that command");
+						}else{
+						ItemStack rps2 = new ItemStack(Material.STICK, 1);
+						ItemMeta rpsmeta2 = rps2.getItemMeta();
+						rpsmeta2.setDisplayName(ChatColor.RED + "RPS Wand");
+						rps2.setItemMeta(rpsmeta2);
+						player.getInventory().addItem(rps2);
+						player.sendMessage(ChatColor.RED + "[RPS] "
+								+ ChatColor.GREEN
+								+ "RPS Wand Given. Left clicking a block with the RPS Wand marks that block as the first corner of the cuboid you wish to select. A right-click chooses the second corner.");
+					}
+					}else if (("setrange").equalsIgnoreCase(arguments.get(1))) {
+						if(!player.hasPermission("redstonesensor.customrange")){
+							player.sendMessage(ChatColor.RED + "[RPS] "
+									+ ChatColor.GREEN
+									+ "You do not have permission to use that command");
+
+						}else{
+						if(playerLocationStorage.containsKey(event.getPlayer().getName())){
+							if(playerLocationStorage.get(event.getPlayer().getName()).get(0).equals(nullLocation) || playerLocationStorage.get(event.getPlayer().getName()).get(1).equals(nullLocation)){
+								player.sendMessage(ChatColor.RED + "[RPS] "
+										+ ChatColor.GREEN
+										+ "Your RPS Wand Selection is not complete. You are missing a corner.");
+
+							}else{
+								//Set Range here
+								Block blk = event.getPlayer().getTargetBlock(null, 15);
+								if(!(blk.getType().equals(Material.REDSTONE_TORCH_OFF) || blk.getType().equals(Material.REDSTONE_TORCH_ON))){									
+									if(blk.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_OFF) || blk.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON)){									
+									blk = blk.getRelative(BlockFace.UP);
+									}
+									}
+								Location lk = blk.getLocation();
+							if(RedstoneSensor.redstoneList.containsKey(lk)){
+							//Add new range
+								ArrayList<String> list = new ArrayList<String>();
+								String setname = "Redstones."
+										+ lk.getWorld().getName() + "-"
+										+ lk.getBlockX() + ""
+										+ lk.getBlockY() + ""
+										+ lk.getBlockZ();								
+								Location l1 = playerLocationStorage.get(event.getPlayer().getName()).get(0);
+								Location l2 = playerLocationStorage.get(event.getPlayer().getName()).get(1);
+								int x1 = Math.min(l1.getBlockX(), l2.getBlockX());
+								int y1 = Math.min(l1.getBlockY(), l2.getBlockY());
+								int z1 = Math.min(l1.getBlockZ(), l2.getBlockZ());
+								int x2 = Math.max(l1.getBlockX(), l2.getBlockX());
+								int y2 = Math.max(l1.getBlockY(), l2.getBlockY());
+								int z2 = Math.max(l1.getBlockZ(), l2.getBlockZ());
+								l1 = new Location(l1.getWorld(), x1, y1, z1);
+								l2 = new Location(l2.getWorld(), x2, y2, z2);
+								String l1String = String.valueOf(l1.getBlockX()) + ":"+String.valueOf(l1.getBlockY()) + ":" + String.valueOf(l1.getBlockZ())  + ":"+ String.valueOf(l1.getWorld().getName());
+								String l2String = String.valueOf(l2.getBlockX()) + ":"+String.valueOf(l2.getBlockY()) + ":" + String.valueOf(l2.getBlockZ())  + ":"+ String.valueOf(l2.getWorld().getName());
+								plugin.getConfig().set(setname + ".Range", (int) -999);
+								plugin.getConfig().set(setname + ".CustomRange", l1String + ";" + l2String);
+								list.add("-999");
+								list.add(RedstoneSensor.redstoneList.get(lk).get(1));
+								list.add(l1String + ";" + l2String);
+								RedstoneSensor.redstoneList.put(lk, list);
+
+								player.sendMessage(ChatColor.RED + "[RPS] "
+										+ ChatColor.GREEN
+										+ "New custom range set.");
+
+								try {
+									plugin.getConfig().save(
+											new File(plugin.getDataFolder(), "config.yml"));
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							//End Add new range
+							}else if(RedstoneSensor.notRedstoneList.containsKey(lk)){
+								//Add new range
+								ArrayList<String> list = new ArrayList<String>();
+								String setname = "Redstones."
+										+ lk.getWorld().getName() + "-"
+										+ lk.getBlockX() + ""
+										+ lk.getBlockY() + ""
+										+ lk.getBlockZ();								
+								Location l1 = playerLocationStorage.get(event.getPlayer().getName()).get(0);
+								Location l2 = playerLocationStorage.get(event.getPlayer().getName()).get(1);
+								int x1 = Math.min(l1.getBlockX(), l2.getBlockX());
+								int y1 = Math.min(l1.getBlockY(), l2.getBlockY());
+								int z1 = Math.min(l1.getBlockZ(), l2.getBlockZ());
+								int x2 = Math.max(l1.getBlockX(), l2.getBlockX());
+								int y2 = Math.max(l1.getBlockY(), l2.getBlockY());
+								int z2 = Math.max(l1.getBlockZ(), l2.getBlockZ());
+								l1 = new Location(l1.getWorld(), x1, y1, z1);
+								l2 = new Location(l2.getWorld(), x2, y2, z2);
+								String l1String = String.valueOf(l1.getBlockX()) + ":"+String.valueOf(l1.getBlockY()) + ":" + String.valueOf(l1.getBlockZ())  + ":"+ String.valueOf(l1.getWorld().getName());
+								String l2String = String.valueOf(l2.getBlockX()) + ":"+String.valueOf(l2.getBlockY()) + ":" + String.valueOf(l2.getBlockZ())  + ":"+ String.valueOf(l2.getWorld().getName());
+								plugin.getConfig().set(setname + ".Range", (int) -999);
+								plugin.getConfig().set(setname + ".CustomRange", l1String + ";" + l2String);
+								list.add("-999");
+								list.add(RedstoneSensor.notRedstoneList.get(lk).get(1));
+								list.add(l1String + ";" + l2String);
+								RedstoneSensor.notRedstoneList.put(lk, list);
+
+								player.sendMessage(ChatColor.RED + "[RPS] "
+										+ ChatColor.GREEN
+										+ "New custom range set.");
+
+								try {
+									plugin.getConfig().save(
+											new File(plugin.getDataFolder(), "config.yml"));
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}else{
+								player.sendMessage(ChatColor.RED + "[RPS] "
+										+ ChatColor.GREEN
+										+ "The block your aiming at is not a RPS. Try aiming at the block under the RPS, or the RPS itself.");
+	
+							}
+							}
+						}else{
+							player.sendMessage(ChatColor.RED + "[RPS] "
+									+ ChatColor.GREEN
+									+ "You must first create a selection with the RPS Wand. Type '/rps wand' to get it");
+
+						}
+					}
 					}
 				} else if (arguments.size() == 3) {
 					if (("defaultrange").equalsIgnoreCase(arguments.get(1))) {
@@ -639,4 +850,16 @@ public class RedstoneSensorListener implements Listener {
 		}
 	}
 	
+	public boolean playerWithin(Location l1, Location l2, Location pLoc) {
+		if(l1.equals(nullLocation) || l2.equals(nullLocation)){
+			return false;
+		}else{
+		return pLoc.getBlockX() >= l1.getBlockX()
+		&& pLoc.getBlockX() <= l2.getBlockX()
+		&& pLoc.getBlockY() >= l1.getBlockY()
+		&& pLoc.getBlockY() <= l2.getBlockY()
+		&& pLoc.getBlockZ() >= l1.getBlockZ()
+		&& pLoc.getBlockZ() <= l2.getBlockZ();
+		}
+	}
 }

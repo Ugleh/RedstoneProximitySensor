@@ -1,4 +1,5 @@
 package com.ugleh.redstonesensor;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class RedstoneSensor extends JavaPlugin{
+public class RedstoneSensor extends JavaPlugin {
 	public static Integer maxRange = null;
 	public static Integer defaultRange = null;
 	public static Boolean onlyOwner = null;
@@ -29,123 +30,190 @@ public class RedstoneSensor extends JavaPlugin{
 	private String currentVersion = "1.9.3";
 	private String readurl = "https://raw.github.com/Ugleh/RedstoneSensor/master/version.txt";
 
-	public static HashMap<Location, ArrayList<String>> redstoneList = new HashMap<Location, 	ArrayList<String>>();
+	public static HashMap<Location, ArrayList<String>> redstoneList = new HashMap<Location, ArrayList<String>>();
 	public static HashMap<Location, ArrayList<String>> notRedstoneList = new HashMap<Location, ArrayList<String>>();
-public void onEnable(){
-	
-	getServer().getPluginManager().registerEvents(new RedstoneSensorListener(this), this);	
-    if (!new File(getDataFolder(), "config.yml").exists()) {
-    saveDefaultConfig();
-    }
-    
-    //Basic config settings below to make sure they have certian configs and if they dont then add them.
-	maxRange = getConfig().getInt("Config.max-range");
-	defaultRange = getConfig().getInt("Config.default-range");
-	onlyOwner = getConfig().getBoolean("Config.owner-only-change-range");
-	redstoneProximityRangeText = getConfig().getString("Config.proximity-sensor-name");
-	notRedstoneProximityRangeText = getConfig().getString("Config.not-proximity-sensor-name");
-	redstoneProximityRangeNotifyText = getConfig().getString("Config.proximity-range-notify-text");
-	updatechecker = getConfig().getBoolean("Config.update-checker");
-    ArrayList<String> keys = new ArrayList<String>();
-    keys.addAll(getConfig().getConfigurationSection("Config").getKeys(false));
-	if(!keys.contains("update-checker")){
-		updatechecker = true;
-		getConfig().set("Config.update-checker", true);
-	}
-	if(!keys.contains("max-range")){
-		maxRange = 10;
-		getConfig().set("Config.max-range", 10);
-	}
-	if(!keys.contains("owner-only-change-rank")){
-		onlyOwner = true;
-		getConfig().set("Config.owner-only-change-range", true);
-	}
-	if(!keys.contains("default-range")){
-		defaultRange = 3;
-		getConfig().set("Config.default-range", 3);
-	}
-	if(!keys.contains("proximity-sensor-name")){
-		redstoneProximityRangeText = "Redstone Proximity Sensor";
-		getConfig().set("Config.proximity-sensor-name", "Redstone Proximity Sensor");
-	}
-	if(!keys.contains("not-proximity-sensor-name")){
-		notRedstoneProximityRangeText = "NOT Redstone Proximity Sensor";
-		getConfig().set("Config.not-proximity-sensor-name", "NOT Redstone Proximity Sensor");
-	}
-	if(!keys.contains("proximity-range-notify-text")){
-		redstoneProximityRangeNotifyText = "Proximity Range";
-		getConfig().set("Config.proximity-range-notify-text", "Proximity Range");
-	}
-	try {
-		getConfig().save(new File(getDataFolder(), "config.yml"));
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-	
-	if(!getConfig().toString().isEmpty()){
-for(String key : getConfig().getConfigurationSection("Redstones").getKeys(false)) {
-    if(("NOT").equalsIgnoreCase((getConfig().getString("Redstones."+key+".Type")))){
-    	ArrayList<String> list = new ArrayList<String>();
-    	list.add(String.valueOf(getConfig().getInt("Redstones."+key+".Range")));
-    	list.add(String.valueOf(getConfig().getString("Redstones."+key+".Owner")));
-    	notRedstoneList.put(new Location(getServer().getWorld(getConfig().getString("Redstones."+key+".World")), getConfig().getInt("Redstones."+key+".X"), getConfig().getInt("Redstones."+key+".Y"), getConfig().getInt("Redstones."+key+".Z")), list);
 
-    }else{
-    	ArrayList<String> list = new ArrayList<String>();
-    	list.add(String.valueOf(getConfig().getInt("Redstones."+key+".Range")));
-    	list.add(String.valueOf(getConfig().getString("Redstones."+key+".Owner")));
-    	redstoneList.put(new Location(getServer().getWorld(getConfig().getString("Redstones."+key+".World")), getConfig().getInt("Redstones."+key+".X"), getConfig().getInt("Redstones."+key+".Y"), getConfig().getInt("Redstones."+key+".Z")), list);
+	public void onEnable() {
 
-    }    }
-}
-	
-	//Crafting Recipe for the regular Proximity Sensor
-	 ItemStack rps = new ItemStack(Material.REDSTONE_TORCH_OFF, 1);
+		getServer().getPluginManager().registerEvents(
+				new RedstoneSensorListener(this), this);
+		if (!new File(getDataFolder(), "config.yml").exists()) {
+			saveDefaultConfig();
+		}
+
+		// Basic config settings below to make sure they have certian configs
+		// and if they dont then add them.
+		maxRange = getConfig().getInt("Config.max-range");
+		defaultRange = getConfig().getInt("Config.default-range");
+		onlyOwner = getConfig().getBoolean("Config.owner-only-change-range");
+		redstoneProximityRangeText = getConfig().getString(
+				"Config.proximity-sensor-name");
+		notRedstoneProximityRangeText = getConfig().getString(
+				"Config.not-proximity-sensor-name");
+		redstoneProximityRangeNotifyText = getConfig().getString(
+				"Config.proximity-range-notify-text");
+		updatechecker = getConfig().getBoolean("Config.update-checker");
+		ArrayList<String> keys = new ArrayList<String>();
+		keys.addAll(getConfig().getConfigurationSection("Config")
+				.getKeys(false));
+		if (!keys.contains("update-checker")) {
+			updatechecker = true;
+			getConfig().set("Config.update-checker", true);
+		}
+		if (!keys.contains("max-range")) {
+			maxRange = 10;
+			getConfig().set("Config.max-range", 10);
+		}
+		if (!keys.contains("owner-only-change-rank")) {
+			onlyOwner = true;
+			getConfig().set("Config.owner-only-change-range", true);
+		}
+		if (!keys.contains("default-range")) {
+			defaultRange = 3;
+			getConfig().set("Config.default-range", 3);
+		}
+		if (!keys.contains("proximity-sensor-name")) {
+			redstoneProximityRangeText = "Redstone Proximity Sensor";
+			getConfig().set("Config.proximity-sensor-name",
+					"Redstone Proximity Sensor");
+		}
+		if (!keys.contains("not-proximity-sensor-name")) {
+			notRedstoneProximityRangeText = "NOT Redstone Proximity Sensor";
+			getConfig().set("Config.not-proximity-sensor-name",
+					"NOT Redstone Proximity Sensor");
+		}
+		if (!keys.contains("proximity-range-notify-text")) {
+			redstoneProximityRangeNotifyText = "Proximity Range";
+			getConfig().set("Config.proximity-range-notify-text",
+					"Proximity Range");
+		}
+		try {
+			getConfig().save(new File(getDataFolder(), "config.yml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (!getConfig().toString().isEmpty()) {
+			for (String key : getConfig().getConfigurationSection("Redstones")
+					.getKeys(false)) {
+				if (("NOT").equalsIgnoreCase((getConfig()
+						.getString("Redstones." + key + ".Type")))) {
+					ArrayList<String> list = new ArrayList<String>();
+					String customrange = String.valueOf(getConfig().getString(
+							"Redstones." + key + ".CustomRange"));
+					if (customrange.equals("null")) {
+						list.add(String.valueOf(getConfig().getInt(
+								"Redstones." + key + ".Range")));
+					} else {
+						list.add("-999");
+					}
+					list.add(String.valueOf(getConfig().getString(
+							"Redstones." + key + ".Owner")));
+					list.add(customrange);
+
+					notRedstoneList.put(
+							new Location(getServer().getWorld(
+									getConfig().getString(
+											"Redstones." + key + ".World")),
+									getConfig().getInt(
+											"Redstones." + key + ".X"),
+									getConfig().getInt(
+											"Redstones." + key + ".Y"),
+									getConfig().getInt(
+											"Redstones." + key + ".Z")), list);
+
+				} else {
+					ArrayList<String> list = new ArrayList<String>();
+					String customrange = String.valueOf(getConfig().getString(
+							"Redstones." + key + ".CustomRange"));
+					if (customrange.equals("null")) {
+						list.add(String.valueOf(getConfig().getInt(
+								"Redstones." + key + ".Range")));
+					} else {
+						list.add("-999");
+					}
+					list.add(String.valueOf(getConfig().getString(
+							"Redstones." + key + ".Owner")));
+					list.add(customrange);
+
+					redstoneList.put(
+							new Location(getServer().getWorld(
+									getConfig().getString(
+											"Redstones." + key + ".World")),
+									getConfig().getInt(
+											"Redstones." + key + ".X"),
+									getConfig().getInt(
+											"Redstones." + key + ".Y"),
+									getConfig().getInt(
+											"Redstones." + key + ".Z")), list);
+
+				}
+			}
+		}
+
+		// Crafting Recipe for the regular Proximity Sensor
+		ItemStack rps = new ItemStack(Material.REDSTONE_TORCH_OFF, 1);
 		ItemMeta rpsmeta = rps.getItemMeta();
 		rpsmeta.setDisplayName(ChatColor.RED + redstoneProximityRangeText);
 		rps.setItemMeta(rpsmeta);
 		ShapedRecipe rpsRecipe = new ShapedRecipe(rps);
-		rpsRecipe.shape(" R "," R "," R ");
+		rpsRecipe.shape(" R ", " R ", " R ");
 		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe);
-	
-	//Crafting Recipe for the Inverted or NOT Proximity Sensor.
-	ItemStack rps2 = new ItemStack(Material.REDSTONE_TORCH_OFF, 1);
+
+		// Crafting Recipe for the Inverted or NOT Proximity Sensor.
+		ItemStack rps2 = new ItemStack(Material.REDSTONE_TORCH_OFF, 1);
 		ItemMeta rpsmeta2 = rps2.getItemMeta();
 		rpsmeta2.setDisplayName(ChatColor.RED + notRedstoneProximityRangeText);
 		rps2.setItemMeta(rpsmeta2);
 		ShapedRecipe rpsRecipe2 = new ShapedRecipe(rps2);
-		rpsRecipe2.shape("   ","RRR","   ");
+		rpsRecipe2.shape("   ", "RRR", "   ");
 		rpsRecipe2.setIngredient('R', Material.REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe2);
-	
-outdated = true;
-startUpdateCheck();
-if(outdated){
-	Bukkit.broadcastMessage("[RPS] "+ "Your version of Redstone Proximity Sensor is outdated");	
-}
-}
 
+		outdated = true;
+		startUpdateCheck();
+		if (outdated) {
+			Bukkit.broadcastMessage("[RPS] "
+					+ "Your version of Redstone Proximity Sensor is outdated");
+		}
+	}
 
- 
-public void startUpdateCheck() {
-if (updatechecker) {
-try {
-URL url = new URL(readurl);
-BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-String str;
-while ((str = br.readLine()) != null) {
-if(str.startsWith(currentVersion)){
-	outdated = false;
-}
-}
-br.close();
-} catch (IOException e) {
-	Bukkit.broadcastMessage("The Update Checker URL is Invalid. Please let Ugleh know.");
-}
-}
-}
+	public void startUpdateCheck() {
+		if (updatechecker) {
+			try {
+				URL url = new URL(readurl);
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						url.openStream()));
+				String str;
+				while ((str = br.readLine()) != null) {
+					if (str.startsWith(currentVersion)) {
+						outdated = false;
+					}
+				}
+				br.close();
+			} catch (IOException e) {
+				Bukkit.broadcastMessage("The Update Checker URL is Invalid. Please let Ugleh know.");
+			}
+		}
+	}
 
+	public boolean playerWithin(Location l1, Location l2, Location pLoc) {
+		int x1 = Math.min(l1.getBlockX(), l2.getBlockX());
+		int y1 = Math.min(l1.getBlockY(), l2.getBlockY());
+		int z1 = Math.min(l1.getBlockZ(), l2.getBlockZ());
+		int x2 = Math.max(l1.getBlockX(), l2.getBlockX());
+		int y2 = Math.max(l1.getBlockY(), l2.getBlockY());
+		int z2 = Math.max(l1.getBlockZ(), l2.getBlockZ());
+		l1 = new Location(l1.getWorld(), x1, y1, z1);
+		l2 = new Location(l2.getWorld(), x2, y2, z2);
+
+		return pLoc.getBlockX() >= l1.getBlockX()
+				&& pLoc.getBlockX() <= l2.getBlockX()
+				&& pLoc.getBlockY() >= l1.getBlockY()
+				&& pLoc.getBlockY() <= l2.getBlockY()
+				&& pLoc.getBlockZ() >= l1.getBlockZ()
+				&& pLoc.getBlockZ() <= l2.getBlockZ();
+	}
 
 }
-
