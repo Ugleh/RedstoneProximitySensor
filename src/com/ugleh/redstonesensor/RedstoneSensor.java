@@ -27,7 +27,7 @@ public class RedstoneSensor extends JavaPlugin {
 	public static String notRedstoneProximityRangeText = null;
 	public Boolean updatechecker;
 	public static Boolean outdated = false;
-	private String currentVersion = "1.9.3";
+	private String currentVersion = "1.9.6";
 	private String readurl = "https://raw.github.com/Ugleh/RedstoneSensor/master/version.txt";
 
 	public static HashMap<Location, ArrayList<String>> redstoneList = new HashMap<Location, ArrayList<String>>();
