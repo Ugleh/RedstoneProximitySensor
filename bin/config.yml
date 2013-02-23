@@ -1,5 +1,6 @@
 Config:
   max-range: 10
+  update-checker: true
   default-range: 3
   owner-only-change-range: true
   proximity-sensor-name: Redstone Proximity Sensor

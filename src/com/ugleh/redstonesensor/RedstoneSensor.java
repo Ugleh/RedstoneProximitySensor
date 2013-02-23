@@ -19,43 +19,38 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class RedstoneSensor extends JavaPlugin {
-	public static Integer maxRange = null;
 	public static Integer defaultRange = null;
-	public static Boolean onlyOwner = null;
-	public static String redstoneProximityRangeText = null;
-	public static String redstoneProximityRangeNotifyText = null;
-	public static String notRedstoneProximityRangeText = null;
-	public Boolean updatechecker;
-	public static Boolean outdated = false;
-	private String currentVersion = "1.9.6";
-	private String readurl = "https://raw.github.com/Ugleh/RedstoneSensor/master/version.txt";
-
-	public static HashMap<Location, ArrayList<String>> redstoneList = new HashMap<Location, ArrayList<String>>();
+	public static Integer maxRange = null;
 	public static HashMap<Location, ArrayList<String>> notRedstoneList = new HashMap<Location, ArrayList<String>>();
+	public static String notRedstoneProximityRangeText = null;
+	public static Boolean onlyOwner = null;
+	public static Boolean outdated = false;
+	public static HashMap<Location, ArrayList<String>> redstoneList = new HashMap<Location, ArrayList<String>>();
+	public static String redstoneProximityRangeNotifyText = null;
+	public static String redstoneProximityRangeText = null;
+	private String currentVersion = "1.9.7";
 
+	private String readurl = "https://raw.github.com/Ugleh/RedstoneSensor/master/version.txt";
+	public Boolean updatechecker;
+
+	@Override
 	public void onEnable() {
 
-		getServer().getPluginManager().registerEvents(
-				new RedstoneSensorListener(this), this);
+		getServer().getPluginManager().registerEvents(new RedstoneSensorListener(this), this);
 		if (!new File(getDataFolder(), "config.yml").exists()) {
 			saveDefaultConfig();
 		}
-
 		// Basic config settings below to make sure they have certian configs
 		// and if they dont then add them.
 		maxRange = getConfig().getInt("Config.max-range");
 		defaultRange = getConfig().getInt("Config.default-range");
 		onlyOwner = getConfig().getBoolean("Config.owner-only-change-range");
-		redstoneProximityRangeText = getConfig().getString(
-				"Config.proximity-sensor-name");
-		notRedstoneProximityRangeText = getConfig().getString(
-				"Config.not-proximity-sensor-name");
-		redstoneProximityRangeNotifyText = getConfig().getString(
-				"Config.proximity-range-notify-text");
+		redstoneProximityRangeText = getConfig().getString("Config.proximity-sensor-name");
+		notRedstoneProximityRangeText = getConfig().getString("Config.not-proximity-sensor-name");
+		redstoneProximityRangeNotifyText = getConfig().getString("Config.proximity-range-notify-text");
 		updatechecker = getConfig().getBoolean("Config.update-checker");
 		ArrayList<String> keys = new ArrayList<String>();
-		keys.addAll(getConfig().getConfigurationSection("Config")
-				.getKeys(false));
+		keys.addAll(getConfig().getConfigurationSection("Config").getKeys(false));
 		if (!keys.contains("update-checker")) {
 			updatechecker = true;
 			getConfig().set("Config.update-checker", true);
@@ -74,18 +69,15 @@ public class RedstoneSensor extends JavaPlugin {
 		}
 		if (!keys.contains("proximity-sensor-name")) {
 			redstoneProximityRangeText = "Redstone Proximity Sensor";
-			getConfig().set("Config.proximity-sensor-name",
-					"Redstone Proximity Sensor");
+			getConfig().set("Config.proximity-sensor-name", "Redstone Proximity Sensor");
 		}
 		if (!keys.contains("not-proximity-sensor-name")) {
 			notRedstoneProximityRangeText = "NOT Redstone Proximity Sensor";
-			getConfig().set("Config.not-proximity-sensor-name",
-					"NOT Redstone Proximity Sensor");
+			getConfig().set("Config.not-proximity-sensor-name", "NOT Redstone Proximity Sensor");
 		}
 		if (!keys.contains("proximity-range-notify-text")) {
 			redstoneProximityRangeNotifyText = "Proximity Range";
-			getConfig().set("Config.proximity-range-notify-text",
-					"Proximity Range");
+			getConfig().set("Config.proximity-range-notify-text", "Proximity Range");
 		}
 		try {
 			getConfig().save(new File(getDataFolder(), "config.yml"));
@@ -94,58 +86,32 @@ public class RedstoneSensor extends JavaPlugin {
 		}
 
 		if (!getConfig().toString().isEmpty()) {
-			for (String key : getConfig().getConfigurationSection("Redstones")
-					.getKeys(false)) {
-				if (("NOT").equalsIgnoreCase((getConfig()
-						.getString("Redstones." + key + ".Type")))) {
+			for (String key : getConfig().getConfigurationSection("Redstones").getKeys(false)) {
+				if (("NOT").equalsIgnoreCase((getConfig().getString("Redstones." + key + ".Type")))) {
 					ArrayList<String> list = new ArrayList<String>();
-					String customrange = String.valueOf(getConfig().getString(
-							"Redstones." + key + ".CustomRange"));
+					String customrange = String.valueOf(getConfig().getString("Redstones." + key + ".CustomRange"));
 					if (customrange.equals("null")) {
-						list.add(String.valueOf(getConfig().getInt(
-								"Redstones." + key + ".Range")));
+						list.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Range")));
 					} else {
 						list.add("-999");
 					}
-					list.add(String.valueOf(getConfig().getString(
-							"Redstones." + key + ".Owner")));
+					list.add(String.valueOf(getConfig().getString("Redstones." + key + ".Owner")));
 					list.add(customrange);
 
-					notRedstoneList.put(
-							new Location(getServer().getWorld(
-									getConfig().getString(
-											"Redstones." + key + ".World")),
-									getConfig().getInt(
-											"Redstones." + key + ".X"),
-									getConfig().getInt(
-											"Redstones." + key + ".Y"),
-									getConfig().getInt(
-											"Redstones." + key + ".Z")), list);
+					notRedstoneList.put(new Location(getServer().getWorld(getConfig().getString("Redstones." + key + ".World")), getConfig().getInt("Redstones." + key + ".X"), getConfig().getInt("Redstones." + key + ".Y"), getConfig().getInt("Redstones." + key + ".Z")), list);
 
 				} else {
 					ArrayList<String> list = new ArrayList<String>();
-					String customrange = String.valueOf(getConfig().getString(
-							"Redstones." + key + ".CustomRange"));
+					String customrange = String.valueOf(getConfig().getString("Redstones." + key + ".CustomRange"));
 					if (customrange.equals("null")) {
-						list.add(String.valueOf(getConfig().getInt(
-								"Redstones." + key + ".Range")));
+						list.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Range")));
 					} else {
 						list.add("-999");
 					}
-					list.add(String.valueOf(getConfig().getString(
-							"Redstones." + key + ".Owner")));
+					list.add(String.valueOf(getConfig().getString("Redstones." + key + ".Owner")));
 					list.add(customrange);
 
-					redstoneList.put(
-							new Location(getServer().getWorld(
-									getConfig().getString(
-											"Redstones." + key + ".World")),
-									getConfig().getInt(
-											"Redstones." + key + ".X"),
-									getConfig().getInt(
-											"Redstones." + key + ".Y"),
-									getConfig().getInt(
-											"Redstones." + key + ".Z")), list);
+					redstoneList.put(new Location(getServer().getWorld(getConfig().getString("Redstones." + key + ".World")), getConfig().getInt("Redstones." + key + ".X"), getConfig().getInt("Redstones." + key + ".Y"), getConfig().getInt("Redstones." + key + ".Z")), list);
 
 				}
 			}
@@ -174,27 +140,7 @@ public class RedstoneSensor extends JavaPlugin {
 		outdated = true;
 		startUpdateCheck();
 		if (outdated) {
-			Bukkit.broadcastMessage("[RPS] "
-					+ "Your version of Redstone Proximity Sensor is outdated");
-		}
-	}
-
-	public void startUpdateCheck() {
-		if (updatechecker) {
-			try {
-				URL url = new URL(readurl);
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						url.openStream()));
-				String str;
-				while ((str = br.readLine()) != null) {
-					if (str.startsWith(currentVersion)) {
-						outdated = false;
-					}
-				}
-				br.close();
-			} catch (IOException e) {
-				Bukkit.broadcastMessage("The Update Checker URL is Invalid. Please let Ugleh know.");
-			}
+			Bukkit.broadcastMessage("[RPS] " + "Your version of Redstone Proximity Sensor is outdated");
 		}
 	}
 
@@ -208,12 +154,25 @@ public class RedstoneSensor extends JavaPlugin {
 		l1 = new Location(l1.getWorld(), x1, y1, z1);
 		l2 = new Location(l2.getWorld(), x2, y2, z2);
 
-		return pLoc.getBlockX() >= l1.getBlockX()
-				&& pLoc.getBlockX() <= l2.getBlockX()
-				&& pLoc.getBlockY() >= l1.getBlockY()
-				&& pLoc.getBlockY() <= l2.getBlockY()
-				&& pLoc.getBlockZ() >= l1.getBlockZ()
-				&& pLoc.getBlockZ() <= l2.getBlockZ();
+		return pLoc.getBlockX() >= l1.getBlockX() && pLoc.getBlockX() <= l2.getBlockX() && pLoc.getBlockY() >= l1.getBlockY() && pLoc.getBlockY() <= l2.getBlockY() && pLoc.getBlockZ() >= l1.getBlockZ() && pLoc.getBlockZ() <= l2.getBlockZ();
+	}
+
+	public void startUpdateCheck() {
+		if (updatechecker) {
+			try {
+				URL url = new URL(readurl);
+				BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+				String str;
+				while ((str = br.readLine()) != null) {
+					if (str.startsWith(currentVersion)) {
+						outdated = false;
+					}
+				}
+				br.close();
+			} catch (IOException e) {
+				Bukkit.broadcastMessage("The Update Checker URL is Invalid. Please let Ugleh know.");
+			}
+		}
 	}
 
 }

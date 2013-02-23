@@ -1,5 +1,5 @@
 name: RedstoneSensor
-version: 1.9.6
+version: 1.9.7
 author: Ugleh
 main: com.ugleh.redstonesensor.RedstoneSensor
 description: Create redstone proximity sensor torches that creates a redstone current when a player is in range.
