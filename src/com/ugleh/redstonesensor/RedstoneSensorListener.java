@@ -52,7 +52,13 @@ public class RedstoneSensorListener implements Listener {
 				list.add(String.valueOf(RedstoneSensor.defaultRange));
 				list.add(event.getPlayer().getName());
 				list.add("null");
-				RedstoneSensor.redstoneList.put(bk.getLocation(), list);
+				ArrayList<String> list2 = new ArrayList<String>();
+				list2.add(bk.getLocation().getWorld().getName());
+				list2.add(String.valueOf(bk.getLocation().getBlockX()));
+				list2.add(String.valueOf(bk.getLocation().getBlockY()));
+				list2.add(String.valueOf(bk.getLocation().getBlockZ()));
+
+				RedstoneSensor.redstoneList.put(list2, list);
 				String setname = "Redstones." + bk.getLocation().getWorld().getName() + "-" + bk.getLocation().getBlockX() + "" + bk.getLocation().getBlockY() + "" + bk.getLocation().getBlockZ();
 				plugin.getConfig().set(setname, null);
 				plugin.getConfig().set(setname + ".Range", 3);
@@ -72,8 +78,13 @@ public class RedstoneSensorListener implements Listener {
 				list.add(String.valueOf(RedstoneSensor.defaultRange));
 				list.add(event.getPlayer().getName());
 				list.add("null");
+				ArrayList<String> list2 = new ArrayList<String>();
+				list2.add(bk.getLocation().getWorld().getName());
+				list2.add(String.valueOf(bk.getLocation().getBlockX()));
+				list2.add(String.valueOf(bk.getLocation().getBlockY()));
+				list2.add(String.valueOf(bk.getLocation().getBlockZ()));
 
-				RedstoneSensor.notRedstoneList.put(bk.getLocation(), list);
+				RedstoneSensor.notRedstoneList.put(list2, list);
 				String setname = "Redstones." + bk.getLocation().getWorld().getName() + "-" + bk.getLocation().getBlockX() + "" + bk.getLocation().getBlockY() + "" + bk.getLocation().getBlockZ();
 				plugin.getConfig().set(setname, null);
 				plugin.getConfig().set(setname + ".Range", 3);
@@ -233,7 +244,13 @@ public class RedstoneSensorListener implements Listener {
 										list.add("-999");
 										list.add(RedstoneSensor.redstoneList.get(lk).get(1));
 										list.add(l1String + ";" + l2String);
-										RedstoneSensor.redstoneList.put(lk, list);
+										ArrayList<String> list2 = new ArrayList<String>();
+										list2.add(lk.getWorld().getName());
+										list2.add(String.valueOf(lk.getBlockX()));
+										list2.add(String.valueOf(lk.getBlockY()));
+										list2.add(String.valueOf(lk.getBlockZ()));
+
+										RedstoneSensor.redstoneList.put(list2, list);
 
 										player.sendMessage(ChatColor.RED + "[RPS] " + ChatColor.GREEN + "New custom range set.");
 
@@ -264,7 +281,13 @@ public class RedstoneSensorListener implements Listener {
 										list.add("-999");
 										list.add(RedstoneSensor.notRedstoneList.get(lk).get(1));
 										list.add(l1String + ";" + l2String);
-										RedstoneSensor.notRedstoneList.put(lk, list);
+										ArrayList<String> list2 = new ArrayList<String>();
+										list2.add(lk.getWorld().getName());
+										list2.add(String.valueOf(lk.getBlockX()));
+										list2.add(String.valueOf(lk.getBlockY()));
+										list2.add(String.valueOf(lk.getBlockZ()));
+
+										RedstoneSensor.notRedstoneList.put(list2, list);
 
 										player.sendMessage(ChatColor.RED + "[RPS] " + ChatColor.GREEN + "New custom range set.");
 
@@ -319,11 +342,15 @@ public class RedstoneSensorListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void PlayerMove(PlayerMoveEvent event) {
-		Iterator<Entry<Location, ArrayList<String>>> it = RedstoneSensor.redstoneList.entrySet().iterator();
-
+		Iterator<Entry<ArrayList<String>, ArrayList<String>>> it = RedstoneSensor.redstoneList.entrySet().iterator();
 		while (it.hasNext()) {
-			Entry<Location, ArrayList<String>> entry = it.next();
-			Location key = entry.getKey();
+
+			Entry< ArrayList<String>, ArrayList<String>> entry = it.next();
+
+			ArrayList<String> keys = entry.getKey();
+			if(plugin.getServer().getWorld(keys.get(0)) == null)
+				continue;
+			Location key = new Location(plugin.getServer().getWorld(keys.get(0)),Integer.parseInt(keys.get(1)), Integer.parseInt(keys.get(2)), Integer.parseInt(keys.get(3)));
 			Block blk = key.getBlock();
 			if (blk.getType() == Material.REDSTONE_TORCH_ON || blk.getType() == Material.REDSTONE_TORCH_OFF) {
 				Integer value = Integer.valueOf(entry.getValue().get(0));
@@ -370,11 +397,16 @@ public class RedstoneSensorListener implements Listener {
 
 			}
 		}
-		Iterator<Entry<Location, ArrayList<String>>> it2 = RedstoneSensor.notRedstoneList.entrySet().iterator();
+		Iterator<Entry<ArrayList<String>, ArrayList<String>>> it2 = RedstoneSensor.notRedstoneList.entrySet().iterator();
 
 		while (it2.hasNext()) {
-			Entry<Location, ArrayList<String>> entry = it2.next();
-			Location key = entry.getKey();
+
+			Entry< ArrayList<String>, ArrayList<String>> entry = it.next();
+
+			ArrayList<String> keys = entry.getKey();
+			if(plugin.getServer().getWorld(keys.get(0)) == null)
+				continue;
+			Location key = new Location(plugin.getServer().getWorld(keys.get(0)),Integer.parseInt(keys.get(1)), Integer.parseInt(keys.get(2)), Integer.parseInt(keys.get(3)));
 			Block blk = key.getBlock();
 			if (blk.getType() == Material.REDSTONE_TORCH_ON || blk.getType() == Material.REDSTONE_TORCH_OFF) {
 				Integer value = Integer.valueOf(entry.getValue().get(0));
@@ -534,14 +566,20 @@ public class RedstoneSensorListener implements Listener {
 	@EventHandler
 	public void RedEvent(BlockRedstoneEvent event) {
 		Block blk = event.getBlock();
-		for (Entry<Location, ArrayList<String>> entry : RedstoneSensor.redstoneList.entrySet()) {
-			Location key = entry.getKey();
+		for (Entry<ArrayList<String>, ArrayList<String>> entry : RedstoneSensor.redstoneList.entrySet()) {
+			ArrayList<String> keys = entry.getKey();
+			if(plugin.getServer().getWorld(keys.get(0)) == null)
+				continue;
+			Location key = new Location(plugin.getServer().getWorld(keys.get(0)),Integer.parseInt(keys.get(1)), Integer.parseInt(keys.get(2)), Integer.parseInt(keys.get(3)));
 			if (blk.getLocation().equals(key)) {
 				event.setNewCurrent(event.getOldCurrent());
 			}
 		}
-		for (Entry<Location, ArrayList<String>> entry : RedstoneSensor.notRedstoneList.entrySet()) {
-			Location key = entry.getKey();
+		for (Entry<ArrayList<String>, ArrayList<String>> entry : RedstoneSensor.notRedstoneList.entrySet()) {
+			ArrayList<String> keys = entry.getKey();
+			if(plugin.getServer().getWorld(keys.get(0)) == null)
+				continue;
+			Location key = new Location(plugin.getServer().getWorld(keys.get(0)),Integer.parseInt(keys.get(1)), Integer.parseInt(keys.get(2)), Integer.parseInt(keys.get(3)));
 			if (blk.getLocation().equals(key)) {
 				event.setNewCurrent(event.getOldCurrent());
 			}
@@ -553,11 +591,14 @@ public class RedstoneSensorListener implements Listener {
 	public void RemoveRedstone(BlockBreakEvent event) throws IOException {
 		Block blk = event.getBlock();
 		if ((blk.getType() == Material.REDSTONE_TORCH_ON) || (blk.getType() == Material.REDSTONE_TORCH_OFF)) {
-			Iterator<Entry<Location, ArrayList<String>>> it = RedstoneSensor.redstoneList.entrySet().iterator();
+			Iterator<Entry<ArrayList<String>, ArrayList<String>>> it = RedstoneSensor.redstoneList.entrySet().iterator();
 
 			while (it.hasNext()) {
-				Entry<Location, ArrayList<String>> item = it.next();
-				Location key = item.getKey();
+				Entry<ArrayList<String>, ArrayList<String>> item = it.next();
+				ArrayList<String> keys = item.getKey();
+				if(plugin.getServer().getWorld(keys.get(0)) == null)
+					continue;
+				Location key = new Location(plugin.getServer().getWorld(keys.get(0)),Integer.parseInt(keys.get(1)), Integer.parseInt(keys.get(2)), Integer.parseInt(keys.get(3)));
 				if (blk.getLocation().equals(key)) {
 					it.remove();
 					String setname = "Redstones." + blk.getLocation().getWorld().getName() + "-" + blk.getLocation().getBlockX() + "" + blk.getLocation().getBlockY() + "" + blk.getLocation().getBlockZ();
@@ -572,10 +613,13 @@ public class RedstoneSensorListener implements Listener {
 					event.setCancelled(true);
 				}
 			}
-			Iterator<Entry<Location, ArrayList<String>>> it2 = RedstoneSensor.notRedstoneList.entrySet().iterator();
+			Iterator<Entry<ArrayList<String>, ArrayList<String>>> it2 = RedstoneSensor.notRedstoneList.entrySet().iterator();
 			while (it2.hasNext()) {
-				Entry<Location, ArrayList<String>> item = it2.next();
-				Location key = item.getKey();
+				Entry<ArrayList<String>, ArrayList<String>> item = it.next();
+				ArrayList<String> keys = item.getKey();
+				if(plugin.getServer().getWorld(keys.get(0)) == null)
+					continue;
+				Location key = new Location(plugin.getServer().getWorld(keys.get(0)),Integer.parseInt(keys.get(1)), Integer.parseInt(keys.get(2)), Integer.parseInt(keys.get(3)));
 				if (blk.getLocation().equals(key)) {
 					it2.remove();
 					String setname = "Redstones." + blk.getLocation().getWorld().getName() + "-" + blk.getLocation().getBlockX() + "" + blk.getLocation().getBlockY() + "" + blk.getLocation().getBlockZ();
@@ -643,4 +687,6 @@ public class RedstoneSensorListener implements Listener {
 		}
 		return true;
 	}
+	
+
 }

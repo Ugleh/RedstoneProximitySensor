@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,14 +22,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class RedstoneSensor extends JavaPlugin {
 	public static Integer defaultRange = null;
 	public static Integer maxRange = null;
-	public static HashMap<Location, ArrayList<String>> notRedstoneList = new HashMap<Location, ArrayList<String>>();
+	public static HashMap<ArrayList<String>, ArrayList<String>> notRedstoneList = new HashMap<ArrayList<String>, ArrayList<String>>();
 	public static String notRedstoneProximityRangeText = null;
 	public static Boolean onlyOwner = null;
 	public static Boolean outdated = false;
-	public static HashMap<Location, ArrayList<String>> redstoneList = new HashMap<Location, ArrayList<String>>();
+	public static HashMap<ArrayList<String>, ArrayList<String>> redstoneList = new HashMap<ArrayList<String>, ArrayList<String>>();
 	public static String redstoneProximityRangeNotifyText = null;
 	public static String redstoneProximityRangeText = null;
-	private String currentVersion = "1.9.7";
+	
+	public static Map<String,String> unLoadedRedstoneList = new HashMap<String, String>();
+	public static Map<String,String> unLoadedNotRedstoneList = new HashMap<String, String>();
+
+	private String currentVersion = "1.9.8";
 
 	private String readurl = "https://raw.github.com/Ugleh/RedstoneSensor/master/version.txt";
 	public Boolean updatechecker;
@@ -97,9 +102,14 @@ public class RedstoneSensor extends JavaPlugin {
 					}
 					list.add(String.valueOf(getConfig().getString("Redstones." + key + ".Owner")));
 					list.add(customrange);
+					
+					ArrayList<String> list2 = new ArrayList<String>();
+					list2.add(getConfig().getString("Redstones." + key + ".World"));
+					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".X")));
+					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Y")));
+					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Z")));
 
-					notRedstoneList.put(new Location(getServer().getWorld(getConfig().getString("Redstones." + key + ".World")), getConfig().getInt("Redstones." + key + ".X"), getConfig().getInt("Redstones." + key + ".Y"), getConfig().getInt("Redstones." + key + ".Z")), list);
-
+					notRedstoneList.put(list2, list);
 				} else {
 					ArrayList<String> list = new ArrayList<String>();
 					String customrange = String.valueOf(getConfig().getString("Redstones." + key + ".CustomRange"));
@@ -110,9 +120,18 @@ public class RedstoneSensor extends JavaPlugin {
 					}
 					list.add(String.valueOf(getConfig().getString("Redstones." + key + ".Owner")));
 					list.add(customrange);
+				//	if(getServer().getWorld(getConfig().getString("Redstones." + key + ".World")) == null){
+						//getWorld is null
+					//	unLoadedRedstoneList.put("Redstones." + key, getConfig().getString("Redstones." + key + ".World"));
+					//}else{
+					ArrayList<String> list2 = new ArrayList<String>();
+					list2.add(getConfig().getString("Redstones." + key + ".World"));
+					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".X")));
+					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Y")));
+					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Z")));
+					redstoneList.put(list2, list);
 
-					redstoneList.put(new Location(getServer().getWorld(getConfig().getString("Redstones." + key + ".World")), getConfig().getInt("Redstones." + key + ".X"), getConfig().getInt("Redstones." + key + ".Y"), getConfig().getInt("Redstones." + key + ".Z")), list);
-
+				//	}
 				}
 			}
 		}
