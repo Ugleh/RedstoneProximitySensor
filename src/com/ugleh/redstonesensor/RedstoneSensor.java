@@ -18,22 +18,21 @@ import org.bukkit.inventory.ShapedRecipe;
 //import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-
 public class RedstoneSensor extends JavaPlugin {
 	public static Integer defaultRange = null;
 	public static Integer maxRange = null;
-	public static HashMap<ArrayList<String>, ArrayList<String>> notRedstoneList = new HashMap<ArrayList<String>, ArrayList<String>>();
+	public static HashMap<String, ArrayList<String>> notRedstoneList = new HashMap<String, ArrayList<String>>();
 	public static String notRedstoneProximityRangeText = null;
 	public static Boolean onlyOwner = null;
 	public static Boolean outdated = false;
-	public static HashMap<ArrayList<String>, ArrayList<String>> redstoneList = new HashMap<ArrayList<String>, ArrayList<String>>();
+	public static HashMap<String, ArrayList<String>> redstoneList = new HashMap<String, ArrayList<String>>();
 	public static String redstoneProximityRangeNotifyText = null;
 	public static String redstoneProximityRangeText = null;
 	
 	public static Map<String,String> unLoadedRedstoneList = new HashMap<String, String>();
 	public static Map<String,String> unLoadedNotRedstoneList = new HashMap<String, String>();
 
-	private String currentVersion = "1.9.8";
+	private String currentVersion = "1.9.9";
 
 	private String readurl = "https://raw.github.com/Ugleh/RedstoneSensor/master/version.txt";
 	public Boolean updatechecker;
@@ -103,14 +102,15 @@ public class RedstoneSensor extends JavaPlugin {
 					list.add(String.valueOf(getConfig().getString("Redstones." + key + ".Owner")));
 					list.add(customrange);
 					
-					ArrayList<String> list2 = new ArrayList<String>();
-					list2.add(getConfig().getString("Redstones." + key + ".World"));
-					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".X")));
-					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Y")));
-					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Z")));
-
-					notRedstoneList.put(list2, list);
-				} else {
+					String listKey = getConfig().getString("Redstones." + key + ".World");
+					listKey += "|";
+					listKey += String.valueOf(getConfig().getInt("Redstones." + key + ".X"));
+					listKey += "|";
+					listKey += String.valueOf(getConfig().getInt("Redstones." + key + ".Y"));
+					listKey += "|";
+					listKey += String.valueOf(getConfig().getInt("Redstones." + key + ".Z"));
+					notRedstoneList.put(listKey, list);
+					} else {
 					ArrayList<String> list = new ArrayList<String>();
 					String customrange = String.valueOf(getConfig().getString("Redstones." + key + ".CustomRange"));
 					if (customrange.equals("null")) {
@@ -124,12 +124,14 @@ public class RedstoneSensor extends JavaPlugin {
 						//getWorld is null
 					//	unLoadedRedstoneList.put("Redstones." + key, getConfig().getString("Redstones." + key + ".World"));
 					//}else{
-					ArrayList<String> list2 = new ArrayList<String>();
-					list2.add(getConfig().getString("Redstones." + key + ".World"));
-					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".X")));
-					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Y")));
-					list2.add(String.valueOf(getConfig().getInt("Redstones." + key + ".Z")));
-					redstoneList.put(list2, list);
+					String listKey = getConfig().getString("Redstones." + key + ".World");
+					listKey += "|";
+					listKey += String.valueOf(getConfig().getInt("Redstones." + key + ".X"));
+					listKey += "|";
+					listKey += String.valueOf(getConfig().getInt("Redstones." + key + ".Y"));
+					listKey += "|";
+					listKey += String.valueOf(getConfig().getInt("Redstones." + key + ".Z"));
+					redstoneList.put(listKey, list);
 
 				//	}
 				}
