@@ -42,7 +42,7 @@ public class RedstoneSensorListener implements Listener {
 	public RedstoneSensorListener(RedstoneSensor p) {
 		plugin = p; 
 	}
-
+	
 	@EventHandler
 	public void BlockCreated(BlockPlaceEvent event) {
 		if (event.getPlayer().hasPermission("redstonesensor.use")) {
@@ -60,6 +60,7 @@ public class RedstoneSensorListener implements Listener {
 				listKey += "|";
 				listKey += String.valueOf(bk.getLocation().getBlockZ());
  
+				RedstoneSensor.redstoneList.put(listKey, list);
 				RedstoneSensor.redstoneList.put(listKey, list);
 				String setname = "Redstones." + bk.getLocation().getWorld().getName() + "-" + bk.getLocation().getBlockX() + "" + bk.getLocation().getBlockY() + "" + bk.getLocation().getBlockZ();
 				plugin.getConfig().set(setname, null);
@@ -88,6 +89,7 @@ public class RedstoneSensorListener implements Listener {
 				listKey += "|";
 				listKey += String.valueOf(bk.getLocation().getBlockZ());
 
+				RedstoneSensor.notRedstoneList.put(listKey, list);
 				RedstoneSensor.notRedstoneList.put(listKey, list);
 				String setname = "Redstones." + bk.getLocation().getWorld().getName() + "-" + bk.getLocation().getBlockX() + "" + bk.getLocation().getBlockY() + "" + bk.getLocation().getBlockZ();
 				plugin.getConfig().set(setname, null);
@@ -226,11 +228,20 @@ public class RedstoneSensorListener implements Listener {
 											blk = blk.getRelative(BlockFace.UP);
 										}
 									}
-									Location lk = blk.getLocation();
+
+									Location lok = blk.getLocation();
+									String lk = lok.getWorld().getName();
+									lk += "|";
+									lk += String.valueOf(lok.getBlockX());
+									lk += "|";
+									lk += String.valueOf(lok.getBlockY());
+									lk += "|";
+									lk += String.valueOf(lok.getBlockZ());
+									
 									if (RedstoneSensor.redstoneList.containsKey(lk)) {
 										// Add new range
 										ArrayList<String> list = new ArrayList<String>();
-										String setname = "Redstones." + lk.getWorld().getName() + "-" + lk.getBlockX() + "" + lk.getBlockY() + "" + lk.getBlockZ();
+										String setname = "Redstones." + lok.getWorld().getName() + "-" + lok.getBlockX() + "" + lok.getBlockY() + "" + lok.getBlockZ();
 										Location l1 = playerLocationStorage.get(event.getPlayer().getName()).get(0);
 										Location l2 = playerLocationStorage.get(event.getPlayer().getName()).get(1);
 										int x1 = Math.min(l1.getBlockX(), l2.getBlockX());
@@ -248,14 +259,15 @@ public class RedstoneSensorListener implements Listener {
 										list.add("-999");
 										list.add(RedstoneSensor.redstoneList.get(lk).get(1));
 										list.add(l1String + ";" + l2String);
-										String listKey = lk.getWorld().getName();
+										String listKey = lok.getWorld().getName();
 										listKey += "|";
-										listKey += String.valueOf(lk.getBlockX());
+										listKey += String.valueOf(lok.getBlockX());
 										listKey += "|";
-										listKey += String.valueOf(lk.getBlockY());
+										listKey += String.valueOf(lok.getBlockY());
 										listKey += "|";
-										listKey += String.valueOf(lk.getBlockZ());
+										listKey += String.valueOf(lok.getBlockZ());
 
+										RedstoneSensor.redstoneList.put(listKey, list);
 										RedstoneSensor.redstoneList.put(listKey, list);
 
 										player.sendMessage(ChatColor.RED + "[RPS] " + ChatColor.GREEN + "New custom range set.");
@@ -269,7 +281,7 @@ public class RedstoneSensorListener implements Listener {
 									} else if (RedstoneSensor.notRedstoneList.containsKey(lk)) {
 										// Add new range
 										ArrayList<String> list = new ArrayList<String>();
-										String setname = "Redstones." + lk.getWorld().getName() + "-" + lk.getBlockX() + "" + lk.getBlockY() + "" + lk.getBlockZ();
+										String setname = "Redstones." + lok.getWorld().getName() + "-" + lok.getBlockX() + "" + lok.getBlockY() + "" + lok.getBlockZ();
 										Location l1 = playerLocationStorage.get(event.getPlayer().getName()).get(0);
 										Location l2 = playerLocationStorage.get(event.getPlayer().getName()).get(1);
 										int x1 = Math.min(l1.getBlockX(), l2.getBlockX());
@@ -287,14 +299,15 @@ public class RedstoneSensorListener implements Listener {
 										list.add("-999");
 										list.add(RedstoneSensor.notRedstoneList.get(lk).get(1));
 										list.add(l1String + ";" + l2String);
-										String listKey = lk.getWorld().getName();
+										String listKey = lok.getWorld().getName();
 										listKey += "|";
-										listKey += String.valueOf(lk.getBlockX());
+										listKey += String.valueOf(lok.getBlockX());
 										listKey += "|";
-										listKey += String.valueOf(lk.getBlockY());
+										listKey += String.valueOf(lok.getBlockY());
 										listKey += "|";
-										listKey += String.valueOf(lk.getBlockZ());
+										listKey += String.valueOf(lok.getBlockZ());
 
+										RedstoneSensor.notRedstoneList.put(listKey, list);
 										RedstoneSensor.notRedstoneList.put(listKey, list);
 
 										player.sendMessage(ChatColor.RED + "[RPS] " + ChatColor.GREEN + "New custom range set.");
@@ -341,10 +354,12 @@ public class RedstoneSensorListener implements Listener {
 
 	@EventHandler
 	public void PlayerJoin(PlayerJoinEvent event) {
+		if(RedstoneSensor.updatechecker){
 		if (event.getPlayer().isOp() && RedstoneSensor.outdated) {
 			event.getPlayer().sendMessage(
 					ChatColor.DARK_PURPLE + "The version of " + ChatColor.DARK_RED + "Redstone Proximity Sensor" + ChatColor.DARK_PURPLE + " that this server is running is out of date. Please consider updating to the latest version at " + ChatColor.ITALIC + ChatColor.GREEN
 							+ "http://dev.bukkit.org/server-mods/redstonesensor/");
+		}
 		}
 	}
 
@@ -696,6 +711,4 @@ public class RedstoneSensorListener implements Listener {
 		}
 		return true;
 	}
-	
-
 }
