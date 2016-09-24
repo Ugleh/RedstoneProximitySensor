@@ -1,9 +1,6 @@
-Config:
-  max-range: 10
-  update-checker: true
-  default-range: 3
-  owner-only-change-range: true
-  proximity-sensor-name: Redstone Proximity Sensor
-  not-proximity-sensor-name: NOT Redstone Proximity Sensor
-  proximity-range-notify-text: Proximity Range
-Redstones: {}
+rps:
+  maxRange: 20
+  defaultRange: 5
+  defaultownerOnlyTrigger: false
+  defaultownerOnlyEdit: true
+  defaultInverted: false

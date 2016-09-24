@@ -1,21 +1,47 @@
-name: RedstoneSensor
-version: 2.0.0
+name: RedstoneProximitySensor
+main: com.ugleh.redstoneproximitysensor.RedstoneProximitySensor
+description: A Sensor can be crafted that has proximity effects.
 author: Ugleh
-main: com.ugleh.redstonesensor.RedstoneSensor
-description: Create redstone proximity sensor torches that creates a redstone current when a player is in range.
+version: 2.0.2
 permissions:
-  redstonesensor.use:
-    description: Gives access to dropping the torch. Without this the torch will not drop.
+  rps.create:
+    description: Permission to craft proximity sensors.
     default: true
-  redstonesensor.create:
-    description: Gives access to crafting both Redstone Proximity Sensors.
+  rps.place:
+    description: Permission to place down proximity sensors.
     default: true
-  redstonesensor.customrange:
-    description: Gives access to using the RPS Wand and Setting the Custom range.
-    default: op
+  rps.invisible:
+    description: Permission given to prevent triggering of RPS.
+    default: false
+  rps.button_invertpower:
+    description: Permission to use said button.
+    default: true
+  rps.button_range:
+    description: Permission to use said button.
+    default: true
+  rps.button_ownerownlyedit:
+    description: Permission to use said button.
+    default: true
+  rps.button_owneronlytrigger:
+    description: Permission to use said button.
+    default: true
+  rps.button_playerentitytrigger:
+    description: Permission to use said button.
+    default: true
+  rps.button_hostileentitiestrigger:
+    description: Permission to use said button.
+    default: true
+  rps.button_peacefulentitiestrigger:
+    description: Permission to use said button.
+    default: true
+  rps.button_droppeditemtrigger:
+    description: Permission to use said button.
+    default: true
+  rps.button_invisibleentitiestrigger:
+    description: Permission to use said button.
+    default: true
 commands:
   rps:
-    description: Redstone Sensor config command
-    aliases: [redstonesensor, rpsensor]
-    permission: redstonesensor.commands
+    description: The admin command for RPS control.
+    permission: rps.admin
     default: op
