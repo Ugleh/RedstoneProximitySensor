@@ -26,7 +26,6 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	public ItemStack rps;
 	public ShapedRecipe rpsRecipe;
 	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
-	public final String version = "2.0.7";
 	private static RedstoneProximitySensor instance;
 	@Override
 	public void onEnable()
