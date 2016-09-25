@@ -35,7 +35,7 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		gConfig = new GeneralConfig();
 		sConfig = new SConfig("sensors.yml", "sensors.yml");
 		instance = this;
-		new UpdateChecker(this);
+		new UpdateChecker();
 		//Setup Glow
 		registerGlow();
 
