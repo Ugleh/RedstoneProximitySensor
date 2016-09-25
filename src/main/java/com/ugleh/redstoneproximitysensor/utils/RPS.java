@@ -27,11 +27,10 @@ public class RPS implements Runnable{
 	private boolean ownerOnlyTrigger = false;
 	private boolean ownerOnlyEdit = true;
 	private boolean triggered = false;
-	public RedstoneProximitySensor plugin;
 	private List<String> acceptedEntities = new ArrayList<String>();
+    private static RedstoneProximitySensor plugin = RedstoneProximitySensor.getInstance();
 
-	public RPS(RedstoneProximitySensor plugin, Location placedLocation, UUID placedBy, UUID id, boolean inConfig) {
-		this.plugin = plugin;
+	public RPS(Location placedLocation, UUID placedBy, UUID id, boolean inConfig) {
 		this.location = placedLocation;
 		this.ownerID = placedBy;
 		this.uniqueID = id;
@@ -44,7 +43,7 @@ public class RPS implements Runnable{
 			//Default Settings
 			acceptedEntities.add("PLAYER");
 		}
-		
+
 	}
 
 	@Override
@@ -82,7 +81,7 @@ public class RPS implements Runnable{
 						continue;
 					}
 				}
-				
+
 				//Check if entity is invisible
 				if(!this.acceptedEntities.contains("INVISIBLE_ENTITY"))
 				{
@@ -104,7 +103,7 @@ public class RPS implements Runnable{
 				break;
 			}
 		}
-		
+
 		if((location.getWorld().getBlockAt(location).getType().equals(Material.REDSTONE_TORCH_OFF)) || (location.getWorld().getBlockAt(location).getType().equals(Material.REDSTONE_TORCH_ON)))
 		{
 			if(triggered)
@@ -113,15 +112,15 @@ public class RPS implements Runnable{
 
 			}else{
 				location.getWorld().getBlockAt(location).setType(getSensorMaterial(inverted));
-			}			
+			}
 		}else{
 			plugin.getSensorConfig().removeSensor(location);
 		}
 
-		
+
 
 	}
-	
+
 	private Material getSensorMaterial(boolean inv)
 	{
 		if(!inv)
@@ -141,8 +140,8 @@ public class RPS implements Runnable{
 	public String getUniqueID() {
 		return this.uniqueID.toString();
 	}
-	
-	
+
+
 	public Location getLocation() {
 		return location;
 	}
@@ -193,7 +192,7 @@ public class RPS implements Runnable{
 
 	public void cancelTask() {
 		this.toCancel.cancel();
-		
+
 	}
 
 	public void setData(boolean oo, boolean inv, int ran, List<String> acpent, boolean ownerEdit) {
@@ -202,13 +201,13 @@ public class RPS implements Runnable{
 		this.setInverted(inv);
 		this.setRange(ran);
 		this.setOwnerOnlyEdit(ownerEdit);
-		
+
 	}
 
 	public boolean isownerOnlyEdit() {
 		return this.ownerOnlyEdit;
 	}
-	
+
 	public boolean setOwnerOnlyEdit(boolean ownerOnlyEdit) {
 		return this.ownerOnlyEdit = ownerOnlyEdit;
 	}

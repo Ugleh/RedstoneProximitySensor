@@ -24,27 +24,29 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	public ItemStack rps;
 	public ShapedRecipe rpsRecipe;
 	public String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
+    private static RedstoneProximitySensor instance;
 
 	@Override
 	public void onEnable()
 	{
+        instance = this;
 		//Init configs.
 		gConfig = new GeneralConfig(this);
 		sConfig = new SConfig(this, "sensors.yml", "sensors.yml");
-		
+
 		//Setup Glow
 		registerGlow();
-		
+
 		//Setting command Executors.
 		this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS(this));
-		
+
 		//Init Listeners
 		this.getServer().getPluginManager().registerEvents(new SensorListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 		//Others
 		createRecipes();
 	}
-	
+
 	private void createRecipes() {
 		rps = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
 		ItemMeta rpsMeta = rps.getItemMeta();
@@ -52,22 +54,21 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		Glow glow = new Glow(1234);
 		rpsMeta.addEnchant(glow, 1, true);
 		rps.setItemMeta(rpsMeta);
-		 
+
 		rpsRecipe = new ShapedRecipe(rps);
 		rpsRecipe.shape("-R-","-R-","-R-");
 		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe);
-		
+
 	}
-	
-	
+
+
 	@Override
-	public void onDisable()
-	{
-		
+	public void onDisable() {
+        instance = null;
 	}
-	
-	
+
+
 	public GeneralConfig getgConfig() {
 		return gConfig;
 	}
@@ -75,8 +76,8 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	public SConfig getSensorConfig() {
 		return sConfig;
 	}
-	
-	
+
+
 	public void registerGlow() {
         try {
             Field f = Enchantment.class.getDeclaredField("acceptingNew");
@@ -96,5 +97,9 @@ public class RedstoneProximitySensor extends JavaPlugin{
             e.printStackTrace();
         }
     }
- 
+
+    public static RedstoneProximitySensor getInstance() {
+        return instance;
+    }
+
 }

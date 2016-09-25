@@ -16,9 +16,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import org.bukkit.World;
 
-public class SConfig extends YamlConfiguration {  
-   
+public class SConfig extends YamlConfiguration {
+
     private File file;
     private String defaults;
     private JavaPlugin plugin;
@@ -32,7 +33,7 @@ public class SConfig extends YamlConfiguration {
     public SConfig(JavaPlugin plugin, String fileName) {
         this(plugin, fileName, null);
     }
-   
+
     /**
      * Creates new PluginFile, with defaults
      * @param plugin - Your plugin
@@ -45,35 +46,35 @@ public class SConfig extends YamlConfiguration {
         this.file = new File(plugin.getDataFolder(), fileName);
         reload();
     }
-   
+
     /**
      * Reload configuration
      */
     public void reload() {
-       
+
         if (!file.exists()) {
-           
+
             try {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
-               
+
             } catch (IOException exception) {
                 exception.printStackTrace();
                 plugin.getLogger().severe("Error while creating file " + file.getName());
             }
-           
+
         }
-       
+
         try {
             load(file);
-           
+
             if (defaults != null) {
                 InputStreamReader reader = new InputStreamReader(plugin.getResource(defaults));
-                FileConfiguration defaultsConfig = YamlConfiguration.loadConfiguration(reader);      
-               
+                FileConfiguration defaultsConfig = YamlConfiguration.loadConfiguration(reader);
+
                 setDefaults(defaultsConfig);
                 options().copyDefaults(true);
-               
+
                 reader.close();
                 save();
             }
@@ -81,20 +82,27 @@ public class SConfig extends YamlConfiguration {
         } catch (IOException exception) {
             exception.printStackTrace();
             plugin.getLogger().severe("Error while loading file " + file.getName());
-           
+
         } catch (InvalidConfigurationException exception) {
             exception.printStackTrace();
             plugin.getLogger().severe("Error while loading file " + file.getName());
-           
+
         }
-       
+
     }
-   
+
     private void grabSensors() {
 		if(!this.isConfigurationSection("sensors")) return;
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
 		{
 			ConfigurationSection sensorSec = this.getConfigurationSection("sensors." + uniqueID);
+            String[] stringLocation = sensorSec.getString("location").split(",");
+
+            World w = Bukkit.getWorld(stringLocation[0]);
+            Double x = Double.parseDouble(stringLocation[1]);
+            Double y = Double.parseDouble(stringLocation[2]);
+            Double z = Double.parseDouble(stringLocation[3]);
+            Location location = new Location(w, x, y, z);
 			this.addSensor((Location)sensorSec.get("location"), UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
 //			if(((Location)sensorSec.get("location")).getBlock().getType().equals(Material.REDSTONE_TORCH_OFF) || ((Location)sensorSec.get("location")).getBlock().getType().equals(Material.REDSTONE_TORCH_ON))
 //			{
@@ -109,16 +117,16 @@ public class SConfig extends YamlConfiguration {
      * Save configuration
      */
     public void save() {
-       
+
         try {
             options().indent(2);
             save(file);
-           
+
         } catch (IOException exception) {
             exception.printStackTrace();
             plugin.getLogger().severe("Error while saving file " + file.getName());
         }
-       
+
     }
 	public void  addSensor(Location location, UUID placedBy, UUID id) {
 		boolean inConfig = false;
@@ -126,15 +134,15 @@ public class SConfig extends YamlConfiguration {
 			inConfig = true;
 		if(location != null)
 		{
-			RPS tempRPS = new RPS((RedstoneProximitySensor) plugin, location, placedBy, id, inConfig);
+			RPS tempRPS = new RPS(location, placedBy, id, inConfig);
 			tempRPS.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, tempRPS, 0L, 2L));
 			sensorList.put(location, tempRPS);
 			addToConfig(tempRPS);
 			//return tempRPS;
 		}
 	}
-	
-	
+
+
 	private void addToConfig(RPS tempRPS) {
 		if(!this.isConfigurationSection("sensors." + tempRPS.getUniqueID()))
 		{
@@ -151,7 +159,7 @@ public class SConfig extends YamlConfiguration {
 		}else{
 			tempRPS.setData(this.getBoolean("sensors." + tempRPS.getUniqueID() + ".ownerOnlyTrigger"), this.getBoolean("sensors." + tempRPS.getUniqueID() + ".inverted"),this.getInt("sensors." + tempRPS.getUniqueID() + ".range"), this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities"), this.getBoolean("sensors." + tempRPS.getUniqueID() + ".ownerOnlyEdit"));
 		}
-		
+
 	}
 
 	public HashMap<Location, RPS> getSensorList() {
@@ -172,21 +180,21 @@ public class SConfig extends YamlConfiguration {
 		this.set("sensors." + selectedRPS.getUniqueID() + ".inverted", b);
 		this.save();
 		selectedRPS.setInverted(b);
-		
+
 	}
 
 	public void setownerOnlyTrigger(RPS selectedRPS, boolean b) {
 		this.set("sensors." + selectedRPS.getUniqueID() + ".ownerOnlyTrigger", b);
 		this.save();
 		selectedRPS.setownerOnlyTrigger(b);
-		
+
 	}
 
 	public void setRange(RPS selectedRPS, int newRange) {
 		this.set("sensors." + selectedRPS.getUniqueID() + ".range", newRange);
 		this.save();
 		selectedRPS.setRange(newRange);
-		
+
 	}
 
 	public void addAcceptedEntity(RPS selectedRPS, String s) {
@@ -201,15 +209,15 @@ public class SConfig extends YamlConfiguration {
 		this.set("sensors." + selectedRPS.getUniqueID() + ".acceptedEntities", acceptedEntitiesConfig);
 		this.save();
 		selectedRPS.setAcceptedEntities(acceptedEntitiesConfig);
-		
-		
+
+
 	}
 
 	public void setownerOnlyEdit(RPS selectedRPS, boolean b) {
 		this.set("sensors." + selectedRPS.getUniqueID() + ".ownerOnlyEdit", b);
 		this.save();
 		selectedRPS.setOwnerOnlyEdit(b);
-		
+
 	}
-   
+
 }
