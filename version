@@ -1,2 +1,2 @@
-#2.0.8
-^Fixed a bug where Locations that where not loaded (Multiverse worlds) would curropt the sensors file.
+#2.0.9
+^Minor fix dealing with single error on first time run.
