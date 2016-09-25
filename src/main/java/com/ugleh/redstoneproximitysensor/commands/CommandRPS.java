@@ -39,11 +39,10 @@ public class CommandRPS implements CommandExecutor {
 					if(args.length > 2)
 					{
 						//Give amount
-						Bukkit.broadcastMessage(args[2]);
 						int amount = Integer.parseInt(args[2]);
 						if(amount > 0)
 						{
-							ItemStack rpsStack = plugin.rps;
+							ItemStack rpsStack = plugin.rps.clone();
 							rpsStack.setAmount(amount);
 							givePlayer.getInventory().addItem(rpsStack);
 							sender.sendMessage(chatPrefix + "Given RPS * " +amount+" to" + givePlayer.getName());
@@ -55,7 +54,7 @@ public class CommandRPS implements CommandExecutor {
 					}else
 					{
 						//Give 1
-						ItemStack rpsStack = plugin.rps;
+						ItemStack rpsStack = plugin.rps.clone();
 						rpsStack.setAmount(1);
 						givePlayer.getInventory().addItem(rpsStack);
 						sender.sendMessage(chatPrefix + "Given RPS * 1 to" + givePlayer.getName());
@@ -71,6 +70,7 @@ public class CommandRPS implements CommandExecutor {
 	}
 
 	private void notEnoughArgs(CommandSender sender) {
+		sender.sendMessage(chatPrefix + "Redstone Proximity Sensor - Version: " + ChatColor.GREEN + this.plugin.getVersion());
 		sender.sendMessage(chatPrefix + "Not enough Arguments.");
 		sender.sendMessage(chatPrefix + "/rps reload");
 		sender.sendMessage(chatPrefix + "/rps give <player> [amount]");

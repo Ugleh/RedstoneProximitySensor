@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,13 +17,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import org.bukkit.World;
 
 public class SConfig extends YamlConfiguration {
 
     private File file;
     private String defaults;
-    private JavaPlugin plugin;
+    private static RedstoneProximitySensor plugin = RedstoneProximitySensor.getInstance();
     private HashMap<Location, RPS> sensorList = new HashMap<Location, RPS>();
 
     /**
@@ -30,8 +30,8 @@ public class SConfig extends YamlConfiguration {
      * @param plugin - Your plugin
      * @param fileName - Name of the file
      */
-    public SConfig(JavaPlugin plugin, String fileName) {
-        this(plugin, fileName, null);
+    public SConfig(String fileName) {
+        this(fileName, null);
     }
 
     /**
@@ -40,9 +40,10 @@ public class SConfig extends YamlConfiguration {
      * @param fileName - Name of the file
      * @param defaultsName - Name of the defaults
      */
-    public SConfig(JavaPlugin plugin, String fileName, String defaultsName) {
-        this.plugin = plugin;
+    public SConfig(String fileName, String defaultsName) {
         this.defaults = defaultsName;
+        //Fix previous version issues:
+        new FileReplace();
         this.file = new File(plugin.getDataFolder(), fileName);
         reload();
     }
@@ -78,7 +79,7 @@ public class SConfig extends YamlConfiguration {
                 reader.close();
                 save();
             }
-            grabSensors();
+            if(!Bukkit.getWorlds().isEmpty()) grabSensors(Bukkit.getWorlds().get(0));
         } catch (IOException exception) {
             exception.printStackTrace();
             plugin.getLogger().severe("Error while loading file " + file.getName());
@@ -91,28 +92,21 @@ public class SConfig extends YamlConfiguration {
 
     }
 
-    private void grabSensors(World loadedWorld) {
+    public void grabSensors(World loadedWorld) {
 		if(!this.isConfigurationSection("sensors")) return;
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
 		{
 			ConfigurationSection sensorSec = this.getConfigurationSection("sensors." + uniqueID);
 
-            /*World w = Bukkit.getWorld(sensorSec.getString("location.world"));
-            Double x = Double.parseDouble(sensorSec.getString("location.x"));
-            Double y = Double.parseDouble(sensorSec.getString("location.y"));
+			String worldName = sensorSec.getString("location.world");
+			if(!loadedWorld.getName().equals(worldName)) continue;
+			World w = Bukkit.getWorld(worldName);
+			Double x = Double.parseDouble(sensorSec.getString("location.x"));
+			Double y = Double.parseDouble(sensorSec.getString("location.y"));
             Double z = Double.parseDouble(sensorSec.getString("location.z"));
-            Location location = new Location(w, x, y, z);*/
-            String[] stringLocation = sensorSec.getString("location").split(",");
-            String wo = stringLocation[0].split("=")[2];
-            wo = wo.substring(0, wo.length()-1);
-            if(!loadedWorld.getName().equals(wo)) return;
-			this.addSensor((Location)sensorSec.get("location"), UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
-//			if(((Location)sensorSec.get("location")).getBlock().getType().equals(Material.REDSTONE_TORCH_OFF) || ((Location)sensorSec.get("location")).getBlock().getType().equals(Material.REDSTONE_TORCH_ON))
-//			{
-//			}else
-//			{
-//				this.removeSensor((Location)sensorSec.get("location"));
-//			}
+            Location location = new Location(w, x, y, z);
+            this.addSensor(location, UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
+
 		}
 	}
 
@@ -137,7 +131,7 @@ public class SConfig extends YamlConfiguration {
 			inConfig = true;
 		if(location != null)
 		{
-			RPS tempRPS = new RPS(location, placedBy, id, inConfig);
+			RPS tempRPS = new RPS((RedstoneProximitySensor) plugin, location, placedBy, id, inConfig);
 			tempRPS.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, tempRPS, 0L, 2L));
 			sensorList.put(location, tempRPS);
 			addToConfig(tempRPS);
