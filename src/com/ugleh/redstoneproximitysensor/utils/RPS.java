@@ -2,9 +2,11 @@ package com.ugleh.redstoneproximitysensor.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -29,12 +31,17 @@ public class RPS implements Runnable{
 	private boolean triggered = false;
 	public RedstoneProximitySensor plugin;
 	private List<String> acceptedEntities = new ArrayList<String>();
-
+	
+	private Random random;
+	
 	public RPS(RedstoneProximitySensor plugin, Location placedLocation, UUID placedBy, UUID id, boolean inConfig) {
 		this.plugin = plugin;
 		this.location = placedLocation;
 		this.ownerID = placedBy;
 		this.uniqueID = id;
+		
+		random = new Random();
+
 		if(!inConfig)
 		{
 			//Not yet made
@@ -42,7 +49,27 @@ public class RPS implements Runnable{
 			this.inverted = plugin.getgConfig().isDefaultInverted();
 			this.range = plugin.getgConfig().getDefaultRange();
 			//Default Settings
-			acceptedEntities.add("PLAYER");
+			GeneralConfig gC = plugin.getgConfig();
+			if(gC.isDeaultPlayerEntityTrigger())
+			{
+				acceptedEntities.add("PLAYER");
+			}
+			if(gC.isDefaultPeacefulEntityTrigger())
+			{
+				acceptedEntities.add("PEACEFUL_ENTITY");
+			}
+			if(gC.isDefaultDroppedItemsTrigger())
+			{
+				acceptedEntities.add("DROPPED_ITEM");
+			}
+			if(gC.isDefaultHostileEntityTrigger())
+			{
+				acceptedEntities.add("HOSTILE_ENTITY");
+			}
+			if(gC.isDefaultInvisibleEntityTrigger())
+			{
+				acceptedEntities.add("INVISIBLE_ENTITY");
+			}
 		}
 		
 	}
@@ -58,7 +85,7 @@ public class RPS implements Runnable{
 		if(this.ownerOnlyTrigger)
 		{
 			entityList.clear();
-			if(Bukkit.getPlayer(this.ownerID) != null && Bukkit.getPlayer(this.ownerID).isOnline())
+			if(Bukkit.getPlayer(this.ownerID) != null && Bukkit.getPlayer(this.ownerID).isOnline() && location.getWorld().equals(Bukkit.getPlayer(this.ownerID).getWorld()))
 			{
 				entityList.add(Bukkit.getPlayer(this.ownerID));
 			}
@@ -109,6 +136,7 @@ public class RPS implements Runnable{
 		{
 			if(triggered)
 			{
+				spawnParticle(location.clone());
 				location.getWorld().getBlockAt(location).setType(getSensorMaterial(!inverted));
 
 			}else{
@@ -122,6 +150,19 @@ public class RPS implements Runnable{
 
 	}
 	
+	private void spawnParticle(Location loc) {
+          double d0 = loc.getX() + random.nextDouble() * 0.6D + 0.2D;
+          double d1 = loc.getY() + random.nextDouble() * 0.6D + 0.2D;
+          double d2 = loc.getZ() + random.nextDouble() * 0.6D + 0.2D;
+          
+          //loc.getWorld().spawnParticle(Particle.SMOKE_NORMAL, d0, d1, d2, 0, 0.0D, 0.0D, 0.0D);
+          int red = 199;
+          int green = 21;
+          int blue = 133;
+          Location loc2 = new Location(loc.getWorld(), d0, d1, d2);
+          loc.getWorld().spigot().playEffect(loc2, Effect.COLOURED_DUST, 0, 0, (float) red/ 255, (float) green/ 255, (float) blue/ 255, 1, 0, 5);
+          }
+
 	private Material getSensorMaterial(boolean inv)
 	{
 		if(!inv)

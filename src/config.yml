@@ -1,6 +1,11 @@
 rps:
   maxRange: 20
   defaultRange: 5
-  defaultownerOnlyTrigger: false
   defaultownerOnlyEdit: true
   defaultInverted: false
+  defaultownerOnlyTrigger: false
+  defaultPlayerEntityTrigger: true
+  defaultHostileEntityTrigger: false
+  defaultPeacefulEntityTrigger: false
+  defaultDroppedItemsTrigger: false
+  defaultInvisibleEntityTrigger: false

@@ -13,9 +13,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.ugleh.redstoneproximitysensor.commands.CommandRPS;
 import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
 import com.ugleh.redstoneproximitysensor.listeners.SensorListener;
+import com.ugleh.redstoneproximitysensor.listeners.WorldListener;
 import com.ugleh.redstoneproximitysensor.utils.GeneralConfig;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.SConfig;
+import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
 
 public class RedstoneProximitySensor extends JavaPlugin{
 
@@ -23,15 +25,17 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	public SConfig sConfig;
 	public ItemStack rps;
 	public ShapedRecipe rpsRecipe;
-	public String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
-
+	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
+	public final String version = "2.0.7";
+	private static RedstoneProximitySensor instance;
 	@Override
 	public void onEnable()
 	{
 		//Init configs.
 		gConfig = new GeneralConfig(this);
 		sConfig = new SConfig(this, "sensors.yml", "sensors.yml");
-		
+		instance = this;
+		new UpdateChecker(this);
 		//Setup Glow
 		registerGlow();
 		
@@ -41,6 +45,7 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		//Init Listeners
 		this.getServer().getPluginManager().registerEvents(new SensorListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+		this.getServer().getPluginManager().registerEvents(new WorldListener(this), this);
 		//Others
 		createRecipes();
 	}
@@ -96,5 +101,11 @@ public class RedstoneProximitySensor extends JavaPlugin{
             e.printStackTrace();
         }
     }
- 
+
+	public String getVersion() {
+		return this.version;
+	}
+    public static RedstoneProximitySensor getInstance() {
+        return instance;
+}
 }

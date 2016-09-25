@@ -20,7 +20,7 @@ public class SensorListener implements Listener {
 		this.plugin = plugin;
 		
 	}
-	
+
 	@EventHandler
 	public void BlockRedstoneEvent(BlockRedstoneEvent e)
 	{

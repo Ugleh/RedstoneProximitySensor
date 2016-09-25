@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -184,28 +185,33 @@ public class PlayerListener implements Listener {
 			newString = newString.toLowerCase().replace(" ", "");
 			String[] testS = newString.split(":");
 			String permString = "rps.button_" + testS[0];
-			if((!e.getWhoClicked().hasPermission(permString)))
+			Player playerWhoClicked = (Player) e.getWhoClicked();
+			if((!playerWhoClicked.hasPermission(permString)))
 			{
-				e.getWhoClicked().sendMessage(chatPrefix + "You do not have permissions to use this modifier.");
+				playRejectSound(playerWhoClicked);
+				playerWhoClicked.sendMessage(chatPrefix + "You do not have permissions to use this modifier.");
 				return;
-
 			}
 			if(displayName.startsWith(ChatColor.BLUE + "Invert Power: "))
 			{
 				//Invert Power
+				playToggleSound(playerWhoClicked);
 				plugin.getSensorConfig().setInverted(selectedRPS, !selectedRPS.isInverted());
 			}else if(displayName.startsWith(ChatColor.BLUE + "Owner Only Trigger: "))
 			{
 				//Owner Only Trigger
+				playToggleSound(playerWhoClicked);
 				plugin.getSensorConfig().setownerOnlyTrigger(selectedRPS, !selectedRPS.isownerOnlyTrigger());
 			}else if(displayName.startsWith(ChatColor.BLUE + "Owner Only Edit: "))
 			{
 				//Owner Only Trigger
-				if(selectedRPS.getOwner().equals(e.getWhoClicked().getUniqueId()))
+				if(selectedRPS.getOwner().equals(playerWhoClicked.getUniqueId()))
 				{
+					playToggleSound(playerWhoClicked);
 					plugin.getSensorConfig().setownerOnlyEdit(selectedRPS, !selectedRPS.isownerOnlyEdit());
 				}else{
-					e.getWhoClicked().sendMessage(chatPrefix + "Only the owner can modify that setting.");
+					playRejectSound(playerWhoClicked);
+					playerWhoClicked.sendMessage(chatPrefix + "Only the owner can modify that setting.");
 				}
 			}else if(displayName.startsWith(ChatColor.BLUE + "Range"))
 			{
@@ -213,40 +219,55 @@ public class PlayerListener implements Listener {
 				int newRange = 0;
 				if(e.getClick().isLeftClick())
 				{
+					playToggleSound(playerWhoClicked);
 					newRange = (selectedRPS.getRange()+1) > plugin.getgConfig().getMaxRange() ? 1 : selectedRPS.getRange()+1;
 				}else if(e.getClick().isRightClick())
 				{
+					playToggleSound(playerWhoClicked);
 					newRange = (selectedRPS.getRange()-1) < 1 ? plugin.getgConfig().getMaxRange() : selectedRPS.getRange()-1;
 				}
 				plugin.getSensorConfig().setRange(selectedRPS, newRange);
 			}else if(displayName.startsWith(ChatColor.BLUE + "Player Entity"))
 			{
 				//Player Entity Trigger
+				playToggleSound(playerWhoClicked);
 				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "PLAYER");
 			}else if(displayName.startsWith(ChatColor.BLUE + "Dropped Item"))
 			{
 				//Dropped Item Trigger
+				playToggleSound(playerWhoClicked);
 				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "DROPPED_ITEM");
 			}else if(displayName.startsWith(ChatColor.BLUE + "Hostile Entities"))
 			{
 				//Hostile Entity Trigger
+				playToggleSound(playerWhoClicked);
 				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "HOSTILE_ENTITY");
 			}else if(displayName.startsWith(ChatColor.BLUE + "Peaceful Entities"))
 			{
 				//Peaceful Entity Trigger
+				playToggleSound(playerWhoClicked);
 				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "PEACEFUL_ENTITY");
 			}else if(displayName.startsWith(ChatColor.BLUE + "Invisible Entities"))
 			{
 				//Invisible Entity Trigger
+				playToggleSound(playerWhoClicked);
 				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "INVISIBLE_ENTITY");
 			}
 			
-			showGUIMenu((Player)e.getWhoClicked(), selectedRPS);
+			showGUIMenu((Player)playerWhoClicked, selectedRPS);
 
 		}
 	}
 	
+
+	private void playRejectSound(Player p) {
+		p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
+	}
 	
+	private void playToggleSound(Player p) {
+		p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 1F);
+	}
+
 	@EventHandler
 	public void DisplayMenuEvent(PlayerInteractEvent e)
 	{
@@ -283,94 +304,32 @@ public class PlayerListener implements Listener {
 	}
 
 	private void SetupOwnerOnlyEditButton(Inventory tempInv, RPS selectedRPS) {
-		ItemMeta ooeMeta = ownerOnlyEditButton.getItemMeta();
-		if(selectedRPS.isownerOnlyEdit())
+		//ItemMeta ooeMeta = ownerOnlyEditButton.getItemMeta();
+		toggleButton(tempInv, ownerOnlyEditButton, selectedRPS.isownerOnlyEdit(), "Owner Only Edit: ", 2);
+	}
+
+	private void toggleButton(Inventory tempInv, ItemStack button, boolean buttonStatus, String buttonText, int slot) {
+		ItemMeta itemMeta = button.getItemMeta();
+		if(buttonStatus)
 		{
-			ooeMeta.addEnchant(glow, 1, true);
-			ooeMeta.setDisplayName(ChatColor.BLUE + "Owner Only Edit: " + ChatColor.GREEN + "True");
+			itemMeta.addEnchant(glow, 1, true);
+			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + "True");
 		}else
 		{
-			ooeMeta.removeEnchant(glow);
-			ooeMeta.setDisplayName(ChatColor.BLUE + "Owner Only Edit: " + ChatColor.RED + "False");
+			itemMeta.removeEnchant(glow);
+			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + "False");
 		}
-		ownerOnlyEditButton.setItemMeta(ooeMeta);
-		tempInv.setItem(2, ownerOnlyEditButton);
-
+		button.setItemMeta(itemMeta);
+		tempInv.setItem(slot, button);
 	}
 
 	private void SetupAcceptedEntitiesButtons(Inventory tempInv, RPS selectedRPS) {
-		ItemMeta peaMeta = playerEntitiesAllowed.getItemMeta();
-		if(selectedRPS.getAcceptedEntities().contains("PLAYER"))
-		{
-			peaMeta.addEnchant(glow, 1, true);
-			peaMeta.setDisplayName(ChatColor.BLUE + "Player Entity Trigger: " + ChatColor.GREEN + "True");
-		}else
-		{
-			peaMeta.removeEnchant(glow);
-			peaMeta.setDisplayName(ChatColor.BLUE + "Player Entity Trigger: " + ChatColor.RED + "False");
-		}
-		playerEntitiesAllowed.setItemMeta(peaMeta);
 
-		ItemMeta diaMeta = droppedItemsAllowed.getItemMeta();
-		if(selectedRPS.getAcceptedEntities().contains("DROPPED_ITEM"))
-		{
-			diaMeta.addEnchant(glow, 1, true);
-			diaMeta.setDisplayName(ChatColor.BLUE + "Dropped Item Trigger: " + ChatColor.GREEN + "True");
-		}
-		else
-		{
-			diaMeta.removeEnchant(glow);
-			diaMeta.setDisplayName(ChatColor.BLUE + "Dropped Item Trigger: " + ChatColor.RED + "False");
-		}
-		droppedItemsAllowed.setItemMeta(diaMeta);
-
-		ItemMeta heaMeta = hostileEntitiesAllowed.getItemMeta();
-		if(selectedRPS.getAcceptedEntities().contains("HOSTILE_ENTITY"))
-		{
-			heaMeta.addEnchant(glow, 1, true);
-			heaMeta.setDisplayName(ChatColor.BLUE + "Hostile Entities Trigger: " + ChatColor.GREEN + "True");
-		}
-		else
-		{
-			heaMeta.removeEnchant(glow);
-			heaMeta.setDisplayName(ChatColor.BLUE + "Hostile Entities Trigger: " + ChatColor.RED + "False");
-		}
-		hostileEntitiesAllowed.setItemMeta(heaMeta);
-
-		ItemMeta pea2Meta = peacefulEntitiesAllowed.getItemMeta();
-		if(selectedRPS.getAcceptedEntities().contains("PEACEFUL_ENTITY"))
-		{
-			pea2Meta.addEnchant(glow, 1, true);
-			pea2Meta.setDisplayName(ChatColor.BLUE + "Peaceful Entities Trigger: " + ChatColor.GREEN + "True");
-		}
-		else
-		{
-			pea2Meta.removeEnchant(glow);
-			pea2Meta.setDisplayName(ChatColor.BLUE + "Peaceful Entities Trigger: " + ChatColor.RED + "False");
-		}
-		
-		peacefulEntitiesAllowed.setItemMeta(pea2Meta);
-
-		ItemMeta ieaMeta = invisibleEntsAllowed.getItemMeta();
-		if(selectedRPS.getAcceptedEntities().contains("INVISIBLE_ENTITY"))
-		{
-			ieaMeta.addEnchant(glow, 1, true);
-			ieaMeta.setDisplayName(ChatColor.BLUE + "Invisible Entities Trigger: " + ChatColor.GREEN + "True");
-		}
-		else
-		{
-			ieaMeta.removeEnchant(glow);
-			ieaMeta.setDisplayName(ChatColor.BLUE + "Invisible Entities Trigger: " + ChatColor.RED + "False");
-		}
-		invisibleEntsAllowed.setItemMeta(ieaMeta);
-
-		
-		tempInv.setItem(5, playerEntitiesAllowed);
-		tempInv.setItem(6, hostileEntitiesAllowed);
-		tempInv.setItem(7, peacefulEntitiesAllowed);
-		tempInv.setItem(8, droppedItemsAllowed);
-		tempInv.setItem(17, invisibleEntsAllowed);
-
+		toggleButton(tempInv, playerEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PLAYER"), "Player Entity Trigger: ", 5);
+		toggleButton(tempInv, hostileEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("HOSTILE_ENTITY"), "Hostile Entities Trigger: ", 6);
+		toggleButton(tempInv, peacefulEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PEACEFUL_ENTITY"), "Peaceful Entities Trigger: ", 7);
+		toggleButton(tempInv, droppedItemsAllowed, selectedRPS.getAcceptedEntities().contains("DROPPED_ITEM"), "Dropped Item Trigger: ", 8);
+		toggleButton(tempInv, invisibleEntsAllowed, selectedRPS.getAcceptedEntities().contains("INVISIBLE_ENTITY"), "Invisible Entities Trigger: ", 17);
 	}
 
 	private void SetupRangeButton(Inventory tempInv, RPS selectedRPS) {

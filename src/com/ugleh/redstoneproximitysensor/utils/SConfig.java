@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -42,6 +43,8 @@ public class SConfig extends YamlConfiguration {
     public SConfig(JavaPlugin plugin, String fileName, String defaultsName) {
         this.plugin = plugin;
         this.defaults = defaultsName;
+        //Fix previous version issues:
+        new FileReplace(plugin);
         this.file = new File(plugin.getDataFolder(), fileName);
         reload();
     }
@@ -77,7 +80,7 @@ public class SConfig extends YamlConfiguration {
                 reader.close();
                 save();
             }
-            grabSensors();
+            if(!Bukkit.getWorlds().isEmpty()) grabSensors(Bukkit.getWorlds().get(0));
         } catch (IOException exception) {
             exception.printStackTrace();
             plugin.getLogger().severe("Error while loading file " + file.getName());
@@ -90,18 +93,21 @@ public class SConfig extends YamlConfiguration {
        
     }
    
-    private void grabSensors() {
+    public void grabSensors(World loadedWorld) {
 		if(!this.isConfigurationSection("sensors")) return;
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
 		{
 			ConfigurationSection sensorSec = this.getConfigurationSection("sensors." + uniqueID);
-			this.addSensor((Location)sensorSec.get("location"), UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
-//			if(((Location)sensorSec.get("location")).getBlock().getType().equals(Material.REDSTONE_TORCH_OFF) || ((Location)sensorSec.get("location")).getBlock().getType().equals(Material.REDSTONE_TORCH_ON))
-//			{
-//			}else
-//			{
-//				this.removeSensor((Location)sensorSec.get("location"));
-//			}
+			
+			String worldName = sensorSec.getString("location.world");
+			if(!loadedWorld.getName().equals(worldName)) continue;
+			World w = Bukkit.getWorld(worldName);
+			Double x = Double.parseDouble(sensorSec.getString("location.x"));
+			Double y = Double.parseDouble(sensorSec.getString("location.y"));
+            Double z = Double.parseDouble(sensorSec.getString("location.z"));
+            Location location = new Location(w, x, y, z);
+            this.addSensor(location, UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
+
 		}
 	}
 
