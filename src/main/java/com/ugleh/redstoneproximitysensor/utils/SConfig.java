@@ -96,7 +96,6 @@ public class SConfig extends YamlConfiguration {
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
 		{
 			ConfigurationSection sensorSec = this.getConfigurationSection("sensors." + uniqueID);
-            //String[] stringLocation = sensorSec.getString("location");
 
             World w = Bukkit.getWorld(sensorSec.getString("location.world"));
             Double x = Double.parseDouble(sensorSec.getString("location.x"));
