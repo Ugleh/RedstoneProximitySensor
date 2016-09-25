@@ -20,22 +20,25 @@ import com.ugleh.redstoneproximitysensor.utils.SConfig;
 import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
 
 public class RedstoneProximitySensor extends JavaPlugin{
+	public final String version = "2.0.10";
 
 	public GeneralConfig gConfig;
 	public SConfig sConfig;
 	public ItemStack rps;
 	public ShapedRecipe rpsRecipe;
 	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
-	public final String version = "2.0.7";
-	private static RedstoneProximitySensor instance;
+	public static RedstoneProximitySensor instance;
 	@Override
 	public void onEnable()
 	{
+		instance = this;
+		
+		new UpdateChecker(this.getVersion());
+		
 		//Init configs.
 		gConfig = new GeneralConfig(this);
-		sConfig = new SConfig(this, "sensors.yml", "sensors.yml");
-		instance = this;
-		new UpdateChecker(this);
+		sConfig = new SConfig(this, "sensors.yml","sensors.yml");
+		
 		//Setup Glow
 		registerGlow();
 		
@@ -43,9 +46,9 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS(this));
 		
 		//Init Listeners
-		this.getServer().getPluginManager().registerEvents(new SensorListener(this), this);
-		this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-		this.getServer().getPluginManager().registerEvents(new WorldListener(this), this);
+		this.getServer().getPluginManager().registerEvents(new SensorListener(), this);
+		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+		this.getServer().getPluginManager().registerEvents(new WorldListener(), this);
 		//Others
 		createRecipes();
 	}
@@ -102,10 +105,13 @@ public class RedstoneProximitySensor extends JavaPlugin{
         }
     }
 
-	public String getVersion() {
+	public String getVersion()
+	{
 		return this.version;
 	}
-    public static RedstoneProximitySensor getInstance() {
-        return instance;
-}
+    public static RedstoneProximitySensor getInstance()
+    {
+    	return instance;
+    }
+    
 }

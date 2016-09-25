@@ -15,16 +15,13 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 public class SensorListener implements Listener {
-	RedstoneProximitySensor plugin;
-	public SensorListener(RedstoneProximitySensor plugin) {
-		this.plugin = plugin;
-		
+	public SensorListener() {
 	}
 
 	@EventHandler
 	public void BlockRedstoneEvent(BlockRedstoneEvent e)
 	{
-		if(plugin.getSensorConfig().getSensorList().containsKey(e.getBlock().getLocation()))
+		if(getInstance().getSensorConfig().getSensorList().containsKey(e.getBlock().getLocation()))
 		{
 			e.setNewCurrent(e.getOldCurrent());
 		}
@@ -34,23 +31,23 @@ public class SensorListener implements Listener {
 	{
 		Location loc = e.getBlock().getLocation();
 		Boolean sensor = false;
-		if(plugin.getSensorConfig().getSensorList().containsKey(e.getBlock().getLocation()))
+		if(getInstance().getSensorConfig().getSensorList().containsKey(e.getBlock().getLocation()))
 		{
 			sensor = true;
-			plugin.getSensorConfig().removeSensor(e.getBlock().getLocation());
+			getInstance().getSensorConfig().removeSensor(e.getBlock().getLocation());
 			e.setCancelled(true);
-		}else if(plugin.getSensorConfig().getSensorList().containsKey(e.getBlock().getLocation().clone().add(0, 1, 0)))
+		}else if(getInstance().getSensorConfig().getSensorList().containsKey(e.getBlock().getLocation().clone().add(0, 1, 0)))
 		{
 			sensor = true;
 			loc = loc.clone().add(0, 1, 0);
-			plugin.getSensorConfig().removeSensor(e.getBlock().getLocation().clone().add(0, 1, 0));
+			getInstance().getSensorConfig().removeSensor(e.getBlock().getLocation().clone().add(0, 1, 0));
 		}
 		if(sensor)
 		{
 			loc.getBlock().setType(Material.AIR);
 			if(!e.getPlayer().getGameMode().equals(GameMode.CREATIVE))
 			{
-				loc.getWorld().dropItemNaturally(loc, plugin.rps);
+				loc.getWorld().dropItemNaturally(loc, getInstance().rps);
 			}
 
 		}
@@ -66,12 +63,15 @@ public class SensorListener implements Listener {
 		if((e.getBlock().getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.REDSTONE_TORCH_OFF)) || (e.getBlock().getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.REDSTONE_TORCH_ON))) return;
 		if(e.getPlayer().hasPermission("rps.place"))
 		{
-			plugin.getSensorConfig().addSensor(e.getBlock().getLocation(), e.getPlayer().getUniqueId(), UUID.randomUUID());	
+			getInstance().getSensorConfig().addSensor(e.getBlock().getLocation(), e.getPlayer().getUniqueId(), UUID.randomUUID());	
 		}else
 		{
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(plugin.chatPrefix + "You do not have permission to place that.");
+			e.getPlayer().sendMessage(getInstance().chatPrefix + "You do not have permission to place that.");
 		}
 	}
-
+	public RedstoneProximitySensor getInstance()
+	{
+		return RedstoneProximitySensor.getInstance();
+	}
 }

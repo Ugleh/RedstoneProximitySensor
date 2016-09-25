@@ -27,7 +27,6 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 public class PlayerListener implements Listener {
-	RedstoneProximitySensor plugin;
 	private Inventory guiMenu;
 	private String invName = ChatColor.BLUE + "Redstone Proximity Sensor Menu";
 	private ItemStack invertedButton;
@@ -43,11 +42,9 @@ public class PlayerListener implements Listener {
 	private HashMap<UUID, RPS> userSelectedRPS = new HashMap<UUID, RPS>();
 	private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<UUID, Inventory>();
 	private Glow glow;
-	private String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
-	public PlayerListener(RedstoneProximitySensor plugin)
+	public PlayerListener()
 	{
 		glow = new Glow(1234);
-		this.plugin = plugin;
 		createMenu();
 	}
 	
@@ -154,7 +151,7 @@ public class PlayerListener implements Listener {
 		{
 			e.setResult(Result.DENY);
 			e.setCancelled(true);
-			e.getWhoClicked().sendMessage(chatPrefix + "You do not have permission to craft that.");
+			e.getWhoClicked().sendMessage(getInstance().chatPrefix + "You do not have permission to craft that.");
 		}
 	}
 	
@@ -189,29 +186,29 @@ public class PlayerListener implements Listener {
 			if((!playerWhoClicked.hasPermission(permString)))
 			{
 				playRejectSound(playerWhoClicked);
-				playerWhoClicked.sendMessage(chatPrefix + "You do not have permissions to use this modifier.");
+				playerWhoClicked.sendMessage(getInstance().chatPrefix + "You do not have permissions to use this modifier.");
 				return;
 			}
 			if(displayName.startsWith(ChatColor.BLUE + "Invert Power: "))
 			{
 				//Invert Power
 				playToggleSound(playerWhoClicked);
-				plugin.getSensorConfig().setInverted(selectedRPS, !selectedRPS.isInverted());
+				getInstance().getSensorConfig().setInverted(selectedRPS, !selectedRPS.isInverted());
 			}else if(displayName.startsWith(ChatColor.BLUE + "Owner Only Trigger: "))
 			{
 				//Owner Only Trigger
 				playToggleSound(playerWhoClicked);
-				plugin.getSensorConfig().setownerOnlyTrigger(selectedRPS, !selectedRPS.isownerOnlyTrigger());
+				getInstance().getSensorConfig().setownerOnlyTrigger(selectedRPS, !selectedRPS.isownerOnlyTrigger());
 			}else if(displayName.startsWith(ChatColor.BLUE + "Owner Only Edit: "))
 			{
 				//Owner Only Trigger
 				if(selectedRPS.getOwner().equals(playerWhoClicked.getUniqueId()))
 				{
 					playToggleSound(playerWhoClicked);
-					plugin.getSensorConfig().setownerOnlyEdit(selectedRPS, !selectedRPS.isownerOnlyEdit());
+					getInstance().getSensorConfig().setownerOnlyEdit(selectedRPS, !selectedRPS.isownerOnlyEdit());
 				}else{
 					playRejectSound(playerWhoClicked);
-					playerWhoClicked.sendMessage(chatPrefix + "Only the owner can modify that setting.");
+					playerWhoClicked.sendMessage(getInstance().chatPrefix + "Only the owner can modify that setting.");
 				}
 			}else if(displayName.startsWith(ChatColor.BLUE + "Range"))
 			{
@@ -220,38 +217,38 @@ public class PlayerListener implements Listener {
 				if(e.getClick().isLeftClick())
 				{
 					playToggleSound(playerWhoClicked);
-					newRange = (selectedRPS.getRange()+1) > plugin.getgConfig().getMaxRange() ? 1 : selectedRPS.getRange()+1;
+					newRange = (selectedRPS.getRange()+1) > getInstance().getgConfig().getMaxRange() ? 1 : selectedRPS.getRange()+1;
 				}else if(e.getClick().isRightClick())
 				{
 					playToggleSound(playerWhoClicked);
-					newRange = (selectedRPS.getRange()-1) < 1 ? plugin.getgConfig().getMaxRange() : selectedRPS.getRange()-1;
+					newRange = (selectedRPS.getRange()-1) < 1 ? getInstance().getgConfig().getMaxRange() : selectedRPS.getRange()-1;
 				}
-				plugin.getSensorConfig().setRange(selectedRPS, newRange);
+				getInstance().getSensorConfig().setRange(selectedRPS, newRange);
 			}else if(displayName.startsWith(ChatColor.BLUE + "Player Entity"))
 			{
 				//Player Entity Trigger
 				playToggleSound(playerWhoClicked);
-				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "PLAYER");
+				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "PLAYER");
 			}else if(displayName.startsWith(ChatColor.BLUE + "Dropped Item"))
 			{
 				//Dropped Item Trigger
 				playToggleSound(playerWhoClicked);
-				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "DROPPED_ITEM");
+				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "DROPPED_ITEM");
 			}else if(displayName.startsWith(ChatColor.BLUE + "Hostile Entities"))
 			{
 				//Hostile Entity Trigger
 				playToggleSound(playerWhoClicked);
-				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "HOSTILE_ENTITY");
+				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "HOSTILE_ENTITY");
 			}else if(displayName.startsWith(ChatColor.BLUE + "Peaceful Entities"))
 			{
 				//Peaceful Entity Trigger
 				playToggleSound(playerWhoClicked);
-				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "PEACEFUL_ENTITY");
+				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "PEACEFUL_ENTITY");
 			}else if(displayName.startsWith(ChatColor.BLUE + "Invisible Entities"))
 			{
 				//Invisible Entity Trigger
 				playToggleSound(playerWhoClicked);
-				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "INVISIBLE_ENTITY");
+				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "INVISIBLE_ENTITY");
 			}
 			
 			showGUIMenu((Player)playerWhoClicked, selectedRPS);
@@ -278,13 +275,13 @@ public class PlayerListener implements Listener {
 		//Check if player is right clicking a block
 		if(!(e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) return;
 		//User Right clicked an RPS
-		if(!(plugin.getSensorConfig().getSensorList().containsKey(l))) return;
-		RPS selectedRPS = plugin.getSensorConfig().getSensorList().get(l);
+		if(!(getInstance().getSensorConfig().getSensorList().containsKey(l))) return;
+		RPS selectedRPS = getInstance().getSensorConfig().getSensorList().get(l);
 		if(((selectedRPS.getOwner().equals(p.getUniqueId())) && selectedRPS.isownerOnlyEdit()) || (!selectedRPS.isownerOnlyEdit()))
 		{
 			showGUIMenu(p, selectedRPS);
 		}else{
-			p.sendMessage(chatPrefix + "This RPS can only be modified by its owner.");
+			p.sendMessage(getInstance().chatPrefix + "This RPS can only be modified by its owner.");
 		}
 	}
 
@@ -371,5 +368,10 @@ public class PlayerListener implements Listener {
 		
 		invertedButton.setItemMeta(tempIBMeta);
 		tempInv.setItem(0, invertedButton);
+	}
+	
+	public RedstoneProximitySensor getInstance()
+	{
+		return RedstoneProximitySensor.getInstance();
 	}
 }

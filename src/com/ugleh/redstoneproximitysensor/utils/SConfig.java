@@ -31,7 +31,7 @@ public class SConfig extends YamlConfiguration {
      * @param fileName - Name of the file
      */
     public SConfig(JavaPlugin plugin, String fileName) {
-        this(plugin, fileName, null);
+        this(plugin, fileName, fileName);
     }
    
     /**
@@ -44,7 +44,7 @@ public class SConfig extends YamlConfiguration {
         this.plugin = plugin;
         this.defaults = defaultsName;
         //Fix previous version issues:
-        new FileReplace(plugin);
+        new LocationDeserializationFix();
         this.file = new File(plugin.getDataFolder(), fileName);
         reload();
     }
@@ -80,8 +80,12 @@ public class SConfig extends YamlConfiguration {
                 reader.close();
                 save();
             }
-            if(!Bukkit.getWorlds().isEmpty()) grabSensors(Bukkit.getWorlds().get(0));
-        } catch (IOException exception) {
+        	for(World w : Bukkit.getWorlds())
+        	{
+            	grabSensors(w);
+
+        	}        
+        	} catch (IOException exception) {
             exception.printStackTrace();
             plugin.getLogger().severe("Error while loading file " + file.getName());
            
@@ -146,7 +150,10 @@ public class SConfig extends YamlConfiguration {
 		{
 			//Not in the config.
 			ConfigurationSection rpsconfig = this.createSection("sensors." + tempRPS.getUniqueID());
-			rpsconfig.set("location", tempRPS.getLocation());
+			rpsconfig.set("location.world", tempRPS.getLocation().getWorld().getName());
+			rpsconfig.set("location.x", tempRPS.getLocation().getX());
+			rpsconfig.set("location.y", tempRPS.getLocation().getY());
+			rpsconfig.set("location.z", tempRPS.getLocation().getZ());
 			rpsconfig.set("inverted", tempRPS.isInverted());
 			rpsconfig.set("range", tempRPS.getRange());
 			rpsconfig.set("acceptedEntities", tempRPS.getAcceptedEntities());
