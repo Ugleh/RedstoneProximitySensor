@@ -1,2 +1,2 @@
-#2.0.7
-^Fixed a bug where the RPS would try to grab the distance of the owner when they are in a different world. Also added Update Checker.
+#2.0.8
+^Fixed a bug where Locations that where not loaded (Multiverse worlds) would curropt the sensors file.
