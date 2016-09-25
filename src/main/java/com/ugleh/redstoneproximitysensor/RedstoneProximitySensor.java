@@ -31,18 +31,18 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	{
         instance = this;
 		//Init configs.
-		gConfig = new GeneralConfig(this);
+		gConfig = new GeneralConfig();
 		sConfig = new SConfig(this, "sensors.yml", "sensors.yml");
 
 		//Setup Glow
 		registerGlow();
 
 		//Setting command Executors.
-		this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS(this));
+		this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS());
 
 		//Init Listeners
-		this.getServer().getPluginManager().registerEvents(new SensorListener(this), this);
-		this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+		this.getServer().getPluginManager().registerEvents(new SensorListener(), this);
+		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		//Others
 		createRecipes();
 	}

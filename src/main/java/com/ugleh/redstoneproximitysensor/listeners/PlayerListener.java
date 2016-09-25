@@ -26,14 +26,14 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 public class PlayerListener implements Listener {
-	RedstoneProximitySensor plugin;
+	private static RedstoneProximitySensor plugin = RedstoneProximitySensor.getInstance();
 	private Inventory guiMenu;
 	private String invName = ChatColor.BLUE + "Redstone Proximity Sensor Menu";
 	private ItemStack invertedButton;
 	private ItemStack ownerOnlyTriggerButton;
 	private ItemStack ownerOnlyEditButton;
 	private ItemStack rangeButton;
-	
+
 	private ItemStack playerEntitiesAllowed;
 	private ItemStack hostileEntitiesAllowed;
 	private ItemStack peacefulEntitiesAllowed;
@@ -43,16 +43,16 @@ public class PlayerListener implements Listener {
 	private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<UUID, Inventory>();
 	private Glow glow;
 	private String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
-	public PlayerListener(RedstoneProximitySensor plugin)
+
+    public PlayerListener()
 	{
 		glow = new Glow(1234);
-		this.plugin = plugin;
 		createMenu();
 	}
-	
+
 	private void createMenu() {
 		guiMenu = Bukkit.createInventory(null, 18, invName);
-		
+
 		invertedButton = new ItemStack(Material.WOOL, 1, (short) 14);
 		ItemMeta invertedButtonMeta = invertedButton.getItemMeta();
 		invertedButtonMeta.setDisplayName(ChatColor.BLUE + "Invert Power");
@@ -62,7 +62,7 @@ public class PlayerListener implements Listener {
 		invertedButtonMeta.setLore(lore);
 		invertedButton.setItemMeta(invertedButtonMeta);
 		guiMenu.setItem(0, invertedButton);
-		
+
 		ownerOnlyTriggerButton = new ItemStack(Material.SKULL_ITEM, 1, (short)3);
 		ItemMeta ownerOnlyTriggerMeta = ownerOnlyTriggerButton.getItemMeta();
 		ownerOnlyTriggerMeta.setDisplayName(ChatColor.BLUE + "Owner Only Trigger");
@@ -72,7 +72,7 @@ public class PlayerListener implements Listener {
 		ownerOnlyTriggerMeta.setLore(lore2);
 		ownerOnlyTriggerButton.setItemMeta(ownerOnlyTriggerMeta);
 		guiMenu.setItem(4, ownerOnlyTriggerButton);
-		
+
 		rangeButton = new ItemStack(Material.COMPASS, 5);
 		ItemMeta rangeBMeta = rangeButton.getItemMeta();
 		rangeBMeta.setDisplayName(ChatColor.BLUE + "Range");
@@ -82,7 +82,7 @@ public class PlayerListener implements Listener {
 		rangeBMeta.setLore(lore3);
 		rangeButton.setItemMeta(rangeBMeta);
 		guiMenu.setItem(1, rangeButton);
-		
+
 		ownerOnlyEditButton = new ItemStack(Material.NAME_TAG, 1);
 		ItemMeta ooeMeta = ownerOnlyEditButton.getItemMeta();
 		ooeMeta.setDisplayName(ChatColor.BLUE + "Owner Only Edit");
@@ -91,7 +91,7 @@ public class PlayerListener implements Listener {
 		ooeMeta.setLore(lore3);
 		ownerOnlyEditButton.setItemMeta(ooeMeta);
 		guiMenu.setItem(2, ownerOnlyEditButton);
-		
+
 		List<String> tempLore = new ArrayList<String>();
 		playerEntitiesAllowed = new ItemStack(Material.DIAMOND_SWORD, 1);
 		ItemMeta peaMeta = playerEntitiesAllowed.getItemMeta();
@@ -139,8 +139,8 @@ public class PlayerListener implements Listener {
 		guiMenu.setItem(17, invisibleEntsAllowed);
 
 	}
-	
-	
+
+
 	@EventHandler
 	public void CraftItemEvent(CraftItemEvent e)
 	{
@@ -148,7 +148,7 @@ public class PlayerListener implements Listener {
 		if(!(result != null && result.hasItemMeta() && result.getItemMeta().hasDisplayName())) return;
 		//Check if item is a RP Sensor.
 		if((!result.getItemMeta().getDisplayName().equals(ChatColor.RED + "Redstone Proximity Sensor"))) return;
-		
+
 		if(!e.getWhoClicked().hasPermission("rps.create"))
 		{
 			e.setResult(Result.DENY);
@@ -156,26 +156,26 @@ public class PlayerListener implements Listener {
 			e.getWhoClicked().sendMessage(chatPrefix + "You do not have permission to craft that.");
 		}
 	}
-	
+
 	@EventHandler
 	public void PlayerQuitEvent(PlayerQuitEvent e)
 	{
-		
+
 		//Prevent Memory Leak
 		userSelectedRPS.remove(e.getPlayer().getUniqueId());
 		userSelectedInventory.remove(e.getPlayer().getUniqueId());
 	}
-	
+
 	@EventHandler
 	public void InventoryClickEvent(InventoryClickEvent e)
 	{
 		if(e.getClickedInventory() == null) return;
 		if(!(e.getInventory().getName().equals(invName) || e.getClickedInventory().getName().equals(invName))) return;
 		RPS selectedRPS = userSelectedRPS.get(e.getWhoClicked().getUniqueId());
-		
+
 		e.setCancelled(true);
-		
-		
+
+
 		if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName())
 		{
 			//Clicked a menu item
@@ -240,13 +240,13 @@ public class PlayerListener implements Listener {
 				//Invisible Entity Trigger
 				plugin.getSensorConfig().addAcceptedEntity(selectedRPS, "INVISIBLE_ENTITY");
 			}
-			
+
 			showGUIMenu((Player)e.getWhoClicked(), selectedRPS);
 
 		}
 	}
-	
-	
+
+
 	@EventHandler
 	public void DisplayMenuEvent(PlayerInteractEvent e)
 	{
@@ -272,7 +272,7 @@ public class PlayerListener implements Listener {
 		if(!userSelectedInventory.containsKey(p.getUniqueId()))
 		{Inventory tempMenu = Bukkit.createInventory(null, 18, invName);
 		tempMenu.setContents(guiMenu.getContents());
-		userSelectedInventory.put(p.getUniqueId(), tempMenu);	
+		userSelectedInventory.put(p.getUniqueId(), tempMenu);
 		}
 		SetupInvertedButton(userSelectedInventory.get(p.getUniqueId()), selectedRPS);
 		SetupownerOnlyTriggerButton(userSelectedInventory.get(p.getUniqueId()), selectedRPS);
@@ -348,7 +348,7 @@ public class PlayerListener implements Listener {
 			pea2Meta.removeEnchant(glow);
 			pea2Meta.setDisplayName(ChatColor.BLUE + "Peaceful Entities Trigger: " + ChatColor.RED + "False");
 		}
-		
+
 		peacefulEntitiesAllowed.setItemMeta(pea2Meta);
 
 		ItemMeta ieaMeta = invisibleEntsAllowed.getItemMeta();
@@ -364,7 +364,7 @@ public class PlayerListener implements Listener {
 		}
 		invisibleEntsAllowed.setItemMeta(ieaMeta);
 
-		
+
 		tempInv.setItem(5, playerEntitiesAllowed);
 		tempInv.setItem(6, hostileEntitiesAllowed);
 		tempInv.setItem(7, peacefulEntitiesAllowed);
@@ -395,7 +395,7 @@ public class PlayerListener implements Listener {
 		}
 		ownerOnlyTriggerButton.setItemMeta(tempOOMeta);
 		tempInv.setItem(4, ownerOnlyTriggerButton);
-		
+
 	}
 
 	private void SetupInvertedButton(Inventory tempInv, RPS selectedRPS) {
@@ -409,7 +409,7 @@ public class PlayerListener implements Listener {
 			invertedButton.setDurability((short)14);
 			tempIBMeta.setDisplayName(ChatColor.BLUE + "Invert Power: " + ChatColor.RED + "Not Inverted");
 		}
-		
+
 		invertedButton.setItemMeta(tempIBMeta);
 		tempInv.setItem(0, invertedButton);
 	}

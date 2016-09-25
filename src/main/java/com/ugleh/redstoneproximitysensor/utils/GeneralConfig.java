@@ -10,7 +10,7 @@ import org.bukkit.entity.EntityType;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 public class GeneralConfig extends YamlConfiguration{
-	RedstoneProximitySensor plugin;
+	private static RedstoneProximitySensor plugin = RedstoneProximitySensor.getInstance();
 	File file;
 
 	int maxRange = 20;
@@ -19,14 +19,13 @@ public class GeneralConfig extends YamlConfiguration{
 	boolean defaultInverted = false;
 	List<String> hostileMobs = new ArrayList<String>();
 	List<String> peacefulMobs = new ArrayList<String>();
-	
-	public GeneralConfig(RedstoneProximitySensor plugin) {
-		this.plugin = plugin;
+
+	public GeneralConfig() {
 		generateHostileMobsList();
 		generatePeacefulMobs();
 		reloadConfig();
 
-		
+
 	}
 
 	private void generatePeacefulMobs() {
@@ -42,7 +41,7 @@ public class GeneralConfig extends YamlConfiguration{
 		peacefulMobs.add(EntityType.HORSE.name());
 		peacefulMobs.add(EntityType.WOLF.name());
 		peacefulMobs.add(EntityType.OCELOT.name());
-		
+
 	}
 
 	private void generateHostileMobsList() {
@@ -71,7 +70,7 @@ public class GeneralConfig extends YamlConfiguration{
 		defaultRange = plugin.getConfig().getInt("rps.defaultRange");
 		defaultownerOnlyTrigger = plugin.getConfig().getBoolean("rps.defaultownerOnlyTrigger");
 		defaultInverted = plugin.getConfig().getBoolean("rps.defaultInverted");
-		
+
 	}
 
 	public void reloadConfig() {

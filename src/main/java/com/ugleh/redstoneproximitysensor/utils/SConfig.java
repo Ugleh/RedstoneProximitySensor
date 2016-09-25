@@ -91,18 +91,22 @@ public class SConfig extends YamlConfiguration {
 
     }
 
-    private void grabSensors() {
+    private void grabSensors(World loadedWorld) {
 		if(!this.isConfigurationSection("sensors")) return;
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
 		{
 			ConfigurationSection sensorSec = this.getConfigurationSection("sensors." + uniqueID);
 
-            World w = Bukkit.getWorld(sensorSec.getString("location.world"));
+            /*World w = Bukkit.getWorld(sensorSec.getString("location.world"));
             Double x = Double.parseDouble(sensorSec.getString("location.x"));
             Double y = Double.parseDouble(sensorSec.getString("location.y"));
             Double z = Double.parseDouble(sensorSec.getString("location.z"));
-            Location location = new Location(w, x, y, z);
-			this.addSensor(location, UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
+            Location location = new Location(w, x, y, z);*/
+            String[] stringLocation = sensorSec.getString("location").split(",");
+            String wo = stringLocation[0].split("=")[2];
+            wo = wo.substring(0, wo.length()-1);
+            if(!loadedWorld.getName().equals(wo)) return;
+			this.addSensor((Location)sensorSec.get("location"), UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
 //			if(((Location)sensorSec.get("location")).getBlock().getType().equals(Material.REDSTONE_TORCH_OFF) || ((Location)sensorSec.get("location")).getBlock().getType().equals(Material.REDSTONE_TORCH_ON))
 //			{
 //			}else

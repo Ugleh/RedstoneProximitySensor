@@ -12,10 +12,7 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 public class CommandRPS implements CommandExecutor {
 	public String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
-	RedstoneProximitySensor plugin;
-	public CommandRPS(RedstoneProximitySensor redstoneProximitySensor) {
-		this.plugin = redstoneProximitySensor;
-	}
+	private static RedstoneProximitySensor plugin = RedstoneProximitySensor.getInstance();
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String rawCommand, String[] args) {
@@ -70,14 +67,14 @@ public class CommandRPS implements CommandExecutor {
 				notEnoughArgs(sender);
 			}
 		}
-		
+
 	}
 
 	private void notEnoughArgs(CommandSender sender) {
 		sender.sendMessage(chatPrefix + "Not enough Arguments.");
 		sender.sendMessage(chatPrefix + "/rps reload");
 		sender.sendMessage(chatPrefix + "/rps give <player> [amount]");
-		
+
 	}
 
 }

@@ -15,12 +15,8 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 public class SensorListener implements Listener {
-	RedstoneProximitySensor plugin;
-	public SensorListener(RedstoneProximitySensor plugin) {
-		this.plugin = plugin;
-		
-	}
-	
+	private static RedstoneProximitySensor plugin = RedstoneProximitySensor.getInstance();
+
 	@EventHandler
 	public void BlockRedstoneEvent(BlockRedstoneEvent e)
 	{
@@ -66,7 +62,7 @@ public class SensorListener implements Listener {
 		if((e.getBlock().getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.REDSTONE_TORCH_OFF)) || (e.getBlock().getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.REDSTONE_TORCH_ON))) return;
 		if(e.getPlayer().hasPermission("rps.place"))
 		{
-			plugin.getSensorConfig().addSensor(e.getBlock().getLocation(), e.getPlayer().getUniqueId(), UUID.randomUUID());	
+			plugin.getSensorConfig().addSensor(e.getBlock().getLocation(), e.getPlayer().getUniqueId(), UUID.randomUUID());
 		}else
 		{
 			e.setCancelled(true);
