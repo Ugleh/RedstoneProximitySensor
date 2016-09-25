@@ -40,7 +40,7 @@ public class UpdateChecker {
             e.printStackTrace();
         }
 
-        if(!redstoneProximitySensor.version.equals(this.latestVersion))
+        if(!RedstoneProximitySensor.getInstance().getVersion().equals(this.latestVersion))
         {
         	needsUpdate = true;
         	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] Redstone Proximity Sensor is outdated.");
