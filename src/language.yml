@@ -1,0 +1,28 @@
+language:
+  lang_main_inventoryname: Redstone Proximity Sensor Menu
+  lang_update_notice: Redstone Proximity Sensor is outdated.
+  lang_update_latest: Latest Version
+  lang_update_desc: Description
+  lang_update_link: Link
+  lang_restriction_place: You do not have permission to place that.
+  lang_restriction_owneronly: This RPS can only be modified by its owner.
+  lang_restriction_owneronly_button: Only the owner can modify that setting.
+  lang_restriction_permission: You do not have permissions to use this modifier.
+  lang_restriction_craft: You do not have permission to craft that.
+  lang_command_playerunknown: Player not found.
+  lang_command_reload: Reload complete.
+  lang_command_wrongamount: Amount can not be less than 1
+  lang_command_invalidargs: Not enough Arguments.
+  lang_button_true: True
+  lang_button_false: False
+  lang_button_inverted: Inverted
+  lang_button_notinverted: Not Inverted
+  lang_button_invertpower: Invert Power
+  lang_button_range: Range
+  lang_button_owneronlyedit: Owner Only Edit
+  lang_button_owneronlytrigger: Owner Only Trigger
+  lang_button_playerentitytrigger: Player Entity Trigger
+  lang_button_hostileentitytrigger: Hostile Entities Trigger
+  lang_button_peacefulentitytrigger: Peaceful Entities Trigger
+  lang_button_droppeditemtrigger: Dropped Items Trigger
+  lang_button_invisibleentitytrigger: Invisible Entities Trigger

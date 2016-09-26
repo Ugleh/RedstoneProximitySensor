@@ -1,6 +1,6 @@
 package com.ugleh.redstoneproximitysensor.listeners;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -26,9 +27,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
+import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
 public class PlayerListener implements Listener {
 	private Inventory guiMenu;
-	private String invName = ChatColor.BLUE + "Redstone Proximity Sensor Menu";
+	private String invName;
 	private ItemStack invertedButton;
 	private ItemStack ownerOnlyTriggerButton;
 	private ItemStack ownerOnlyEditButton;
@@ -44,119 +46,93 @@ public class PlayerListener implements Listener {
 	private Glow glow;
 	public PlayerListener()
 	{
+		invName = ChatColor.BLUE + langString("lang_main_inventoryname");
 		glow = new Glow(1234);
 		createMenu();
 	}
 	
+	
+	private void createItem(ItemStack button, String langString, List<String> lore, int slot) {
+		ItemMeta itemMeta = button.getItemMeta();
+		itemMeta.setDisplayName(ChatColor.BLUE + langString(langString));
+		itemMeta.setLore(lore);
+		button.setItemMeta(itemMeta);
+		guiMenu.setItem(slot, button);
+	}
 	private void createMenu() {
 		guiMenu = Bukkit.createInventory(null, 18, invName);
 		
-		invertedButton = new ItemStack(Material.WOOL, 1, (short) 14);
-		ItemMeta invertedButtonMeta = invertedButton.getItemMeta();
-		invertedButtonMeta.setDisplayName(ChatColor.BLUE + "Invert Power");
-		List<String> lore = new ArrayList<String>();
-		lore.add("Toggle the sensors power to be");
-		lore.add("inverted when triggered.");
-		invertedButtonMeta.setLore(lore);
-		invertedButton.setItemMeta(invertedButtonMeta);
-		guiMenu.setItem(0, invertedButton);
+		List<String> lore = WordWrapLore("Toggle the sensors power to be inverted when triggered.");
+		createItem(invertedButton = new ItemStack(Material.WOOL, 1, (short) 14), "lang_button_invertpower", lore, 0);
 		
-		ownerOnlyTriggerButton = new ItemStack(Material.SKULL_ITEM, 1, (short)3);
-		ItemMeta ownerOnlyTriggerMeta = ownerOnlyTriggerButton.getItemMeta();
-		ownerOnlyTriggerMeta.setDisplayName(ChatColor.BLUE + "Owner Only Trigger");
-		List<String> lore2 = new ArrayList<String>();
-		lore2.add("Decides if only the owner should");
-		lore2.add("be able to set off this sensor.");
-		ownerOnlyTriggerMeta.setLore(lore2);
-		ownerOnlyTriggerButton.setItemMeta(ownerOnlyTriggerMeta);
-		guiMenu.setItem(4, ownerOnlyTriggerButton);
+		lore = WordWrapLore("Decides if only the owner should be able to set off this sensor.");
+		createItem(ownerOnlyTriggerButton = new ItemStack(Material.SKULL_ITEM, 1, (short)3), "lang_button_owneronlytrigger", lore, 4);		
 		
-		rangeButton = new ItemStack(Material.COMPASS, 5);
-		ItemMeta rangeBMeta = rangeButton.getItemMeta();
-		rangeBMeta.setDisplayName(ChatColor.BLUE + "Range");
-		List<String> lore3 = new ArrayList<String>();
-		lore3.add("Left Click to increase range.");
-		lore3.add("Right Click to decrease range.");
-		rangeBMeta.setLore(lore3);
-		rangeButton.setItemMeta(rangeBMeta);
-		guiMenu.setItem(1, rangeButton);
+		lore = WordWrapLore("Left Click to increase range, Right Click to decrease range.");
+		createItem(rangeButton = new ItemStack(Material.COMPASS, getInstance().getgConfig().getDefaultRange()), "lang_button_range", lore, 1);		
 		
-		ownerOnlyEditButton = new ItemStack(Material.NAME_TAG, 1);
-		ItemMeta ooeMeta = ownerOnlyEditButton.getItemMeta();
-		ooeMeta.setDisplayName(ChatColor.BLUE + "Owner Only Edit");
-		lore3.clear();
-		lore3.add("Click to toggle if only the owner should be able to edit this, or everyone.");
-		ooeMeta.setLore(lore3);
-		ownerOnlyEditButton.setItemMeta(ooeMeta);
-		guiMenu.setItem(2, ownerOnlyEditButton);
+		lore = WordWrapLore("Click to toggle if only the owner should be able to edit this, or everyone.");
+		createItem(ownerOnlyEditButton = new ItemStack(Material.NAME_TAG, 1), "lang_button_owneronlyedit", lore, 2);		
 		
-		List<String> tempLore = new ArrayList<String>();
-		playerEntitiesAllowed = new ItemStack(Material.DIAMOND_SWORD, 1);
-		ItemMeta peaMeta = playerEntitiesAllowed.getItemMeta();
-		peaMeta.setDisplayName(ChatColor.BLUE + "Player Entity Trigger");
-		tempLore.add("Click to have the RPS trigger from Player Entities.");
-		peaMeta.setLore(tempLore);
-		tempLore.clear();
-		playerEntitiesAllowed.setItemMeta(peaMeta);
-		guiMenu.setItem(5, playerEntitiesAllowed);
+		lore = WordWrapLore("Click to have the RPS trigger from Player Entities.");
+		createItem(playerEntitiesAllowed = new ItemStack(Material.DIAMOND_SWORD, 1), "lang_button_playerentitytrigger", lore, 5);
+		
+		lore = WordWrapLore("Click to have the RPS trigger from Hostile Entities.");
+		createItem(hostileEntitiesAllowed = new ItemStack(Material.SKULL_ITEM, 1, (short)2), "lang_button_hostileentitytrigger", lore, 6);		
 
-		hostileEntitiesAllowed = new ItemStack(Material.SKULL_ITEM, 1, (short)2);
-		ItemMeta heaMeta = hostileEntitiesAllowed.getItemMeta();
-		heaMeta.setDisplayName(ChatColor.BLUE + "Hostile Entities Trigger");
-		tempLore.add("Click to have the RPS trigger from Hostile Entities.");
-		heaMeta.setLore(tempLore);
-		tempLore.clear();
-		hostileEntitiesAllowed.setItemMeta(heaMeta);
-		guiMenu.setItem(6, hostileEntitiesAllowed);
-
-		peacefulEntitiesAllowed = new ItemStack(Material.COOKED_BEEF, 1);
-		ItemMeta pea2Meta = peacefulEntitiesAllowed.getItemMeta();
-		pea2Meta.setDisplayName(ChatColor.BLUE + "Peaceful Entities Trigger");
-		tempLore.add("Click to have the RPS trigger from Peaceful Entities.");
-		pea2Meta.setLore(tempLore);
-		tempLore.clear();
-		peacefulEntitiesAllowed.setItemMeta(pea2Meta);
-		guiMenu.setItem(7, peacefulEntitiesAllowed);
-
-		droppedItemsAllowed = new ItemStack(Material.PUMPKIN_SEEDS, 1);
-		ItemMeta diaMeta = droppedItemsAllowed.getItemMeta();
-		diaMeta.setDisplayName(ChatColor.BLUE + "Dropped Items Trigger");
-		tempLore.add("Click to have the RPS trigger from Dropped Items.");
-		diaMeta.setLore(tempLore);
-		tempLore.clear();
-		droppedItemsAllowed.setItemMeta(diaMeta);
-		guiMenu.setItem(8, droppedItemsAllowed);
-
-		invisibleEntsAllowed = new ItemStack(Material.POTION, 1);
-		ItemMeta ieaMeta = invisibleEntsAllowed.getItemMeta();
-		ieaMeta.setDisplayName(ChatColor.BLUE + "Invisible Entities Trigger");
-		tempLore.add("Click to have invisible entities trigger the RPS.");
-		ieaMeta.setLore(tempLore);
-		tempLore.clear();
-		invisibleEntsAllowed.setItemMeta(ieaMeta);
-		guiMenu.setItem(17, invisibleEntsAllowed);
-
+		lore = WordWrapLore("Click to have the RPS trigger from Peaceful Entities.");
+		createItem(peacefulEntitiesAllowed = new ItemStack(Material.COOKED_BEEF, 1), "lang_button_peacefulentitytrigger", lore, 7);		
+		
+		lore = WordWrapLore("Click to have the RPS trigger from Dropped Items.");
+		createItem(droppedItemsAllowed = new ItemStack(Material.PUMPKIN_SEEDS, 1), "lang_button_droppeditemtrigger", lore, 8);		
+		
+		lore = WordWrapLore("Click to have invisible entities trigger the RPS.");
+		createItem(invisibleEntsAllowed = new ItemStack(Material.POTION, 1), "lang_button_invisibleentitytrigger", lore, 17);		
 	}
 	
-	
+
+
+	private List<String> WordWrapLore(String string) {
+		StringBuilder sb = new StringBuilder(string);
+
+		int i = 0;
+		while (i + 35 < sb.length() && (i = sb.lastIndexOf(" ", i + 35)) != -1) {
+		    sb.replace(i, i + 1, "\n");
+		}
+		return Arrays.asList(sb.toString().split("\n"));
+		
+	}
+
+
 	@EventHandler
 	public void CraftItemEvent(CraftItemEvent e)
 	{
 		ItemStack result = e.getRecipe().getResult();
 		if(!(result != null && result.hasItemMeta() && result.getItemMeta().hasDisplayName())) return;
 		//Check if item is a RP Sensor.
-		if((!result.getItemMeta().getDisplayName().equals(ChatColor.RED + "Redstone Proximity Sensor"))) return;
+		if((!result.getItemMeta().getDisplayName().equals(getInstance().rps.getItemMeta().getDisplayName()))) return;
 		
 		if(!e.getWhoClicked().hasPermission("rps.create"))
 		{
 			e.setResult(Result.DENY);
 			e.setCancelled(true);
-			e.getWhoClicked().sendMessage(getInstance().chatPrefix + "You do not have permission to craft that.");
+			e.getWhoClicked().sendMessage(getInstance().chatPrefix + langString("lang_restriction_craft"));
 		}
 	}
 	
 	@EventHandler
-	public void PlayerQuitEvent(PlayerQuitEvent e)
+	public void PlayerJoin(PlayerJoinEvent e)
+	{
+		if(e.getPlayer().isOp())
+		{
+			e.getPlayer().sendMessage(ChatColor.RED + getInstance().chatPrefix + langString("lang_update_notice"));
+			e.getPlayer().sendMessage(ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
+
+		}
+	}
+	
+	@EventHandler
+	public void PlayerQuit(PlayerQuitEvent e)
 	{
 		
 		//Prevent Memory Leak
@@ -186,7 +162,7 @@ public class PlayerListener implements Listener {
 			if((!playerWhoClicked.hasPermission(permString)))
 			{
 				playRejectSound(playerWhoClicked);
-				playerWhoClicked.sendMessage(getInstance().chatPrefix + "You do not have permissions to use this modifier.");
+				playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_permission"));
 				return;
 			}
 			if(displayName.startsWith(ChatColor.BLUE + "Invert Power: "))
@@ -208,7 +184,7 @@ public class PlayerListener implements Listener {
 					getInstance().getSensorConfig().setownerOnlyEdit(selectedRPS, !selectedRPS.isownerOnlyEdit());
 				}else{
 					playRejectSound(playerWhoClicked);
-					playerWhoClicked.sendMessage(getInstance().chatPrefix + "Only the owner can modify that setting.");
+					playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_owneronly_button"));
 				}
 			}else if(displayName.startsWith(ChatColor.BLUE + "Range"))
 			{
@@ -275,13 +251,13 @@ public class PlayerListener implements Listener {
 		//Check if player is right clicking a block
 		if(!(e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) return;
 		//User Right clicked an RPS
-		if(!(getInstance().getSensorConfig().getSensorList().containsKey(l))) return;
-		RPS selectedRPS = getInstance().getSensorConfig().getSensorList().get(l);
+		if(!(getInstance().getSensorConfig().getSensorList().containsKey(RPSLocation.getSLoc(l)))) return;
+		RPS selectedRPS = getInstance().getSensorConfig().getSensorList().get(RPSLocation.getSLoc(l));
 		if(((selectedRPS.getOwner().equals(p.getUniqueId())) && selectedRPS.isownerOnlyEdit()) || (!selectedRPS.isownerOnlyEdit()))
 		{
 			showGUIMenu(p, selectedRPS);
 		}else{
-			p.sendMessage(getInstance().chatPrefix + "This RPS can only be modified by its owner.");
+			p.sendMessage(getInstance().chatPrefix + langString("lang_restriction_owneronly"));
 		}
 	}
 
@@ -310,11 +286,11 @@ public class PlayerListener implements Listener {
 		if(buttonStatus)
 		{
 			itemMeta.addEnchant(glow, 1, true);
-			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + "True");
+			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + langString("lang_button_true"));
 		}else
 		{
 			itemMeta.removeEnchant(glow);
-			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + "False");
+			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + langString("lang_button_false"));
 		}
 		button.setItemMeta(itemMeta);
 		tempInv.setItem(slot, button);
@@ -343,11 +319,11 @@ public class PlayerListener implements Listener {
 		if(selectedRPS.isownerOnlyTrigger())
 		{
 			tempOOMeta.addEnchant(glow, 1, true);
-			tempOOMeta.setDisplayName(ChatColor.BLUE + "Owner Only Trigger: " + ChatColor.GREEN + "True");
+			tempOOMeta.setDisplayName(ChatColor.BLUE + "Owner Only Trigger: " + ChatColor.GREEN + langString("lang_button_true"));
 		}else
 		{
 			tempOOMeta.removeEnchant(glow);
-			tempOOMeta.setDisplayName(ChatColor.BLUE + "Owner Only Trigger: " + ChatColor.RED + "False");
+			tempOOMeta.setDisplayName(ChatColor.BLUE + "Owner Only Trigger: " + ChatColor.RED + langString("lang_button_false"));
 		}
 		ownerOnlyTriggerButton.setItemMeta(tempOOMeta);
 		tempInv.setItem(4, ownerOnlyTriggerButton);
@@ -359,11 +335,11 @@ public class PlayerListener implements Listener {
 		if(selectedRPS.isInverted())
 		{
 			invertedButton.setDurability((short)7);
-			tempIBMeta.setDisplayName(ChatColor.BLUE + "Invert Power: " + ChatColor.GRAY + "Inverted");
+			tempIBMeta.setDisplayName(ChatColor.BLUE + "Invert Power: " + ChatColor.GRAY + langString("lang_button_inverted"));
 		}else
 		{
 			invertedButton.setDurability((short)14);
-			tempIBMeta.setDisplayName(ChatColor.BLUE + "Invert Power: " + ChatColor.RED + "Not Inverted");
+			tempIBMeta.setDisplayName(ChatColor.BLUE + "Invert Power: " + ChatColor.RED + langString("lang_button_notinverted"));
 		}
 		
 		invertedButton.setItemMeta(tempIBMeta);
@@ -373,5 +349,10 @@ public class PlayerListener implements Listener {
 	public RedstoneProximitySensor getInstance()
 	{
 		return RedstoneProximitySensor.getInstance();
+	}
+	
+	public String langString(String key)
+	{
+		return getInstance().getLang().get(key);
 	}
 }

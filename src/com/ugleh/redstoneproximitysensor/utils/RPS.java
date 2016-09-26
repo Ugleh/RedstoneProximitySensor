@@ -18,10 +18,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
 
 public class RPS implements Runnable{
 	private UUID uniqueID;
-	private Location location;
+	private RPSLocation location;
 	private UUID ownerID;
 	private BukkitTask toCancel;
 	private int range = 5;
@@ -34,9 +35,9 @@ public class RPS implements Runnable{
 	
 	private Random random;
 	
-	public RPS(RedstoneProximitySensor plugin, Location placedLocation, UUID placedBy, UUID id, boolean inConfig) {
+	public RPS(RedstoneProximitySensor plugin, RPSLocation location2, UUID placedBy, UUID id, boolean inConfig) {
 		this.plugin = plugin;
-		this.location = placedLocation;
+		this.location = location2;
 		this.ownerID = placedBy;
 		this.uniqueID = id;
 		
@@ -76,6 +77,9 @@ public class RPS implements Runnable{
 
 	@Override
 	public void run() {
+	    if(Bukkit.getWorld(this.location.getWorld()) == null) return;
+		Location location = this.getLocation();
+		
 		triggered = false;
 		List<Entity> entityList = location.getWorld().getEntities();
 		for(Player p : location.getWorld().getPlayers())
@@ -93,8 +97,8 @@ public class RPS implements Runnable{
 		for(Entity ent : entityList)
 		{
 			if((ent.getLocation().distance(location) <= this.range) &&
-			((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().hostileMobs.contains(ent.getType().name())) ||
-					(this.acceptedEntities.contains("PEACEFUL_ENTITY") && plugin.getgConfig().peacefulMobs.contains(ent.getType().name())) ||
+			((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().name())) ||
+					(this.acceptedEntities.contains("PEACEFUL_ENTITY") && plugin.getgConfig().getPeacefulMobs().contains(ent.getType().name())) ||
 					(this.acceptedEntities.contains("PLAYER") && ent.getType().name().equals("PLAYER")) ||
 					(this.acceptedEntities.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
 					))
@@ -143,7 +147,7 @@ public class RPS implements Runnable{
 				location.getWorld().getBlockAt(location).setType(getSensorMaterial(inverted));
 			}			
 		}else{
-			plugin.getSensorConfig().removeSensor(location);
+			plugin.getSensorConfig().removeSensor(RPSLocation.getSLoc(location));
 		}
 
 		
@@ -185,11 +189,11 @@ public class RPS implements Runnable{
 	
 	
 	public Location getLocation() {
-		return location;
+		return location.getLocation();
 	}
 
 	public void setLocation(Location location) {
-		this.location = location;
+		this.location = RPSLocation.getRPSLoc(location);
 	}
 
 	public UUID getOwner() {

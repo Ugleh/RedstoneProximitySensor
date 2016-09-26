@@ -1,6 +1,7 @@
 package com.ugleh.redstoneproximitysensor;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,34 +12,40 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.ugleh.redstoneproximitysensor.commands.CommandRPS;
+import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
+import com.ugleh.redstoneproximitysensor.configs.LanguageConfig;
+import com.ugleh.redstoneproximitysensor.configs.SensorConfig;
 import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
 import com.ugleh.redstoneproximitysensor.listeners.SensorListener;
-import com.ugleh.redstoneproximitysensor.listeners.WorldListener;
-import com.ugleh.redstoneproximitysensor.utils.GeneralConfig;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
-import com.ugleh.redstoneproximitysensor.utils.SConfig;
 import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
 
 public class RedstoneProximitySensor extends JavaPlugin{
 	public final String version = "2.0.10";
-
+	public final boolean debug = true;
+	
 	public GeneralConfig gConfig;
-	public SConfig sConfig;
+	public SensorConfig sensorConfig;
 	public ItemStack rps;
 	public ShapedRecipe rpsRecipe;
 	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
 	public static RedstoneProximitySensor instance;
+	public static LanguageConfig languageConfig;
 	@Override
 	public void onEnable()
 	{
 		instance = this;
 		
-		new UpdateChecker(this.getVersion());
 		
 		//Init configs.
+		languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
 		gConfig = new GeneralConfig(this);
-		sConfig = new SConfig(this, "sensors.yml","sensors.yml");
+		sensorConfig = new SensorConfig(this, "sensors.yml","sensors.yml");
 		
+		//Check for update
+		if(!debug)
+			new UpdateChecker(this.getVersion());
+
 		//Setup Glow
 		registerGlow();
 		
@@ -48,7 +55,6 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		//Init Listeners
 		this.getServer().getPluginManager().registerEvents(new SensorListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-		this.getServer().getPluginManager().registerEvents(new WorldListener(), this);
 		//Others
 		createRecipes();
 	}
@@ -80,8 +86,8 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		return gConfig;
 	}
 
-	public SConfig getSensorConfig() {
-		return sConfig;
+	public SensorConfig getSensorConfig() {
+		return sensorConfig;
 	}
 	
 	
@@ -114,4 +120,8 @@ public class RedstoneProximitySensor extends JavaPlugin{
     	return instance;
     }
     
+    public HashMap<String, String> getLang()
+    {
+    	return languageConfig.getLanguageNodes();
+    }
 }

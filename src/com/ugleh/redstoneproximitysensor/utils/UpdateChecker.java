@@ -40,10 +40,10 @@ public class UpdateChecker {
         if(!getInstance().getVersion().equals(this.latestVersion))
         {
         	needsUpdate = true;
-        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] Redstone Proximity Sensor is outdated.");
-        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] Latest Version: " + ChatColor.GREEN + this.latestVersion);
-        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] Description: " + ChatColor.GREEN + this.latestDesc);
-        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] Link: " + ChatColor.GREEN + "https://www.spigotmc.org/resources/redstone-proximity-sensor.17965/");
+        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] " + getInstance().getLang().get("lang_update_notice"));
+        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] " + getInstance().getLang().get("lang_update_latest") + ": " + ChatColor.GREEN + this.latestVersion);
+        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] " + getInstance().getLang().get("lang_update_desc") + ": " + ChatColor.GREEN + this.latestDesc);
+        	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] " + getInstance().getLang().get("lang_update_link") + ": " + ChatColor.GREEN + "https://www.spigotmc.org/resources/redstone-proximity-sensor.17965/");
         	
         	
         }
