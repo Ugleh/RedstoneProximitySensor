@@ -21,8 +21,7 @@ import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
 
 public class RedstoneProximitySensor extends JavaPlugin{
-	public final String version = "2.0.10";
-	public final boolean debug = true;
+	public final String version = "2.0.11";
 	
 	public GeneralConfig gConfig;
 	public SensorConfig sensorConfig;
@@ -31,11 +30,11 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
 	public static RedstoneProximitySensor instance;
 	public static LanguageConfig languageConfig;
+	public boolean needsUpdate;
 	@Override
 	public void onEnable()
 	{
-		instance = this;
-		
+		instance = this;	
 		
 		//Init configs.
 		languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
@@ -43,8 +42,7 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		sensorConfig = new SensorConfig(this, "sensors.yml","sensors.yml");
 		
 		//Check for update
-		if(!debug)
-			new UpdateChecker(this.getVersion());
+		needsUpdate = new UpdateChecker(this.getVersion()).needsUpdate;
 
 		//Setup Glow
 		registerGlow();

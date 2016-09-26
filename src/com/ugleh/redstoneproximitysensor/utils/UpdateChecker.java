@@ -47,7 +47,7 @@ public class UpdateChecker {
         	
         	
         }
-	}
+     }
 	
 	public static RedstoneProximitySensor getInstance()
 	{

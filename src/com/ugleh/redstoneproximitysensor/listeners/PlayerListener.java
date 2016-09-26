@@ -62,31 +62,32 @@ public class PlayerListener implements Listener {
 	private void createMenu() {
 		guiMenu = Bukkit.createInventory(null, 18, invName);
 		
-		List<String> lore = WordWrapLore("Toggle the sensors power to be inverted when triggered.");
+		List<String> lore = WordWrapLore(langString("lang_button_invertpower_lore"));
 		createItem(invertedButton = new ItemStack(Material.WOOL, 1, (short) 14), "lang_button_invertpower", lore, 0);
-		
-		lore = WordWrapLore("Decides if only the owner should be able to set off this sensor.");
+
+		lore = WordWrapLore(langString("lang_button_oot_lore"));
 		createItem(ownerOnlyTriggerButton = new ItemStack(Material.SKULL_ITEM, 1, (short)3), "lang_button_owneronlytrigger", lore, 4);		
 		
-		lore = WordWrapLore("Left Click to increase range, Right Click to decrease range.");
+		lore = WordWrapLore(langString("lang_button_r_lore"));
 		createItem(rangeButton = new ItemStack(Material.COMPASS, getInstance().getgConfig().getDefaultRange()), "lang_button_range", lore, 1);		
 		
-		lore = WordWrapLore("Click to toggle if only the owner should be able to edit this, or everyone.");
+		lore = WordWrapLore(langString("lang_button_ooe_lore"));
 		createItem(ownerOnlyEditButton = new ItemStack(Material.NAME_TAG, 1), "lang_button_owneronlyedit", lore, 2);		
 		
-		lore = WordWrapLore("Click to have the RPS trigger from Player Entities.");
+		lore = WordWrapLore(langString("lang_button_pet1_lore"));
 		createItem(playerEntitiesAllowed = new ItemStack(Material.DIAMOND_SWORD, 1), "lang_button_playerentitytrigger", lore, 5);
-		
-		lore = WordWrapLore("Click to have the RPS trigger from Hostile Entities.");
+		lore = WordWrapLore(langString("lang_button_pet1_lore"));
+
+		lore = WordWrapLore(langString("lang_button_het_lore"));
 		createItem(hostileEntitiesAllowed = new ItemStack(Material.SKULL_ITEM, 1, (short)2), "lang_button_hostileentitytrigger", lore, 6);		
 
-		lore = WordWrapLore("Click to have the RPS trigger from Peaceful Entities.");
+		lore = WordWrapLore(langString("lang_button_pet2_lore"));
 		createItem(peacefulEntitiesAllowed = new ItemStack(Material.COOKED_BEEF, 1), "lang_button_peacefulentitytrigger", lore, 7);		
 		
-		lore = WordWrapLore("Click to have the RPS trigger from Dropped Items.");
+		lore = WordWrapLore(langString("lang_button_dit_lore"));
 		createItem(droppedItemsAllowed = new ItemStack(Material.PUMPKIN_SEEDS, 1), "lang_button_droppeditemtrigger", lore, 8);		
-		
-		lore = WordWrapLore("Click to have invisible entities trigger the RPS.");
+
+		lore = WordWrapLore(langString("lang_button_iet_lore"));
 		createItem(invisibleEntsAllowed = new ItemStack(Material.POTION, 1), "lang_button_invisibleentitytrigger", lore, 17);		
 	}
 	
@@ -123,7 +124,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void PlayerJoin(PlayerJoinEvent e)
 	{
-		if(e.getPlayer().isOp())
+		if(e.getPlayer().isOp() && getInstance().needsUpdate)
 		{
 			e.getPlayer().sendMessage(ChatColor.RED + getInstance().chatPrefix + langString("lang_update_notice"));
 			e.getPlayer().sendMessage(ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
@@ -165,17 +166,17 @@ public class PlayerListener implements Listener {
 				playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_permission"));
 				return;
 			}
-			if(displayName.startsWith(ChatColor.BLUE + "Invert Power: "))
+			if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_invertpower")))
 			{
 				//Invert Power
 				playToggleSound(playerWhoClicked);
 				getInstance().getSensorConfig().setInverted(selectedRPS, !selectedRPS.isInverted());
-			}else if(displayName.startsWith(ChatColor.BLUE + "Owner Only Trigger: "))
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_owneronlytrigger")))
 			{
 				//Owner Only Trigger
 				playToggleSound(playerWhoClicked);
 				getInstance().getSensorConfig().setownerOnlyTrigger(selectedRPS, !selectedRPS.isownerOnlyTrigger());
-			}else if(displayName.startsWith(ChatColor.BLUE + "Owner Only Edit: "))
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_owneronlyedit")))
 			{
 				//Owner Only Trigger
 				if(selectedRPS.getOwner().equals(playerWhoClicked.getUniqueId()))
@@ -186,7 +187,7 @@ public class PlayerListener implements Listener {
 					playRejectSound(playerWhoClicked);
 					playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_owneronly_button"));
 				}
-			}else if(displayName.startsWith(ChatColor.BLUE + "Range"))
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_range")))
 			{
 				//Range
 				int newRange = 0;
@@ -200,27 +201,27 @@ public class PlayerListener implements Listener {
 					newRange = (selectedRPS.getRange()-1) < 1 ? getInstance().getgConfig().getMaxRange() : selectedRPS.getRange()-1;
 				}
 				getInstance().getSensorConfig().setRange(selectedRPS, newRange);
-			}else if(displayName.startsWith(ChatColor.BLUE + "Player Entity"))
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_playerentitytrigger")))
 			{
 				//Player Entity Trigger
 				playToggleSound(playerWhoClicked);
 				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "PLAYER");
-			}else if(displayName.startsWith(ChatColor.BLUE + "Dropped Item"))
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_droppeditemtrigger")))
 			{
 				//Dropped Item Trigger
 				playToggleSound(playerWhoClicked);
 				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "DROPPED_ITEM");
-			}else if(displayName.startsWith(ChatColor.BLUE + "Hostile Entities"))
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_hostileentitytrigger")))
 			{
 				//Hostile Entity Trigger
 				playToggleSound(playerWhoClicked);
 				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "HOSTILE_ENTITY");
-			}else if(displayName.startsWith(ChatColor.BLUE + "Peaceful Entities"))
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_peacefulentitytrigger")))
 			{
 				//Peaceful Entity Trigger
 				playToggleSound(playerWhoClicked);
 				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "PEACEFUL_ENTITY");
-			}else if(displayName.startsWith(ChatColor.BLUE + "Invisible Entities"))
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_invisibleentitytrigger")))
 			{
 				//Invisible Entity Trigger
 				playToggleSound(playerWhoClicked);
@@ -278,7 +279,7 @@ public class PlayerListener implements Listener {
 
 	private void SetupOwnerOnlyEditButton(Inventory tempInv, RPS selectedRPS) {
 		//ItemMeta ooeMeta = ownerOnlyEditButton.getItemMeta();
-		toggleButton(tempInv, ownerOnlyEditButton, selectedRPS.isownerOnlyEdit(), "Owner Only Edit: ", 2);
+		toggleButton(tempInv, ownerOnlyEditButton, selectedRPS.isownerOnlyEdit(), langString("lang_button_owneronlyedit") + ": ", 2);
 	}
 
 	private void toggleButton(Inventory tempInv, ItemStack button, boolean buttonStatus, String buttonText, int slot) {
@@ -298,17 +299,17 @@ public class PlayerListener implements Listener {
 
 	private void SetupAcceptedEntitiesButtons(Inventory tempInv, RPS selectedRPS) {
 
-		toggleButton(tempInv, playerEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PLAYER"), "Player Entity Trigger: ", 5);
-		toggleButton(tempInv, hostileEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("HOSTILE_ENTITY"), "Hostile Entities Trigger: ", 6);
-		toggleButton(tempInv, peacefulEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PEACEFUL_ENTITY"), "Peaceful Entities Trigger: ", 7);
-		toggleButton(tempInv, droppedItemsAllowed, selectedRPS.getAcceptedEntities().contains("DROPPED_ITEM"), "Dropped Item Trigger: ", 8);
-		toggleButton(tempInv, invisibleEntsAllowed, selectedRPS.getAcceptedEntities().contains("INVISIBLE_ENTITY"), "Invisible Entities Trigger: ", 17);
+		toggleButton(tempInv, playerEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PLAYER"), langString("lang_button_playerentitytrigger") + ": ", 5);
+		toggleButton(tempInv, hostileEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("HOSTILE_ENTITY"), langString("lang_button_hostileentitytrigger") + ": ", 6);
+		toggleButton(tempInv, peacefulEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PEACEFUL_ENTITY"), langString("lang_button_peacefulentitytrigger") + ": ", 7);
+		toggleButton(tempInv, droppedItemsAllowed, selectedRPS.getAcceptedEntities().contains("DROPPED_ITEM"), langString("lang_button_droppeditemtrigger") + ": ", 8);
+		toggleButton(tempInv, invisibleEntsAllowed, selectedRPS.getAcceptedEntities().contains("INVISIBLE_ENTITY"), langString("lang_button_invisibleentitytrigger") + ": ", 17);
 	}
 
 	private void SetupRangeButton(Inventory tempInv, RPS selectedRPS) {
 		rangeButton.setAmount(selectedRPS.getRange());
 		ItemMeta rangeBMeta = rangeButton.getItemMeta();
-		rangeBMeta.setDisplayName(ChatColor.BLUE + "Range: " + ChatColor.GOLD + selectedRPS.getRange());
+		rangeBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_range") + ": " + ChatColor.GOLD + selectedRPS.getRange());
 		rangeButton.setItemMeta(rangeBMeta);
 		tempInv.setItem(1, rangeButton);
 
@@ -319,11 +320,11 @@ public class PlayerListener implements Listener {
 		if(selectedRPS.isownerOnlyTrigger())
 		{
 			tempOOMeta.addEnchant(glow, 1, true);
-			tempOOMeta.setDisplayName(ChatColor.BLUE + "Owner Only Trigger: " + ChatColor.GREEN + langString("lang_button_true"));
+			tempOOMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_owneronlytrigger") + ": " + ChatColor.GREEN + langString("lang_button_true"));
 		}else
 		{
 			tempOOMeta.removeEnchant(glow);
-			tempOOMeta.setDisplayName(ChatColor.BLUE + "Owner Only Trigger: " + ChatColor.RED + langString("lang_button_false"));
+			tempOOMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_owneronlytrigger") + ": " + ChatColor.RED + langString("lang_button_false"));
 		}
 		ownerOnlyTriggerButton.setItemMeta(tempOOMeta);
 		tempInv.setItem(4, ownerOnlyTriggerButton);
@@ -335,11 +336,11 @@ public class PlayerListener implements Listener {
 		if(selectedRPS.isInverted())
 		{
 			invertedButton.setDurability((short)7);
-			tempIBMeta.setDisplayName(ChatColor.BLUE + "Invert Power: " + ChatColor.GRAY + langString("lang_button_inverted"));
+			tempIBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.GRAY + langString("lang_button_inverted"));
 		}else
 		{
 			invertedButton.setDurability((short)14);
-			tempIBMeta.setDisplayName(ChatColor.BLUE + "Invert Power: " + ChatColor.RED + langString("lang_button_notinverted"));
+			tempIBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.RED + langString("lang_button_notinverted"));
 		}
 		
 		invertedButton.setItemMeta(tempIBMeta);

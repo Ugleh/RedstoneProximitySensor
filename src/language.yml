@@ -18,11 +18,20 @@ language:
   lang_button_inverted: Inverted
   lang_button_notinverted: Not Inverted
   lang_button_invertpower: Invert Power
+  lang_button_invertpower_lore: Toggle the sensors power to be inverted when triggered.  
   lang_button_range: Range
+  lang_button_r_lore: Left Click to increase range, Right Click to decrease range.
   lang_button_owneronlyedit: Owner Only Edit
+  lang_button_ooe_lore: Click to toggle if only the owner should be able to edit this, or everyone.
   lang_button_owneronlytrigger: Owner Only Trigger
+  lang_button_oot_lore: Click to have the RPS trigger from the Owner only.
   lang_button_playerentitytrigger: Player Entity Trigger
+  lang_button_pet1_lore: Click to have the RPS trigger from Player Entities.
   lang_button_hostileentitytrigger: Hostile Entities Trigger
+  lang_button_het_lore: Click to have the RPS trigger from Hostile Entities.
   lang_button_peacefulentitytrigger: Peaceful Entities Trigger
+  lang_button_pet2_lore: Click to have the RPS trigger from Peaceful Entities.
   lang_button_droppeditemtrigger: Dropped Items Trigger
+  lang_button_dit_lore: Click to have the RPS trigger from Dropped Items.
   lang_button_invisibleentitytrigger: Invisible Entities Trigger
+  lang_button_iet_lore: Click to have invisible entities trigger the RPS.
