@@ -27,6 +27,7 @@ public class RPS implements Runnable {
 	private BukkitTask toCancel;
 	private int range = 5;
 	private boolean inverted = false;
+	private boolean ownerOnlyTrigger = false;
 	private boolean ownerOnlyEdit = true;
 	private boolean triggered = false;
 	public RedstoneProximitySensor plugin;
@@ -44,14 +45,11 @@ public class RPS implements Runnable {
 
 		if (!inConfig) {
 			// Not yet made
+			this.ownerOnlyTrigger = plugin.getgConfig().isDefaultownerOnlyTrigger();
 			this.inverted = plugin.getgConfig().isDefaultInverted();
 			this.range = plugin.getgConfig().getDefaultRange();
 			// Default Settings
 			GeneralConfig gC = plugin.getgConfig();
-			
-			if (gC.isDefaultownerOnlyTrigger()) {
-				acceptedEntities.add("OWNER");
-			}
 			if (gC.isDeaultPlayerEntityTrigger()) {
 				acceptedEntities.add("PLAYER");
 			}
@@ -113,6 +111,10 @@ public class RPS implements Runnable {
 		return this.ownerOnlyEdit;
 	}
 
+	public boolean isownerOnlyTrigger() {
+		return ownerOnlyTrigger;
+	}
+
 	@Override
 	public void run() {
 		if (Bukkit.getWorld(this.location.getWorld()) == null)
@@ -124,7 +126,7 @@ public class RPS implements Runnable {
 		for (Player p : location.getWorld().getPlayers()) {
 			entityList.add(p);
 		}
-		if (this.acceptedEntities.contains("OWNER")) {
+		if (this.ownerOnlyTrigger) {
 			entityList.clear();
 			if (Bukkit.getPlayer(this.ownerID) != null && Bukkit.getPlayer(this.ownerID).isOnline()
 					&& location.getWorld().equals(Bukkit.getPlayer(this.ownerID).getWorld())) {
@@ -192,8 +194,9 @@ public class RPS implements Runnable {
 		this.toCancel = task;
 	}
 
-	public void setData(boolean inv, int ran, List<String> acpent, boolean ownerEdit) {
+	public void setData(boolean oo, boolean inv, int ran, List<String> acpent, boolean ownerEdit) {
 		this.setAcceptedEntities(acpent);
+		this.setownerOnlyTrigger(oo);
 		this.setInverted(inv);
 		this.setRange(ran);
 		this.setOwnerOnlyEdit(ownerEdit);
@@ -214,6 +217,10 @@ public class RPS implements Runnable {
 
 	public boolean setOwnerOnlyEdit(boolean ownerOnlyEdit) {
 		return this.ownerOnlyEdit = ownerOnlyEdit;
+	}
+
+	public void setownerOnlyTrigger(boolean ownerOnlyTrigger) {
+		this.ownerOnlyTrigger = ownerOnlyTrigger;
 	}
 
 	public void setRange(int range) {

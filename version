@@ -1,2 +1,2 @@
-#2.0.12
-^Minor: Code optimization. Read full update on spigot page.
+#2.0.10
+^Minor fix dealing with single error on first time run. Also fixed Update Checker causing a npe.

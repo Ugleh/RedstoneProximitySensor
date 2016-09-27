@@ -44,7 +44,8 @@ public class UpdateChecker {
         	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] " + getInstance().getLang().get("lang_update_latest") + ": " + ChatColor.GREEN + this.latestVersion);
         	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] " + getInstance().getLang().get("lang_update_desc") + ": " + ChatColor.GREEN + this.latestDesc);
         	Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RPS] " + getInstance().getLang().get("lang_update_link") + ": " + ChatColor.GREEN + "https://www.spigotmc.org/resources/redstone-proximity-sensor.17965/");
-
+        	
+        	
         }
      }
 	
