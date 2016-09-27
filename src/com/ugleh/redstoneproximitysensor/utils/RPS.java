@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -167,21 +168,34 @@ public class RPS implements Runnable {
 				triggered = true;
 				break;
 			}
-		}
-
-		if ((location.getWorld().getBlockAt(location).getType().equals(Material.REDSTONE_TORCH_OFF))
-				|| (location.getWorld().getBlockAt(location).getType().equals(Material.REDSTONE_TORCH_ON))) {
+		} 
+		Block b = location.getBlock();
+		Material m = b.getType();
+		if ((m.equals(Material.REDSTONE_TORCH_OFF))
+				|| (m.equals(Material.REDSTONE_TORCH_ON))) {
 			if (triggered) {
 				spawnParticle(location.clone());
-				location.getWorld().getBlockAt(location).setType(getSensorMaterial(!inverted));
+				setMaterial(b, !inverted);
 
 			} else {
-				location.getWorld().getBlockAt(location).setType(getSensorMaterial(inverted));
+				setMaterial(b, inverted);
 			}
 		} else {
 			plugin.getSensorConfig().removeSensor(RPSLocation.getSLoc(location));
 		}
 
+	}
+
+	@SuppressWarnings("deprecation")
+	private void setMaterial(Block b, boolean c) {
+		try
+		{
+			b.setTypeIdAndData(getSensorMaterial(c).getId(), b.getData(), true);
+
+		}catch(NoSuchMethodError e)
+		{
+			b.setType(getSensorMaterial(c));
+		}
 	}
 
 	public void setAcceptedEntities(List<String> acceptedEntities) {
