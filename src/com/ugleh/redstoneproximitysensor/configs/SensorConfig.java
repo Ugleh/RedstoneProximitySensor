@@ -100,10 +100,12 @@ public class SensorConfig extends YamlConfiguration {
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
 		{
 			ConfigurationSection sensorSec = this.getConfigurationSection("sensors." + uniqueID);
-			
+			if(sensorSec.isBoolean("ownerOnlyTrigger") && !sensorSec.getList("acceptedEntities").contains("OWNER"))
+			{
+				sensorSec.set("ownerOnlyTrigger", null);
+				this.toggleAcceptedEntities(uniqueID, "OWNER");
+			}
 			String worldName = sensorSec.getString("location.world");
-			//if(!loadedWorld.getName().equals(worldName)) continue;
-			//World w = Bukkit.getWorld(worldName);
 			Double x = Double.parseDouble(sensorSec.getString("location.x"));
 			Double y = Double.parseDouble(sensorSec.getString("location.y"));
             Double z = Double.parseDouble(sensorSec.getString("location.z"));
@@ -138,7 +140,6 @@ public class SensorConfig extends YamlConfiguration {
 			tempRPS.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, tempRPS, 0L, 2L));
 			sensorList.put(location.getSLoc(), tempRPS);
 			addToConfig(tempRPS);
-			//return tempRPS;
 		}
 	}
 	
@@ -156,11 +157,10 @@ public class SensorConfig extends YamlConfiguration {
 			rpsconfig.set("range", tempRPS.getRange());
 			rpsconfig.set("acceptedEntities", tempRPS.getAcceptedEntities());
 			rpsconfig.set("owner", tempRPS.getOwner().toString());
-			rpsconfig.set("ownerOnlyTrigger", tempRPS.isownerOnlyTrigger());
 			rpsconfig.set("ownerOnlyEdit", tempRPS.isownerOnlyEdit());
 			this.save();
 		}else{
-			tempRPS.setData(this.getBoolean("sensors." + tempRPS.getUniqueID() + ".ownerOnlyTrigger"), this.getBoolean("sensors." + tempRPS.getUniqueID() + ".inverted"),this.getInt("sensors." + tempRPS.getUniqueID() + ".range"), this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities"), this.getBoolean("sensors." + tempRPS.getUniqueID() + ".ownerOnlyEdit"));
+			tempRPS.setData(this.getBoolean("sensors." + tempRPS.getUniqueID() + ".inverted"),this.getInt("sensors." + tempRPS.getUniqueID() + ".range"), this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities"), this.getBoolean("sensors." + tempRPS.getUniqueID() + ".ownerOnlyEdit"));
 		}
 		
 	}
@@ -186,12 +186,6 @@ public class SensorConfig extends YamlConfiguration {
 		
 	}
 
-	public void setownerOnlyTrigger(RPS selectedRPS, boolean b) {
-		this.set("sensors." + selectedRPS.getUniqueID() + ".ownerOnlyTrigger", b);
-		this.save();
-		selectedRPS.setownerOnlyTrigger(b);
-		
-	}
 
 	public void setRange(RPS selectedRPS, int newRange) {
 		this.set("sensors." + selectedRPS.getUniqueID() + ".range", newRange);
@@ -199,8 +193,21 @@ public class SensorConfig extends YamlConfiguration {
 		selectedRPS.setRange(newRange);
 		
 	}
-
-	public void addAcceptedEntity(RPS selectedRPS, String s) {
+	
+	public void toggleAcceptedEntities(String uniqueID, String s) {
+		List<String> acceptedEntitiesConfig = this.getStringList("sensors." + uniqueID + ".acceptedEntities");
+		if(acceptedEntitiesConfig.contains(s))
+		{
+			acceptedEntitiesConfig.remove(s);
+		}else
+		{
+			acceptedEntitiesConfig.add(s);
+		}
+		this.set("sensors." + uniqueID + ".acceptedEntities", acceptedEntitiesConfig);
+		this.save();		
+	}
+	
+	public void toggleAcceptedEntities(RPS selectedRPS, String s) {
 		List<String> acceptedEntitiesConfig = this.getStringList("sensors." + selectedRPS.getUniqueID() + ".acceptedEntities");
 		if(acceptedEntitiesConfig.contains(s))
 		{

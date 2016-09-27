@@ -1,5 +1,6 @@
 package com.ugleh.redstoneproximitysensor.listeners;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.utils.Trigger;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
@@ -32,15 +34,11 @@ public class PlayerListener implements Listener {
 	private Inventory guiMenu;
 	private String invName;
 	private ItemStack invertedButton;
-	private ItemStack ownerOnlyTriggerButton;
 	private ItemStack ownerOnlyEditButton;
 	private ItemStack rangeButton;
 	
-	private ItemStack playerEntitiesAllowed;
-	private ItemStack hostileEntitiesAllowed;
-	private ItemStack peacefulEntitiesAllowed;
-	private ItemStack droppedItemsAllowed;
-	private ItemStack invisibleEntsAllowed;
+	private List<Trigger> triggers = new ArrayList<Trigger>();
+
 	private HashMap<UUID, RPS> userSelectedRPS = new HashMap<UUID, RPS>();
 	private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<UUID, Inventory>();
 	private Glow glow;
@@ -62,33 +60,41 @@ public class PlayerListener implements Listener {
 	private void createMenu() {
 		guiMenu = Bukkit.createInventory(null, 18, invName);
 		
+		//Setting button, Invert Power
 		List<String> lore = WordWrapLore(langString("lang_button_invertpower_lore"));
 		createItem(invertedButton = new ItemStack(Material.WOOL, 1, (short) 14), "lang_button_invertpower", lore, 0);
-
-		lore = WordWrapLore(langString("lang_button_oot_lore"));
-		createItem(ownerOnlyTriggerButton = new ItemStack(Material.SKULL_ITEM, 1, (short)3), "lang_button_owneronlytrigger", lore, 4);		
 		
+		//Setting button, Range
 		lore = WordWrapLore(langString("lang_button_r_lore"));
 		createItem(rangeButton = new ItemStack(Material.COMPASS, getInstance().getgConfig().getDefaultRange()), "lang_button_range", lore, 1);		
 		
+		//Setting button, Owner Only Edit
 		lore = WordWrapLore(langString("lang_button_ooe_lore"));
 		createItem(ownerOnlyEditButton = new ItemStack(Material.NAME_TAG, 1), "lang_button_owneronlyedit", lore, 2);		
 		
-		lore = WordWrapLore(langString("lang_button_pet1_lore"));
-		createItem(playerEntitiesAllowed = new ItemStack(Material.DIAMOND_SWORD, 1), "lang_button_playerentitytrigger", lore, 5);
-		lore = WordWrapLore(langString("lang_button_pet1_lore"));
+		//Trigger button, Owner Only Trigger
+		lore = WordWrapLore(langString("lang_button_oot_lore"));
+		addTrigger(new Trigger(guiMenu, new ItemStack(Material.SKULL_ITEM, 1, (short)3), 4, "lang_button_owneronlytrigger", "OWNER", "lang_button_true", "lang_button_false", lore, glow));
 
-		lore = WordWrapLore(langString("lang_button_het_lore"));
-		createItem(hostileEntitiesAllowed = new ItemStack(Material.SKULL_ITEM, 1, (short)2), "lang_button_hostileentitytrigger", lore, 6);		
-
-		lore = WordWrapLore(langString("lang_button_pet2_lore"));
-		createItem(peacefulEntitiesAllowed = new ItemStack(Material.COOKED_BEEF, 1), "lang_button_peacefulentitytrigger", lore, 7);		
+		//Trigger button, Player Entity Trigger
+		lore = WordWrapLore(langString("lang_button_pet1_lore"));
+		addTrigger(new Trigger(guiMenu, new ItemStack(Material.DIAMOND_SWORD, 1), 5, "lang_button_playerentitytrigger", "PLAYER", "lang_button_true", "lang_button_false", lore, glow));
 		
-		lore = WordWrapLore(langString("lang_button_dit_lore"));
-		createItem(droppedItemsAllowed = new ItemStack(Material.PUMPKIN_SEEDS, 1), "lang_button_droppeditemtrigger", lore, 8);		
+		//Trigger button, Hostile Entity Trigger
+		lore = WordWrapLore(langString("lang_button_het_lore"));
+		addTrigger(new Trigger(guiMenu, new ItemStack(Material.SKULL_ITEM, 1, (short)2), 6, "lang_button_hostileentitytrigger", "HOSTILE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));
 
+		//Trigger button, Peaceful Entity Trigger
+		lore = WordWrapLore(langString("lang_button_pet2_lore"));
+		addTrigger(new Trigger(guiMenu, new ItemStack(Material.COOKED_BEEF, 1), 7, "lang_button_peacefulentitytrigger", "PEACEFUL_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+		
+		//Trigger button, Dropped Items Trigger
+		lore = WordWrapLore(langString("lang_button_dit_lore"));
+		addTrigger(new Trigger(guiMenu, new ItemStack(Material.PUMPKIN_SEEDS, 1), 8, "lang_button_droppeditemtrigger", "DROPPED_ITEM", "lang_button_true", "lang_button_false", lore, glow));		
+		
+		//Trigger button, Invisible Entity Trigger
 		lore = WordWrapLore(langString("lang_button_iet_lore"));
-		createItem(invisibleEntsAllowed = new ItemStack(Material.POTION, 1), "lang_button_invisibleentitytrigger", lore, 17);		
+		addTrigger(new Trigger(guiMenu, new ItemStack(Material.FERMENTED_SPIDER_EYE, 1), 17, "lang_button_invisibleentitytrigger", "INVISIBLE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
 	}
 	
 
@@ -126,8 +132,8 @@ public class PlayerListener implements Listener {
 	{
 		if(e.getPlayer().isOp() && getInstance().needsUpdate)
 		{
-			e.getPlayer().sendMessage(ChatColor.RED + getInstance().chatPrefix + langString("lang_update_notice"));
-			e.getPlayer().sendMessage(ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
+			e.getPlayer().sendMessage(getInstance().chatPrefix + ChatColor.RED + langString("lang_update_notice"));
+			e.getPlayer().sendMessage(getInstance().chatPrefix + ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
 
 		}
 	}
@@ -171,11 +177,6 @@ public class PlayerListener implements Listener {
 				//Invert Power
 				playToggleSound(playerWhoClicked);
 				getInstance().getSensorConfig().setInverted(selectedRPS, !selectedRPS.isInverted());
-			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_owneronlytrigger")))
-			{
-				//Owner Only Trigger
-				playToggleSound(playerWhoClicked);
-				getInstance().getSensorConfig().setownerOnlyTrigger(selectedRPS, !selectedRPS.isownerOnlyTrigger());
 			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_owneronlyedit")))
 			{
 				//Owner Only Trigger
@@ -201,31 +202,16 @@ public class PlayerListener implements Listener {
 					newRange = (selectedRPS.getRange()-1) < 1 ? getInstance().getgConfig().getMaxRange() : selectedRPS.getRange()-1;
 				}
 				getInstance().getSensorConfig().setRange(selectedRPS, newRange);
-			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_playerentitytrigger")))
+			}
+			
+			for(Trigger t : this.triggers)
 			{
-				//Player Entity Trigger
-				playToggleSound(playerWhoClicked);
-				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "PLAYER");
-			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_droppeditemtrigger")))
-			{
-				//Dropped Item Trigger
-				playToggleSound(playerWhoClicked);
-				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "DROPPED_ITEM");
-			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_hostileentitytrigger")))
-			{
-				//Hostile Entity Trigger
-				playToggleSound(playerWhoClicked);
-				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "HOSTILE_ENTITY");
-			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_peacefulentitytrigger")))
-			{
-				//Peaceful Entity Trigger
-				playToggleSound(playerWhoClicked);
-				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "PEACEFUL_ENTITY");
-			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_invisibleentitytrigger")))
-			{
-				//Invisible Entity Trigger
-				playToggleSound(playerWhoClicked);
-				getInstance().getSensorConfig().addAcceptedEntity(selectedRPS, "INVISIBLE_ENTITY");
+				if(displayName.startsWith(ChatColor.BLUE + t.getDisplayNamePrefix()))
+				{
+					playToggleSound(playerWhoClicked);
+					getInstance().getSensorConfig().toggleAcceptedEntities(selectedRPS, t.getFlag());
+					break;
+				}
 			}
 			
 			showGUIMenu((Player)playerWhoClicked, selectedRPS);
@@ -270,7 +256,6 @@ public class PlayerListener implements Listener {
 		userSelectedInventory.put(p.getUniqueId(), tempMenu);	
 		}
 		SetupInvertedButton(userSelectedInventory.get(p.getUniqueId()), selectedRPS);
-		SetupownerOnlyTriggerButton(userSelectedInventory.get(p.getUniqueId()), selectedRPS);
 		SetupOwnerOnlyEditButton(userSelectedInventory.get(p.getUniqueId()), selectedRPS);
 		SetupRangeButton(userSelectedInventory.get(p.getUniqueId()), selectedRPS);
 		SetupAcceptedEntitiesButtons(userSelectedInventory.get(p.getUniqueId()), selectedRPS);
@@ -299,13 +284,17 @@ public class PlayerListener implements Listener {
 
 	private void SetupAcceptedEntitiesButtons(Inventory tempInv, RPS selectedRPS) {
 
-		toggleButton(tempInv, playerEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PLAYER"), langString("lang_button_playerentitytrigger") + ": ", 5);
-		toggleButton(tempInv, hostileEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("HOSTILE_ENTITY"), langString("lang_button_hostileentitytrigger") + ": ", 6);
-		toggleButton(tempInv, peacefulEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PEACEFUL_ENTITY"), langString("lang_button_peacefulentitytrigger") + ": ", 7);
-		toggleButton(tempInv, droppedItemsAllowed, selectedRPS.getAcceptedEntities().contains("DROPPED_ITEM"), langString("lang_button_droppeditemtrigger") + ": ", 8);
-		toggleButton(tempInv, invisibleEntsAllowed, selectedRPS.getAcceptedEntities().contains("INVISIBLE_ENTITY"), langString("lang_button_invisibleentitytrigger") + ": ", 17);
+		//toggleButton(tempInv, playerEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PLAYER"), langString("lang_button_playerentitytrigger") + ": ", 5);
+		for(Trigger b : this.triggers)
+		{
+			b.toggleButton(selectedRPS, tempInv);
+		}
 	}
-
+	
+	private void addTrigger(Trigger trigger)
+	{
+		this.triggers.add(trigger);
+	}
 	private void SetupRangeButton(Inventory tempInv, RPS selectedRPS) {
 		rangeButton.setAmount(selectedRPS.getRange());
 		ItemMeta rangeBMeta = rangeButton.getItemMeta();
@@ -313,22 +302,6 @@ public class PlayerListener implements Listener {
 		rangeButton.setItemMeta(rangeBMeta);
 		tempInv.setItem(1, rangeButton);
 
-	}
-
-	private void SetupownerOnlyTriggerButton(Inventory tempInv, RPS selectedRPS) {
-		ItemMeta tempOOMeta = ownerOnlyTriggerButton.getItemMeta();
-		if(selectedRPS.isownerOnlyTrigger())
-		{
-			tempOOMeta.addEnchant(glow, 1, true);
-			tempOOMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_owneronlytrigger") + ": " + ChatColor.GREEN + langString("lang_button_true"));
-		}else
-		{
-			tempOOMeta.removeEnchant(glow);
-			tempOOMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_owneronlytrigger") + ": " + ChatColor.RED + langString("lang_button_false"));
-		}
-		ownerOnlyTriggerButton.setItemMeta(tempOOMeta);
-		tempInv.setItem(4, ownerOnlyTriggerButton);
-		
 	}
 
 	private void SetupInvertedButton(Inventory tempInv, RPS selectedRPS) {

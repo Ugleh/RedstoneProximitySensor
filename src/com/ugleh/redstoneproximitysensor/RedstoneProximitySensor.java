@@ -3,9 +3,11 @@ package com.ugleh.redstoneproximitysensor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,7 +23,7 @@ import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
 
 public class RedstoneProximitySensor extends JavaPlugin{
-	public final String version = "2.0.11";
+	public final String version = "2.0.12";
 	
 	public GeneralConfig gConfig;
 	public SensorConfig sensorConfig;
@@ -55,8 +57,21 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		//Others
 		createRecipes();
+		initUpdateAlert();
 	}
-	
+
+	private void initUpdateAlert() {
+		for(Player p : Bukkit.getOnlinePlayers())
+		{
+			if(p.isOp() && this.needsUpdate)
+			{
+				p.sendMessage(getInstance().chatPrefix + ChatColor.DARK_RED + langString("lang_update_notice"));
+				p.sendMessage(getInstance().chatPrefix + ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
+
+			}
+		}
+	}
+
 	private void createRecipes() {
 		rps = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
 		ItemMeta rpsMeta = rps.getItemMeta();
@@ -122,4 +137,8 @@ public class RedstoneProximitySensor extends JavaPlugin{
     {
     	return languageConfig.getLanguageNodes();
     }
+	public String langString(String key)
+	{
+		return getInstance().getLang().get(key);
+	}
 }
