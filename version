@@ -1,2 +1,2 @@
-#2.0.12
-^Minor: Code optimization. Read full update on spigot page.
+#2.0.13
+^Changed Owner Only Trigger to just Owner Trigger. Language nodes form them changed as well.
