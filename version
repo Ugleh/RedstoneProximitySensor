@@ -1,2 +1,2 @@
-#2.0.13
-^Changed Owner Only Trigger to just Owner Trigger. Language nodes form them changed as well.
+#2.0.14
+^Fixed permission bug caused by the language update.
