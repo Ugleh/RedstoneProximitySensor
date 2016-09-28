@@ -23,7 +23,7 @@ import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
 
 public class RedstoneProximitySensor extends JavaPlugin{
-	public final String version = "2.0.12";
+	public final String version = "2.0.13";
 	
 	public GeneralConfig gConfig;
 	public SensorConfig sensorConfig;

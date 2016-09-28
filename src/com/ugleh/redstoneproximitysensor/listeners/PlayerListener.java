@@ -72,9 +72,9 @@ public class PlayerListener implements Listener {
 		lore = WordWrapLore(langString("lang_button_ooe_lore"));
 		createItem(ownerOnlyEditButton = new ItemStack(Material.NAME_TAG, 1), "lang_button_owneronlyedit", lore, 2);		
 		
-		//Trigger button, Owner Only Trigger
-		lore = WordWrapLore(langString("lang_button_oot_lore"));
-		addTrigger(new Trigger(guiMenu, new ItemStack(Material.SKULL_ITEM, 1, (short)3), 4, "lang_button_owneronlytrigger", "OWNER", "lang_button_true", "lang_button_false", lore, glow));
+		//Trigger button, Owner Trigger
+		lore = WordWrapLore(langString("lang_button_ot_lore"));
+		addTrigger(new Trigger(guiMenu, new ItemStack(Material.SKULL_ITEM, 1, (short)3), 4, "lang_button_ownertrigger", "OWNER", "lang_button_true", "lang_button_false", lore, glow));
 
 		//Trigger button, Player Entity Trigger
 		lore = WordWrapLore(langString("lang_button_pet1_lore"));

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -62,7 +63,7 @@ public class LanguageConfig extends YamlConfiguration{
             if (defaults != null) {
                 InputStreamReader reader = new InputStreamReader(plugin.getResource(defaults));
                 FileConfiguration defaultsConfig = YamlConfiguration.loadConfiguration(reader);      
-               
+            	update13();
                 setDefaults(defaultsConfig);
                 options().copyDefaults(true);
                
@@ -84,13 +85,21 @@ public class LanguageConfig extends YamlConfiguration{
     }
    
     private void loadLanguageNodes() {
-
     	if(!this.isConfigurationSection("language")) return;
 		for(String languageID : this.getConfigurationSection("language").getKeys(false))
 		{
 			String langString = this.getString("language." + languageID);
 			languageNodes.put(languageID, langString);
 		}
+	}
+
+	private void update13() {
+    	if(!this.isConfigurationSection("language")) return;
+    	ConfigurationSection cs = this.getConfigurationSection("language");
+    	cs.set("lang_button_owneronlytrigger", null);
+    	cs.set("lang_button_oot_lore", null);
+    	cs.addDefault("lang_button_ownertrigger", "Owner Trigger");
+    	cs.addDefault("lang_button_ot_lore", "Click to have the RPS trigger from the Owner.");
 	}
 
 	/**

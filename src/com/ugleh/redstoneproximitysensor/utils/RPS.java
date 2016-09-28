@@ -125,22 +125,13 @@ public class RPS implements Runnable {
 		for (Player p : location.getWorld().getPlayers()) {
 			entityList.add(p);
 		}
-		if (this.acceptedEntities.contains("OWNER")) {
-			entityList.clear();
-			if (Bukkit.getPlayer(this.ownerID) != null && Bukkit.getPlayer(this.ownerID).isOnline()
-					&& location.getWorld().equals(Bukkit.getPlayer(this.ownerID).getWorld())) {
-				entityList.add(Bukkit.getPlayer(this.ownerID));
-			}
-		}
+		
 		for (Entity ent : entityList) {
-			if ((ent.getLocation().distance(location) <= this.range)
-					&& ((this.acceptedEntities.contains("HOSTILE_ENTITY")
-							&& plugin.getgConfig().getHostileMobs().contains(ent.getType().name()))
-							|| (this.acceptedEntities.contains("PEACEFUL_ENTITY")
-									&& plugin.getgConfig().getPeacefulMobs().contains(ent.getType().name()))
+			if ((ent.getLocation().distance(location) <= this.range)&& ((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().name()))
+					|| (this.acceptedEntities.contains("PEACEFUL_ENTITY") && plugin.getgConfig().getPeacefulMobs().contains(ent.getType().name()))
 					|| (this.acceptedEntities.contains("PLAYER") && ent.getType().name().equals("PLAYER"))
-					|| (this.acceptedEntities.contains("DROPPED_ITEM")
-							&& ent.getType().name().equals("DROPPED_ITEM")))) {
+					|| (this.acceptedEntities.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
+					|| (this.acceptedEntities.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM")))) {
 				// Check if entity is player and that player has invisible, if
 				// so continue on.
 				if (ent.getType().equals(EntityType.PLAYER)) {
