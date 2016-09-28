@@ -1,2 +1,2 @@
-#2.0.14
-^Fixed permission bug caused by the language update.
+#2.0.15
+^Fixed debug text left in previous version.
