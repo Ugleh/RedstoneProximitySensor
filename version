@@ -1,2 +1,2 @@
-#2.1.0
-^Created Copy & Paste Setting buttons.
+#2.1.1
+^Fixed inverted RPS particle bug, changed behavior of Player Entities Trigger to All Players Except Owner. Changed config nodes for Owner Trigger.
