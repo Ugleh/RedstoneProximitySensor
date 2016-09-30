@@ -54,7 +54,7 @@ public class SensorListener implements Listener {
 	@EventHandler
 	public void SensorPlaced(BlockPlaceEvent e)
 	{
-		//Check if item has a display name.
+		// Check if item has a display name.
 		if(!(e.getItemInHand() != null && e.getItemInHand().hasItemMeta() && e.getItemInHand().getItemMeta().hasDisplayName())) return;
 		//Check if item is a RP Sensor.
 		if((!e.getItemInHand().getItemMeta().getDisplayName().equals(getInstance().rps.getItemMeta().getDisplayName()))) return;

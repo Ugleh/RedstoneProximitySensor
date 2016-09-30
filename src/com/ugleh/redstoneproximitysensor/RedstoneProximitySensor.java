@@ -1,8 +1,14 @@
 package com.ugleh.redstoneproximitysensor;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-
+import com.ugleh.redstoneproximitysensor.commands.CommandRPS;
+import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
+import com.ugleh.redstoneproximitysensor.configs.LanguageConfig;
+import com.ugleh.redstoneproximitysensor.configs.SensorConfig;
+import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
+import com.ugleh.redstoneproximitysensor.listeners.SensorListener;
+import com.ugleh.redstoneproximitysensor.utils.Glow;
+import com.ugleh.redstoneproximitysensor.utils.Metrics;
+import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,29 +19,24 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.ugleh.redstoneproximitysensor.commands.CommandRPS;
-import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
-import com.ugleh.redstoneproximitysensor.configs.LanguageConfig;
-import com.ugleh.redstoneproximitysensor.configs.SensorConfig;
-import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
-import com.ugleh.redstoneproximitysensor.listeners.SensorListener;
-import com.ugleh.redstoneproximitysensor.utils.Glow;
-import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 
 public class RedstoneProximitySensor extends JavaPlugin{
-	public final String version = "2.0.13";
-	
-	public GeneralConfig gConfig;
-	public SensorConfig sensorConfig;
+    public final String version = "2.1.2";
+    private GeneralConfig gConfig;
+    private SensorConfig sensorConfig;
 	public ItemStack rps;
-	public ShapedRecipe rpsRecipe;
 	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
-	public static RedstoneProximitySensor instance;
-	public static LanguageConfig languageConfig;
+    public static RedstoneProximitySensor instance;
+    private LanguageConfig languageConfig;
 	public boolean needsUpdate;
+
 	@Override
 	public void onEnable()
 	{
+	    
 		instance = this;	
 		
 		//Init configs.
@@ -58,7 +59,20 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		//Others
 		createRecipes();
 		initUpdateAlert();
+		
+		initMetrics();
 	}
+
+
+	private void initMetrics() {
+	    try {
+	        Metrics metrics = new Metrics(this);
+	        metrics.start();
+	    } catch (IOException e) {
+	        // Failed to submit the stats :-(
+	    }		
+	}
+
 
 	private void initUpdateAlert() {
 		for(Player p : Bukkit.getOnlinePlayers())
@@ -79,8 +93,8 @@ public class RedstoneProximitySensor extends JavaPlugin{
 		Glow glow = new Glow(1234);
 		rpsMeta.addEnchant(glow, 1, true);
 		rps.setItemMeta(rpsMeta);
-		 
-		rpsRecipe = new ShapedRecipe(rps);
+        ShapedRecipe rpsRecipe;
+        rpsRecipe = new ShapedRecipe(rps);
 		rpsRecipe.shape("-R-","-R-","-R-");
 		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe);
@@ -104,7 +118,7 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	}
 	
 	
-	public void registerGlow() {
+	private void registerGlow() {
         try {
             Field f = Enchantment.class.getDeclaredField("acceptingNew");
             f.setAccessible(true);
@@ -118,6 +132,7 @@ public class RedstoneProximitySensor extends JavaPlugin{
             Enchantment.registerEnchantment(glow);
         }
         catch (IllegalArgumentException e){
+
         }
         catch(Exception e){
             e.printStackTrace();
@@ -132,13 +147,18 @@ public class RedstoneProximitySensor extends JavaPlugin{
     {
     	return instance;
     }
-    
+
     public HashMap<String, String> getLang()
     {
     	return languageConfig.getLanguageNodes();
     }
-	public String langString(String key)
+    public String langString(String key)
 	{
 		return getInstance().getLang().get(key);
+	}
+
+
+	public LanguageConfig getLanguageConfig() {
+		return languageConfig;
 	}
 }

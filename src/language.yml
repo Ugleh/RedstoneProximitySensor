@@ -9,6 +9,7 @@ language:
   lang_restriction_owneronly_button: Only the owner can modify that setting.
   lang_restriction_permission: You do not have permissions to use this modifier.
   lang_restriction_craft: You do not have permission to craft that.
+  lang_restriction_paste: You have not previously copied an RPS torch.
   lang_command_playerunknown: Player not found.
   lang_command_reload: Reload complete.
   lang_command_wrongamount: Amount can not be less than 1
@@ -21,12 +22,18 @@ language:
   lang_button_invertpower_lore: Toggle the sensors power to be inverted when triggered.  
   lang_button_range: Range
   lang_button_r_lore: Left Click to increase range, Right Click to decrease range.
+  lang_button_copy: Copy
+  lang_button_c_lore: Click to copy this RPS settings.
+  lang_button_c_reply: Copied RPS settings.
+  lang_button_paste: Paste
+  lang_button_p_lore: Click to paste the copied RPS settings.
+  lang_button_p_reply: Pasted RPS settings.
   lang_button_owneronlyedit: Owner Only Edit
   lang_button_ooe_lore: Click to toggle if only the owner should be able to edit this, or everyone.
   lang_button_ownertrigger: Owner Trigger
   lang_button_ot_lore: Click to have the RPS trigger from the Owner.
   lang_button_playerentitytrigger: Player Entity Trigger
-  lang_button_pet1_lore: Click to have the RPS trigger from Player Entities.
+  lang_button_pet1_lore: Click to have the RPS trigger from Player Entities except Owner.
   lang_button_hostileentitytrigger: Hostile Entities Trigger
   lang_button_het_lore: Click to have the RPS trigger from Hostile Entities.
   lang_button_peacefulentitytrigger: Peaceful Entities Trigger

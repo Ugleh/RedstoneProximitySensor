@@ -1,5 +1,6 @@
 package com.ugleh.redstoneproximitysensor.commands;
 
+import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,10 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-
 public class CommandRPS implements CommandExecutor {
-	RedstoneProximitySensor plugin;
+	private RedstoneProximitySensor plugin;
 	public CommandRPS(RedstoneProximitySensor redstoneProximitySensor) {
 		this.plugin = redstoneProximitySensor;
 	}
@@ -27,6 +26,8 @@ public class CommandRPS implements CommandExecutor {
 		if(args[0].equalsIgnoreCase("reload"))
 		{
 			plugin.getgConfig().reloadConfig();
+			plugin.getLanguageConfig().reload();
+			plugin.getSensorConfig().reload();
 			sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_reload"));
 		}else if(args[0].equalsIgnoreCase("give"))
 		{
@@ -47,7 +48,7 @@ public class CommandRPS implements CommandExecutor {
 							ItemStack rpsStack = plugin.rps.clone();
 							rpsStack.setAmount(amount);
 							givePlayer.getInventory().addItem(rpsStack);
-							sender.sendMessage(getInstance().chatPrefix + "Given RPS * " +amount+" to" + givePlayer.getName());
+							sender.sendMessage(getInstance().chatPrefix + "Given RPS * " +amount+" to " + givePlayer.getName());
 
 						}else
 						{

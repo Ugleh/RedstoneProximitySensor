@@ -1,13 +1,12 @@
 package com.ugleh.redstoneproximitysensor.configs;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
-import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GeneralConfig extends YamlConfiguration{
 	RedstoneProximitySensor plugin;
@@ -15,11 +14,8 @@ public class GeneralConfig extends YamlConfiguration{
 
 	int maxRange = 20;
 	int defaultRange = 5;
-	boolean defaultownerOnlyTrigger = true;
 	boolean defaultInverted = false;
-
-
-	boolean defaultOwnerOnlyTrigger = false;
+	boolean defaultOwnerTrigger = true;
 	boolean deaultPlayerEntityTrigger = true;
 	boolean defaultHostileEntityTrigger = false;
 	boolean defaultPeacefulEntityTrigger = false;
@@ -78,10 +74,9 @@ public class GeneralConfig extends YamlConfiguration{
 	private void grabSettings() {
 		maxRange = plugin.getConfig().getInt("rps.maxRange");
 		defaultRange = plugin.getConfig().getInt("rps.defaultRange");
-		defaultownerOnlyTrigger = plugin.getConfig().getBoolean("rps.defaultownerOnlyTrigger");
 		defaultInverted = plugin.getConfig().getBoolean("rps.defaultInverted");
 		
-		defaultOwnerOnlyTrigger = plugin.getConfig().getBoolean("rps.defaultOwnerOnlyTrigger");;
+		defaultOwnerTrigger = plugin.getConfig().getBoolean("rps.defaultOwnerTrigger");;
 		deaultPlayerEntityTrigger = plugin.getConfig().getBoolean("rps.defaultPlayerEntityTrigger");;
 		defaultHostileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultHostileEntityTrigger");;
 		defaultPeacefulEntityTrigger = plugin.getConfig().getBoolean("rps.defaultPeacefulEntityTrigger");;
@@ -129,8 +124,8 @@ public class GeneralConfig extends YamlConfiguration{
 		return defaultRange;
 	}
 
-	public boolean isDefaultownerOnlyTrigger() {
-		return defaultownerOnlyTrigger;
+	public boolean isDefaultOwnerTrigger() {
+		return defaultOwnerTrigger;
 	}
 
 	public boolean isDefaultInverted() {
@@ -143,10 +138,6 @@ public class GeneralConfig extends YamlConfiguration{
 
 	public File getFile() {
 		return file;
-	}
-
-	public boolean isDefaultOwnerOnlyTrigger() {
-		return defaultOwnerOnlyTrigger;
 	}
 
 	public boolean isDeaultPlayerEntityTrigger() {

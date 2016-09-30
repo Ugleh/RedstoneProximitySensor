@@ -1,13 +1,10 @@
 package com.ugleh.redstoneproximitysensor.utils;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 public class LocationDeserializationFix {
     List<String> lines = new ArrayList<String>();

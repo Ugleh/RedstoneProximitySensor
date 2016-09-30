@@ -1,12 +1,9 @@
 package com.ugleh.redstoneproximitysensor.configs;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
+import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.utils.LocationDeserializationFix;
+import com.ugleh.redstoneproximitysensor.utils.RPS;
+import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -14,10 +11,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.utils.LocationDeserializationFix;
-import com.ugleh.redstoneproximitysensor.utils.RPS;
-import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class SensorConfig extends YamlConfiguration {  
    
@@ -96,6 +95,7 @@ public class SensorConfig extends YamlConfiguration {
     }
    
     public void grabSensors() {
+        sensorList.clear();
 		if(!this.isConfigurationSection("sensors")) return;
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
 		{
@@ -227,6 +227,16 @@ public class SensorConfig extends YamlConfiguration {
 		this.set("sensors." + selectedRPS.getUniqueID() + ".ownerOnlyEdit", b);
 		this.save();
 		selectedRPS.setOwnerOnlyEdit(b);
+		
+	}
+	
+	public void savePaste(String uniqueID, List<String> acceptedEntities, boolean inverted, boolean isownerOnlyEdit,
+			int range) {
+		this.set("sensors." + uniqueID + ".acceptedEntities", acceptedEntities);
+		this.set("sensors." + uniqueID + ".inverted", inverted);
+		this.set("sensors." + uniqueID + ".ownerOnlyEdit", isownerOnlyEdit);
+		this.set("sensors." + uniqueID + ".range", range);
+		this.save();
 		
 	}
    

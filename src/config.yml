@@ -3,7 +3,7 @@ rps:
   defaultRange: 5
   defaultownerOnlyEdit: true
   defaultInverted: false
-  defaultownerOnlyTrigger: false
+  defaultOwnerTrigger: true
   defaultPlayerEntityTrigger: true
   defaultHostileEntityTrigger: false
   defaultPeacefulEntityTrigger: false

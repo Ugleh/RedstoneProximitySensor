@@ -1,15 +1,15 @@
 package com.ugleh.redstoneproximitysensor.configs;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 
 public class LanguageConfig extends YamlConfiguration{
 	   
@@ -98,8 +98,6 @@ public class LanguageConfig extends YamlConfiguration{
     	ConfigurationSection cs = this.getConfigurationSection("language");
     	cs.set("lang_button_owneronlytrigger", null);
     	cs.set("lang_button_oot_lore", null);
-    	cs.addDefault("lang_button_ownertrigger", "Owner Trigger");
-    	cs.addDefault("lang_button_ot_lore", "Click to have the RPS trigger from the Owner.");
 	}
 
 	/**

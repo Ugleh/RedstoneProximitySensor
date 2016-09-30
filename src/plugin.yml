@@ -2,11 +2,14 @@ name: RedstoneProximitySensor
 main: com.ugleh.redstoneproximitysensor.RedstoneProximitySensor
 description: A Sensor can be crafted that has proximity effects.
 author: Ugleh
-version: 2.0.13
+version: 2.1.2
 permissions:
   rps.create:
     description: Permission to craft proximity sensors.
     default: true
+  rps.debug:
+    description: Permission to view debug text.
+    default: false
   rps.place:
     description: Permission to place down proximity sensors.
     default: true
@@ -19,10 +22,16 @@ permissions:
   rps.button_range:
     description: Permission to use said button.
     default: true
+  rps.button_copy:
+    description: Permission to use said button.
+    default: true
+  rps.button_paste:
+    description: Permission to use said button.
+    default: true
   rps.button_owneronlyedit:
     description: Permission to use said button.
     default: true
-  rps.button_owneronlytrigger:
+  rps.button_ownertrigger:
     description: Permission to use said button.
     default: true
   rps.button_playerentitytrigger:

@@ -1,14 +1,8 @@
 package com.ugleh.redstoneproximitysensor.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -18,8 +12,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public class RPS implements Runnable {
 	private UUID uniqueID;
@@ -50,7 +46,7 @@ public class RPS implements Runnable {
 			// Default Settings
 			GeneralConfig gC = plugin.getgConfig();
 			
-			if (gC.isDefaultownerOnlyTrigger()) {
+			if (gC.isDefaultOwnerTrigger()) {
 				acceptedEntities.add("OWNER");
 			}
 			if (gC.isDeaultPlayerEntityTrigger()) {
@@ -132,6 +128,25 @@ public class RPS implements Runnable {
 					|| (this.acceptedEntities.contains("PLAYER") && ent.getType().name().equals("PLAYER"))
 					|| (this.acceptedEntities.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
 					|| (this.acceptedEntities.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM")))) {
+				
+				//If Owner is set to false and player is set to true, I will continue on.
+				if((!this.acceptedEntities.contains("OWNER")) && this.acceptedEntities.contains("PLAYER"))
+				{
+					if(ent.getUniqueId().equals(this.getOwner()))
+					{
+						triggered = false;
+						continue;
+					}
+				}
+				if(ent instanceof Player)
+				{
+					Player pl = (Player) ent;
+					if(pl.getGameMode().equals(GameMode.SPECTATOR))
+					{
+						triggered = false;
+						continue;
+					}
+				}
 				// Check if entity is player and that player has invisible, if
 				// so continue on.
 				if (ent.getType().equals(EntityType.PLAYER)) {
@@ -165,10 +180,11 @@ public class RPS implements Runnable {
 		if ((m.equals(Material.REDSTONE_TORCH_OFF))
 				|| (m.equals(Material.REDSTONE_TORCH_ON))) {
 			if (triggered) {
-				spawnParticle(location.clone());
+				if(!this.inverted) spawnParticle(location.clone());
 				setMaterial(b, !inverted);
 
 			} else {
+				if(this.inverted) spawnParticle(location.clone());
 				setMaterial(b, inverted);
 			}
 		} else {
@@ -238,6 +254,15 @@ public class RPS implements Runnable {
 		Location loc2 = new Location(loc.getWorld(), d0, d1, d2);
 		loc.getWorld().spigot().playEffect(loc2, Effect.COLOURED_DUST, 0, 0, (float) red / 255, (float) green / 255,
 				(float) blue / 255, 1, 0, 5);
+	}
+
+	public void pasteSettings(RPS originalRPS) {
+		this.setAcceptedEntities(originalRPS.getAcceptedEntities());
+		this.setInverted(originalRPS.inverted);
+		this.setOwnerOnlyEdit(originalRPS.ownerOnlyEdit);
+		this.setRange(originalRPS.range);
+		plugin.getSensorConfig().savePaste(this.getUniqueID(), this.getAcceptedEntities(), this.isInverted(), this.isownerOnlyEdit(), this.getRange());
+
 	}
 
 }

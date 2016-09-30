@@ -37,9 +37,13 @@ public class PlayerListener implements Listener {
 	private ItemStack ownerOnlyEditButton;
 	private ItemStack rangeButton;
 	
-	private List<Trigger> triggers = new ArrayList<Trigger>();
+	private ItemStack copyButton;
+	private ItemStack pasteButton;
 
+	private List<Trigger> triggers = new ArrayList<Trigger>();
+	private HashMap<String, String> permList = new HashMap<String, String>();
 	private HashMap<UUID, RPS> userSelectedRPS = new HashMap<UUID, RPS>();
+	private HashMap<UUID, RPS> userCopiedRPS = new HashMap<UUID, RPS>();
 	private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<UUID, Inventory>();
 	private Glow glow;
 	public PlayerListener()
@@ -50,9 +54,10 @@ public class PlayerListener implements Listener {
 	}
 	
 	
-	private void createItem(ItemStack button, String langString, List<String> lore, int slot) {
+	private void createItem(ItemStack button, String perm, String langString, List<String> lore, int slot) {
 		ItemMeta itemMeta = button.getItemMeta();
 		itemMeta.setDisplayName(ChatColor.BLUE + langString(langString));
+		permList.put(itemMeta.getDisplayName(), perm);
 		itemMeta.setLore(lore);
 		button.setItemMeta(itemMeta);
 		guiMenu.setItem(slot, button);
@@ -62,39 +67,47 @@ public class PlayerListener implements Listener {
 		
 		//Setting button, Invert Power
 		List<String> lore = WordWrapLore(langString("lang_button_invertpower_lore"));
-		createItem(invertedButton = new ItemStack(Material.WOOL, 1, (short) 14), "lang_button_invertpower", lore, 0);
+		createItem(invertedButton = new ItemStack(Material.WOOL, 1, (short) 14), "button_invertpower", "lang_button_invertpower", lore, 0);
 		
 		//Setting button, Range
 		lore = WordWrapLore(langString("lang_button_r_lore"));
-		createItem(rangeButton = new ItemStack(Material.COMPASS, getInstance().getgConfig().getDefaultRange()), "lang_button_range", lore, 1);		
+		createItem(rangeButton = new ItemStack(Material.COMPASS, getInstance().getgConfig().getDefaultRange()), "button_range", "lang_button_range", lore, 1);		
 		
 		//Setting button, Owner Only Edit
 		lore = WordWrapLore(langString("lang_button_ooe_lore"));
-		createItem(ownerOnlyEditButton = new ItemStack(Material.NAME_TAG, 1), "lang_button_owneronlyedit", lore, 2);		
+		createItem(ownerOnlyEditButton = new ItemStack(Material.NAME_TAG, 1), "button_owneronlyedit", "lang_button_owneronlyedit", lore, 2);		
 		
+		//Setting button, Copy Settings Button
+		lore = WordWrapLore(langString("lang_button_c_lore"));
+		createItem(setCopyButton(new ItemStack(Material.PAPER, 1)), "button_copy", "lang_button_copy", lore, 9);		
+
+		//Setting button, Copy Settings Button
+		lore = WordWrapLore(langString("lang_button_p_lore"));
+		createItem(setPasteButton(new ItemStack(Material.INK_SACK, 1)), "button_paste", "lang_button_paste", lore, 10);		
+
 		//Trigger button, Owner Trigger
 		lore = WordWrapLore(langString("lang_button_ot_lore"));
-		addTrigger(new Trigger(guiMenu, new ItemStack(Material.SKULL_ITEM, 1, (short)3), 4, "lang_button_ownertrigger", "OWNER", "lang_button_true", "lang_button_false", lore, glow));
+		addTrigger(new Trigger(guiMenu, "button_ownertrigger", new ItemStack(Material.SKULL_ITEM, 1, (short)3), 4, "lang_button_ownertrigger", "OWNER", "lang_button_true", "lang_button_false", lore, glow));
 
 		//Trigger button, Player Entity Trigger
 		lore = WordWrapLore(langString("lang_button_pet1_lore"));
-		addTrigger(new Trigger(guiMenu, new ItemStack(Material.DIAMOND_SWORD, 1), 5, "lang_button_playerentitytrigger", "PLAYER", "lang_button_true", "lang_button_false", lore, glow));
+		addTrigger(new Trigger(guiMenu, "button_playerentitytrigger", new ItemStack(Material.DIAMOND_SWORD, 1), 5, "lang_button_playerentitytrigger", "PLAYER", "lang_button_true", "lang_button_false", lore, glow));
 		
 		//Trigger button, Hostile Entity Trigger
 		lore = WordWrapLore(langString("lang_button_het_lore"));
-		addTrigger(new Trigger(guiMenu, new ItemStack(Material.SKULL_ITEM, 1, (short)2), 6, "lang_button_hostileentitytrigger", "HOSTILE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));
+		addTrigger(new Trigger(guiMenu, "button_hostileentitiestrigger", new ItemStack(Material.SKULL_ITEM, 1, (short)2), 6, "lang_button_hostileentitytrigger", "HOSTILE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));
 
 		//Trigger button, Peaceful Entity Trigger
 		lore = WordWrapLore(langString("lang_button_pet2_lore"));
-		addTrigger(new Trigger(guiMenu, new ItemStack(Material.COOKED_BEEF, 1), 7, "lang_button_peacefulentitytrigger", "PEACEFUL_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+		addTrigger(new Trigger(guiMenu, "button_peacefulentitiestrigger", new ItemStack(Material.COOKED_BEEF, 1), 7, "lang_button_peacefulentitytrigger", "PEACEFUL_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
 		
 		//Trigger button, Dropped Items Trigger
 		lore = WordWrapLore(langString("lang_button_dit_lore"));
-		addTrigger(new Trigger(guiMenu, new ItemStack(Material.PUMPKIN_SEEDS, 1), 8, "lang_button_droppeditemtrigger", "DROPPED_ITEM", "lang_button_true", "lang_button_false", lore, glow));		
+		addTrigger(new Trigger(guiMenu, "button_droppeditemtrigger", new ItemStack(Material.PUMPKIN_SEEDS, 1), 8, "lang_button_droppeditemtrigger", "DROPPED_ITEM", "lang_button_true", "lang_button_false", lore, glow));		
 		
 		//Trigger button, Invisible Entity Trigger
 		lore = WordWrapLore(langString("lang_button_iet_lore"));
-		addTrigger(new Trigger(guiMenu, new ItemStack(Material.FERMENTED_SPIDER_EYE, 1), 17, "lang_button_invisibleentitytrigger", "INVISIBLE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+		addTrigger(new Trigger(guiMenu, "button_invisibleentitiestrigger", new ItemStack(Material.FERMENTED_SPIDER_EYE, 1), 17, "lang_button_invisibleentitytrigger", "INVISIBLE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
 	}
 	
 
@@ -160,13 +173,32 @@ public class PlayerListener implements Listener {
 		if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName())
 		{
 			//Clicked a menu item
+			Trigger selectedTrigger = null;
+			for(Trigger t : this.triggers)
+			{
+				if(e.getCurrentItem().getItemMeta().getDisplayName().startsWith(t.getItem().getItemMeta().getDisplayName()))
+				{
+					selectedTrigger = t;
+				}
+			}
+			String perm = null;
+			if(selectedTrigger != null)
+			{
+				perm = selectedTrigger.getPerm();
+			}else
+			{
+				for(String s : permList.keySet())
+				{
+					if(e.getCurrentItem().getItemMeta().getDisplayName().startsWith(s))
+					{
+						perm = permList.get(s);
+						break;
+					}
+				}
+			}
 			String displayName = e.getCurrentItem().getItemMeta().getDisplayName();
-			String newString = displayName.replace(ChatColor.BLUE.toString(), "");
-			newString = newString.toLowerCase().replace(" ", "");
-			String[] testS = newString.split(":");
-			String permString = "rps.button_" + testS[0];
 			Player playerWhoClicked = (Player) e.getWhoClicked();
-			if((!playerWhoClicked.hasPermission(permString)))
+			if(perm != null && (!playerWhoClicked.hasPermission("rps." + perm)))
 			{
 				playRejectSound(playerWhoClicked);
 				playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_permission"));
@@ -202,6 +234,23 @@ public class PlayerListener implements Listener {
 					newRange = (selectedRPS.getRange()-1) < 1 ? getInstance().getgConfig().getMaxRange() : selectedRPS.getRange()-1;
 				}
 				getInstance().getSensorConfig().setRange(selectedRPS, newRange);
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_copy")))
+			{
+				this.userCopiedRPS.put(playerWhoClicked.getUniqueId(), selectedRPS);
+				playToggleSound(playerWhoClicked);
+				playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_button_c_reply"));
+			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_paste")))
+			{
+				if(this.userCopiedRPS.containsKey(playerWhoClicked.getUniqueId()))
+				{
+					selectedRPS.pasteSettings(this.userCopiedRPS.get(playerWhoClicked.getUniqueId()));
+					playToggleSound(playerWhoClicked);
+					playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_button_p_reply"));
+				}else
+				{
+					playRejectSound(playerWhoClicked);
+					playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_paste"));
+				}
 			}
 			
 			for(Trigger t : this.triggers)
@@ -328,5 +377,27 @@ public class PlayerListener implements Listener {
 	public String langString(String key)
 	{
 		return getInstance().getLang().get(key);
+	}
+
+
+	public ItemStack getCopyButton() {
+		return copyButton;
+	}
+
+
+	public ItemStack setCopyButton(ItemStack copyButton) {
+		this.copyButton = copyButton;
+		return copyButton;
+	}
+
+
+	public ItemStack getPasteButton() {
+		return pasteButton;
+	}
+
+
+	public ItemStack setPasteButton(ItemStack pasteButton) {
+		this.pasteButton = pasteButton;
+		return pasteButton;
 	}
 }

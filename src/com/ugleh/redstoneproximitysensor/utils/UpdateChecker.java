@@ -1,14 +1,13 @@
 package com.ugleh.redstoneproximitysensor.utils;
 
+import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
-import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 public class UpdateChecker {
 	final String versionUrl = "https://raw.githubusercontent.com/Ugleh/RedstoneProximitySensor/master/version";
@@ -48,7 +47,7 @@ public class UpdateChecker {
         }
      }
 	
-	public static RedstoneProximitySensor getInstance()
+	private static RedstoneProximitySensor getInstance()
 	{
 		return RedstoneProximitySensor.getInstance();
 	}
