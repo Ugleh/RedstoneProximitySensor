@@ -1,2 +1,2 @@
-#2.1.1
-^Fixed inverted RPS particle bug, changed behavior of Player Entities Trigger to All Players Except Owner. Changed config nodes for Owner Trigger.
+#2.1.2
+^Updated reload command to reload config, sensors, and language. Also added Metrics.
