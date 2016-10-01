@@ -1,2 +1,2 @@
-#2.1.2
-^Updated reload command to reload config, sensors, and language. Also added Metrics.
+#2.1.3
+^Added Towny & GriefPrevention Trigger addons. Only will show if you have said plugins.
