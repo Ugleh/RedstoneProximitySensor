@@ -1,2 +1,2 @@
-#2.1.4
-^Added update checker in config and added item name language node 
+#2.1.6
+^Fixed a NPE bug dealing with addons, also added Vehcile & Projectile Triggers.
