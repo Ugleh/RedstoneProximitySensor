@@ -1,2 +1,2 @@
-#2.1.6
-^Fixed a NPE bug dealing with addons, also added Vehcile & Projectile Triggers.
+#2.1.7
+^Added /ignorerps command for rps.invisible Permission, also added new language nodes
