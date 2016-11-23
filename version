@@ -1,2 +1,2 @@
-#2.1.7
-^Added /ignorerps command for rps.invisible Permission, also added new language nodes
+#2.1.8
+^Support for 1.11 snapshot. Release comes with an enchantment glow bug. the RPS torch and menu items will not glow, working on it.
