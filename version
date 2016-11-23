@@ -1,2 +1,2 @@
-#2.1.8
-^Support for 1.11 snapshot. Release comes with an enchantment glow bug. the RPS torch and menu items will not glow, working on it.
+#2.1.9
+^Support for 1.11 snapshot (glow bug not yet fixed) & event cancellation on RPS interaction.
