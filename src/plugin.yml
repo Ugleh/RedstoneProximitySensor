@@ -2,7 +2,8 @@ name: RedstoneProximitySensor
 main: com.ugleh.redstoneproximitysensor.RedstoneProximitySensor
 description: A Sensor can be crafted that has proximity effects.
 author: Ugleh
-version: 2.1.2
+softdepend: [Towny, GriefPrevention]
+version: 2.2.0
 permissions:
   rps.create:
     description: Permission to craft proximity sensors.
@@ -15,7 +16,7 @@ permissions:
     default: true
   rps.invisible:
     description: Permission given to prevent triggering of RPS.
-    default: false
+    default: op
   rps.button_invertpower:
     description: Permission to use said button.
     default: true
@@ -49,8 +50,24 @@ permissions:
   rps.button_invisibleentitiestrigger:
     description: Permission to use said button.
     default: true
+  rps.button_projectiletrigger:
+    description: Permission to use said button.
+    default: true
+  rps.button_vehicletrigger:
+    description: Permission to use said button.
+    default: true
+  rps.button_townytrigger:
+    description: Permission to use Towny Addon.
+    default: true
+  rps.button_gptrigger:
+    description: Permission to use GP Addon.
+    default: true
 commands:
   rps:
     description: The admin command for RPS control.
     permission: rps.admin
+    default: op
+  ignorerps:
+    description: The command to toggle ignore the RPS or not.
+    permission: rps.invisible
     default: op

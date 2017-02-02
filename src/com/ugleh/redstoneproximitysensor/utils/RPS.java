@@ -1,6 +1,7 @@
 package com.ugleh.redstoneproximitysensor.utils;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
 import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -8,6 +9,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
@@ -63,6 +66,12 @@ public class RPS implements Runnable {
 			}
 			if (gC.isDefaultInvisibleEntityTrigger()) {
 				acceptedEntities.add("INVISIBLE_ENTITY");
+			}
+			if (gC.isDefaultVehcileEntityTrigger()) {
+				acceptedEntities.add("VEHCILE_ENTITY");
+			}
+			if (gC.isDefaultProjectileEntityTrigger()) {
+				acceptedEntities.add("PROJECTILE_ENTITY");
 			}
 		}
 
@@ -123,11 +132,15 @@ public class RPS implements Runnable {
 		}
 		
 		for (Entity ent : entityList) {
+			if(ent.getWorld() != location.getWorld()) continue;
 			if ((ent.getLocation().distance(location) <= this.range)&& ((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().name()))
 					|| (this.acceptedEntities.contains("PEACEFUL_ENTITY") && plugin.getgConfig().getPeacefulMobs().contains(ent.getType().name()))
-					|| (this.acceptedEntities.contains("PLAYER") && ent.getType().name().equals("PLAYER"))
+					|| (this.acceptedEntities.contains("PLAYER") && ent instanceof Player)
 					|| (this.acceptedEntities.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
-					|| (this.acceptedEntities.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM")))) {
+					|| (this.acceptedEntities.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
+					|| (this.acceptedEntities.contains("PROJECTILE_ENTITY") && ent instanceof Projectile)
+					|| (this.acceptedEntities.contains("VEHICLE_ENTITY") && ent instanceof Vehicle)
+					|| (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(acceptedEntities, ent, this.getLocation())))) {
 				
 				//If Owner is set to false and player is set to true, I will continue on.
 				if((!this.acceptedEntities.contains("OWNER")) && this.acceptedEntities.contains("PLAYER"))
@@ -151,7 +164,7 @@ public class RPS implements Runnable {
 				// so continue on.
 				if (ent.getType().equals(EntityType.PLAYER)) {
 					Player p = (Player) ent;
-					if (p.hasPermission("rps.invisible")) {
+					if (RedstoneProximitySensor.getInstance().playerListener.rpsIgnoreList.contains(p.getUniqueId())) {
 						triggered = false;
 						continue;
 					}
@@ -241,6 +254,7 @@ public class RPS implements Runnable {
 		this.range = range;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void spawnParticle(Location loc) {
 		double d0 = loc.getX() + random.nextDouble() * 0.6D + 0.2D;
 		double d1 = loc.getY() + random.nextDouble() * 0.6D + 0.2D;
@@ -264,5 +278,4 @@ public class RPS implements Runnable {
 		plugin.getSensorConfig().savePaste(this.getUniqueID(), this.getAcceptedEntities(), this.isInverted(), this.isownerOnlyEdit(), this.getRange());
 
 	}
-
 }

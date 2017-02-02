@@ -30,8 +30,9 @@ import com.ugleh.redstoneproximitysensor.utils.Trigger;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
-public class PlayerListener implements Listener {
-	private Inventory guiMenu;
+public class PlayerListener implements Listener
+{
+	public Inventory guiMenu;
 	private String invName;
 	private ItemStack invertedButton;
 	private ItemStack ownerOnlyEditButton;
@@ -41,20 +42,29 @@ public class PlayerListener implements Listener {
 	private ItemStack pasteButton;
 
 	private List<Trigger> triggers = new ArrayList<Trigger>();
+	public List<UUID> rpsIgnoreList = new ArrayList<UUID>();
 	private HashMap<String, String> permList = new HashMap<String, String>();
 	private HashMap<UUID, RPS> userSelectedRPS = new HashMap<UUID, RPS>();
 	private HashMap<UUID, RPS> userCopiedRPS = new HashMap<UUID, RPS>();
 	private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<UUID, Inventory>();
-	private Glow glow;
+	public Glow glow;
+	public static PlayerListener instance;
+	
 	public PlayerListener()
 	{
+		instance = this;
 		invName = ChatColor.BLUE + langString("lang_main_inventoryname");
 		glow = new Glow(1234);
 		createMenu();
 	}
 	
+	public PlayerListener PL()
+	{
+		return instance;
+	}
 	
-	private void createItem(ItemStack button, String perm, String langString, List<String> lore, int slot) {
+	private void createItem(ItemStack button, String perm, String langString, List<String> lore, int slot)
+	{
 		ItemMeta itemMeta = button.getItemMeta();
 		itemMeta.setDisplayName(ChatColor.BLUE + langString(langString));
 		permList.put(itemMeta.getDisplayName(), perm);
@@ -62,7 +72,8 @@ public class PlayerListener implements Listener {
 		button.setItemMeta(itemMeta);
 		guiMenu.setItem(slot, button);
 	}
-	private void createMenu() {
+	private void createMenu()
+	{
 		guiMenu = Bukkit.createInventory(null, 18, invName);
 		
 		//Setting button, Invert Power
@@ -108,11 +119,20 @@ public class PlayerListener implements Listener {
 		//Trigger button, Invisible Entity Trigger
 		lore = WordWrapLore(langString("lang_button_iet_lore"));
 		addTrigger(new Trigger(guiMenu, "button_invisibleentitiestrigger", new ItemStack(Material.FERMENTED_SPIDER_EYE, 1), 17, "lang_button_invisibleentitytrigger", "INVISIBLE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+
+		//Trigger button, Invisible Entity Trigger
+		lore = WordWrapLore(langString("lang_button_pt_lore"));
+		addTrigger(new Trigger(guiMenu, "button_projectiletrigger", new ItemStack(Material.ARROW, 1), 16, "lang_button_projectiletrigger", "PROJECTILE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+
+		//Trigger button, Invisible Entity Trigger
+		lore = WordWrapLore(langString("lang_button_vt_lore"));
+		addTrigger(new Trigger(guiMenu, "button_vehicletrigger", new ItemStack(Material.MINECART, 1), 15, "lang_button_vehicletrigger", "VEHICLE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
 	}
 	
 
 
-	private List<String> WordWrapLore(String string) {
+	public List<String> WordWrapLore(String string)
+	{
 		StringBuilder sb = new StringBuilder(string);
 
 		int i = 0;
@@ -269,11 +289,13 @@ public class PlayerListener implements Listener {
 	}
 	
 
-	private void playRejectSound(Player p) {
+	private void playRejectSound(Player p)
+	{
 		p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
 	}
 	
-	private void playToggleSound(Player p) {
+	private void playToggleSound(Player p)
+	{
 		p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 1F);
 	}
 
@@ -288,6 +310,7 @@ public class PlayerListener implements Listener {
 		if(!(e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) return;
 		//User Right clicked an RPS
 		if(!(getInstance().getSensorConfig().getSensorList().containsKey(RPSLocation.getSLoc(l)))) return;
+		e.setCancelled(true);
 		RPS selectedRPS = getInstance().getSensorConfig().getSensorList().get(RPSLocation.getSLoc(l));
 		if(((selectedRPS.getOwner().equals(p.getUniqueId())) && selectedRPS.isownerOnlyEdit()) || (!selectedRPS.isownerOnlyEdit()))
 		{
@@ -297,7 +320,8 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	private void showGUIMenu(Player p, RPS selectedRPS) {
+	private void showGUIMenu(Player p, RPS selectedRPS)
+	{
 		userSelectedRPS.put(p.getUniqueId(), selectedRPS);
 		if(!userSelectedInventory.containsKey(p.getUniqueId()))
 		{Inventory tempMenu = Bukkit.createInventory(null, 18, invName);
@@ -311,40 +335,47 @@ public class PlayerListener implements Listener {
 		p.openInventory(userSelectedInventory.get(p.getUniqueId()));
 	}
 
-	private void SetupOwnerOnlyEditButton(Inventory tempInv, RPS selectedRPS) {
-		//ItemMeta ooeMeta = ownerOnlyEditButton.getItemMeta();
+	private void SetupOwnerOnlyEditButton(Inventory tempInv, RPS selectedRPS)
+	{
 		toggleButton(tempInv, ownerOnlyEditButton, selectedRPS.isownerOnlyEdit(), langString("lang_button_owneronlyedit") + ": ", 2);
 	}
 
-	private void toggleButton(Inventory tempInv, ItemStack button, boolean buttonStatus, String buttonText, int slot) {
+	private void toggleButton(Inventory tempInv, ItemStack button, boolean buttonStatus, String buttonText, int slot)
+	{
 		ItemMeta itemMeta = button.getItemMeta();
 		if(buttonStatus)
 		{
 			itemMeta.addEnchant(glow, 1, true);
-			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + langString("lang_button_true"));
-		}else
+			String suffix = langString("lang_button_true");
+			suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
+			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + suffix);
+		}
+		else
 		{
 			itemMeta.removeEnchant(glow);
-			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + langString("lang_button_false"));
+			String suffix = langString("lang_button_false");
+			suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
+			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + suffix);
 		}
 		button.setItemMeta(itemMeta);
 		tempInv.setItem(slot, button);
 	}
 
-	private void SetupAcceptedEntitiesButtons(Inventory tempInv, RPS selectedRPS) {
+	private void SetupAcceptedEntitiesButtons(Inventory tempInv, RPS selectedRPS)
+	{
 
-		//toggleButton(tempInv, playerEntitiesAllowed, selectedRPS.getAcceptedEntities().contains("PLAYER"), langString("lang_button_playerentitytrigger") + ": ", 5);
 		for(Trigger b : this.triggers)
 		{
 			b.toggleButton(selectedRPS, tempInv);
 		}
 	}
 	
-	private void addTrigger(Trigger trigger)
+	public void addTrigger(Trigger trigger)
 	{
 		this.triggers.add(trigger);
 	}
-	private void SetupRangeButton(Inventory tempInv, RPS selectedRPS) {
+	private void SetupRangeButton(Inventory tempInv, RPS selectedRPS)
+	{
 		rangeButton.setAmount(selectedRPS.getRange());
 		ItemMeta rangeBMeta = rangeButton.getItemMeta();
 		rangeBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_range") + ": " + ChatColor.GOLD + selectedRPS.getRange());
@@ -353,7 +384,8 @@ public class PlayerListener implements Listener {
 
 	}
 
-	private void SetupInvertedButton(Inventory tempInv, RPS selectedRPS) {
+	private void SetupInvertedButton(Inventory tempInv, RPS selectedRPS)
+	{
 		ItemMeta tempIBMeta = invertedButton.getItemMeta();
 		if(selectedRPS.isInverted())
 		{
@@ -385,18 +417,21 @@ public class PlayerListener implements Listener {
 	}
 
 
-	public ItemStack setCopyButton(ItemStack copyButton) {
+	public ItemStack setCopyButton(ItemStack copyButton)
+	{
 		this.copyButton = copyButton;
 		return copyButton;
 	}
 
 
-	public ItemStack getPasteButton() {
+	public ItemStack getPasteButton()
+	{
 		return pasteButton;
 	}
 
 
-	public ItemStack setPasteButton(ItemStack pasteButton) {
+	public ItemStack setPasteButton(ItemStack pasteButton)
+	{
 		this.pasteButton = pasteButton;
 		return pasteButton;
 	}

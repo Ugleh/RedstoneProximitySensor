@@ -14,14 +14,17 @@ public class GeneralConfig extends YamlConfiguration{
 
 	int maxRange = 20;
 	int defaultRange = 5;
-	boolean defaultInverted = false;
-	boolean defaultOwnerTrigger = true;
-	boolean deaultPlayerEntityTrigger = true;
-	boolean defaultHostileEntityTrigger = false;
-	boolean defaultPeacefulEntityTrigger = false;
-	boolean defaultDroppedItemsTrigger = false;
-	boolean defaultInvisibleEntityTrigger = false;
-	
+	public boolean updateChecker = true;
+	private boolean defaultInverted = false;
+	private boolean defaultOwnerTrigger = true;
+	private boolean deaultPlayerEntityTrigger = true;
+	private boolean defaultHostileEntityTrigger = false;
+	private boolean defaultPeacefulEntityTrigger = false;
+	private boolean defaultDroppedItemsTrigger = false;
+	private boolean defaultInvisibleEntityTrigger = false;
+	private boolean defaultVehcileEntityTrigger = false;
+	private boolean defaultProjectileEntityTrigger = false;
+
 	List<String> hostileMobs = new ArrayList<String>();
 	List<String> peacefulMobs = new ArrayList<String>();
 	
@@ -72,6 +75,7 @@ public class GeneralConfig extends YamlConfiguration{
 	}
 
 	private void grabSettings() {
+		updateChecker = plugin.getConfig().getBoolean("rps.update-checker");
 		maxRange = plugin.getConfig().getInt("rps.maxRange");
 		defaultRange = plugin.getConfig().getInt("rps.defaultRange");
 		defaultInverted = plugin.getConfig().getBoolean("rps.defaultInverted");
@@ -82,9 +86,10 @@ public class GeneralConfig extends YamlConfiguration{
 		defaultPeacefulEntityTrigger = plugin.getConfig().getBoolean("rps.defaultPeacefulEntityTrigger");;
 		defaultDroppedItemsTrigger = plugin.getConfig().getBoolean("rps.defaultDroppedItemsTrigger");;
 		defaultInvisibleEntityTrigger = plugin.getConfig().getBoolean("rps.defaultInvisibleEntityTrigger");;
-
+		defaultVehcileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultVehcileEntityTrigger");;
+		defaultProjectileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultProjectileEntityTrigger");;
 	}
-
+	
 	public void reloadConfig() {
 		try {
 			if (!plugin.getDataFolder().exists()) {
@@ -112,6 +117,9 @@ public class GeneralConfig extends YamlConfiguration{
 		plugin.getConfig().addDefault("rps.defaultPeacefulEntityTrigger", false);
 		plugin.getConfig().addDefault("rps.defaultDroppedItemsTrigger", false);
 		plugin.getConfig().addDefault("rps.defaultInvisibleEntityTrigger", false);
+		plugin.getConfig().addDefault("rps.defaultVehcileEntityTrigger", false);
+		plugin.getConfig().addDefault("rps.defaultProjectileEntityTrigger", false);
+
 		plugin.getConfig().options().copyDefaults(true);
 		plugin.saveConfig();		
 	}
@@ -166,5 +174,13 @@ public class GeneralConfig extends YamlConfiguration{
 
 	public List<String> getPeacefulMobs() {
 		return peacefulMobs;
+	}
+
+	public boolean isDefaultVehcileEntityTrigger() {
+		return defaultVehcileEntityTrigger;
+	}
+
+	public boolean isDefaultProjectileEntityTrigger() {
+		return defaultProjectileEntityTrigger;
 	}
 }

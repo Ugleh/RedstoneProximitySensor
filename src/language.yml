@@ -1,4 +1,5 @@
 language:
+  lang_main_itemname: Redstone Proximity Sensor
   lang_main_inventoryname: Redstone Proximity Sensor Menu
   lang_update_notice: Redstone Proximity Sensor is outdated.
   lang_update_latest: Latest Version
@@ -11,6 +12,9 @@ language:
   lang_restriction_craft: You do not have permission to craft that.
   lang_restriction_paste: You have not previously copied an RPS torch.
   lang_command_playerunknown: Player not found.
+  lang_command_consolesender: Sorry, you must be in-game to use that command.
+  lang_command_invisibleenabled: You are now invisible to RPS torches.
+  lang_command_invisibledisabled: You are now visible to RPS torches.
   lang_command_reload: Reload complete.
   lang_command_wrongamount: Amount can not be less than 1
   lang_command_invalidargs: Not enough Arguments.
@@ -42,3 +46,11 @@ language:
   lang_button_dit_lore: Click to have the RPS trigger from Dropped Items.
   lang_button_invisibleentitytrigger: Invisible Entities Trigger
   lang_button_iet_lore: Click to have invisible entities trigger the RPS.
+  lang_button_projectiletrigger: Projectile Trigger
+  lang_button_pt_lore: Click to have Projectiles trigger the RPS.
+  lang_button_vehicletrigger: Vehicle Trigger
+  lang_button_vt_lore: Click to have Vehicles trigger the RPS.
+  lang_button_townytrigger: Towny Resident Trigger
+  lang_button_tt_lore: Click to have the town this RPS is placed in triggered by its residents.
+  lang_button_gptrigger: GP Trustee Trigger
+  lang_button_gp_lore: Click to have your Grief Prevention Trustee's trigger the RPS.

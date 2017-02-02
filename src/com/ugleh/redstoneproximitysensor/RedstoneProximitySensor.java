@@ -1,5 +1,7 @@
 package com.ugleh.redstoneproximitysensor;
 
+import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
+import com.ugleh.redstoneproximitysensor.commands.CommandIgnoreRPS;
 import com.ugleh.redstoneproximitysensor.commands.CommandRPS;
 import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
 import com.ugleh.redstoneproximitysensor.configs.LanguageConfig;
@@ -23,62 +25,71 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-public class RedstoneProximitySensor extends JavaPlugin{
-    public final String version = "2.1.2";
-    private GeneralConfig gConfig;
-    private SensorConfig sensorConfig;
+public class RedstoneProximitySensor extends JavaPlugin {
+	public final String version = "2.2.0";
+	private GeneralConfig gConfig;
+	private SensorConfig sensorConfig;
 	public ItemStack rps;
-	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED ;
-    public static RedstoneProximitySensor instance;
-    private LanguageConfig languageConfig;
-	public boolean needsUpdate;
-
+	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED;
+	public static RedstoneProximitySensor instance;
+	private LanguageConfig languageConfig;
+	private TriggerAddons triggerAddons;
+	public boolean needsUpdate = false;
+	
+	//Listeners
+	public PlayerListener playerListener;
+	public SensorListener sensorListener;
+	
+	
 	@Override
-	public void onEnable()
-	{
-	    
-		instance = this;	
+	public void onEnable() {
+
+		instance = this;
 		
-		//Init configs.
+		// Init configs.
 		languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
 		gConfig = new GeneralConfig(this);
-		sensorConfig = new SensorConfig(this, "sensors.yml","sensors.yml");
 		
-		//Check for update
-		needsUpdate = new UpdateChecker(this.getVersion()).needsUpdate;
-
-		//Setup Glow
+		// Init Listeners
+		this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
+		this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
+		//Register addons
+		setTriggerAddons(new TriggerAddons());
+		
+		// Add existing sensors back
+		sensorConfig = new SensorConfig(this, "sensors.yml", "sensors.yml");
+		
+		if(gConfig.updateChecker)
+			needsUpdate = new UpdateChecker(this.getVersion()).needsUpdate;
+		// Setup Glow
 		registerGlow();
-		
-		//Setting command Executors.
+
+		// Setting command Executors.
 		this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS(this));
+		this.getServer().getPluginCommand("ignorerps").setExecutor(new CommandIgnoreRPS(this));
 		
-		//Init Listeners
-		this.getServer().getPluginManager().registerEvents(new SensorListener(), this);
-		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-		//Others
+
+		
+
+		// Others
+
 		createRecipes();
 		initUpdateAlert();
-		
 		initMetrics();
 	}
 
-
 	private void initMetrics() {
-	    try {
-	        Metrics metrics = new Metrics(this);
-	        metrics.start();
-	    } catch (IOException e) {
-	        // Failed to submit the stats :-(
-	    }		
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		} catch (IOException e) {
+			// Failed to submit the stats :-(
+		}
 	}
 
-
 	private void initUpdateAlert() {
-		for(Player p : Bukkit.getOnlinePlayers())
-		{
-			if(p.isOp() && this.needsUpdate)
-			{
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			if (p.isOp() && this.needsUpdate) {
 				p.sendMessage(getInstance().chatPrefix + ChatColor.DARK_RED + langString("lang_update_notice"));
 				p.sendMessage(getInstance().chatPrefix + ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
 
@@ -89,26 +100,23 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	private void createRecipes() {
 		rps = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
 		ItemMeta rpsMeta = rps.getItemMeta();
-		rpsMeta.setDisplayName(ChatColor.RED + "Redstone Proximity Sensor");
+		rpsMeta.setDisplayName(ChatColor.RED + this.langString("lang_main_itemname"));
 		Glow glow = new Glow(1234);
 		rpsMeta.addEnchant(glow, 1, true);
 		rps.setItemMeta(rpsMeta);
-        ShapedRecipe rpsRecipe;
-        rpsRecipe = new ShapedRecipe(rps);
-		rpsRecipe.shape("-R-","-R-","-R-");
+		ShapedRecipe rpsRecipe;
+		rpsRecipe = new ShapedRecipe(rps);
+		rpsRecipe.shape("-R-", "-R-", "-R-");
 		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe);
-		
+
 	}
-	
-	
+
 	@Override
-	public void onDisable()
-	{
-		
+	public void onDisable() {
+
 	}
-	
-	
+
 	public GeneralConfig getgConfig() {
 		return gConfig;
 	}
@@ -116,49 +124,51 @@ public class RedstoneProximitySensor extends JavaPlugin{
 	public SensorConfig getSensorConfig() {
 		return sensorConfig;
 	}
-	
-	
+
 	private void registerGlow() {
-        try {
-            Field f = Enchantment.class.getDeclaredField("acceptingNew");
-            f.setAccessible(true);
-            f.set(null, true);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            Glow glow = new Glow(70);
-            Enchantment.registerEnchantment(glow);
-        }
-        catch (IllegalArgumentException e){
+		try {
+			Field f = Enchantment.class.getDeclaredField("acceptingNew");
+			f.setAccessible(true);
+			f.set(null, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			Glow glow = new Glow(1234);
+			Enchantment.registerEnchantment(glow);
+		} catch (IllegalArgumentException e) {
 
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-	public String getVersion()
-	{
+	public String getVersion() {
 		return this.version;
 	}
-    public static RedstoneProximitySensor getInstance()
-    {
-    	return instance;
-    }
 
-    public HashMap<String, String> getLang()
-    {
-    	return languageConfig.getLanguageNodes();
-    }
-    public String langString(String key)
-	{
-		return getInstance().getLang().get(key);
+	public static RedstoneProximitySensor getInstance() {
+		return instance;
 	}
 
+	public HashMap<String, String> getLang() {
+		return languageConfig.getLanguageNodes();
+	}
+
+	public String langString(String key) {
+		return getInstance().getLang().get(key);
+	}
 
 	public LanguageConfig getLanguageConfig() {
 		return languageConfig;
 	}
+
+	public TriggerAddons getTriggerAddons() {
+		return triggerAddons;
+	}
+
+	public void setTriggerAddons(TriggerAddons triggerAddons) {
+		this.triggerAddons = triggerAddons;
+	}
+	
 }

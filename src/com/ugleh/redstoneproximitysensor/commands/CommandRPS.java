@@ -36,7 +36,7 @@ public class CommandRPS implements CommandExecutor {
 				Player givePlayer = Bukkit.getPlayer(args[1]);
 				if(givePlayer == null)
 				{
-					sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_playerunkown"));
+					sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_playerunknown"));
 				}else
 				{
 					if(args.length > 2)

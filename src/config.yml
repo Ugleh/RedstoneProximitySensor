@@ -1,4 +1,5 @@
 rps:
+  update-checker: true
   maxRange: 20
   defaultRange: 5
   defaultownerOnlyEdit: true
@@ -9,3 +10,5 @@ rps:
   defaultPeacefulEntityTrigger: false
   defaultDroppedItemsTrigger: false
   defaultInvisibleEntityTrigger: false
+  defaultVehcileEntityTrigger: false
+  defaultProjectileEntityTrigger: false
