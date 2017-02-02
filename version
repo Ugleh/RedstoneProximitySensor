@@ -1,2 +1,2 @@
-#2.1.2
-^Updated reload command to reload config, sensors, and language. Also added Metrics.
+#2.1.9
+^Support for 1.11 snapshot (glow bug not yet fixed) & event cancellation on RPS interaction.
