@@ -1,2 +1,2 @@
-#2.1.9
-^Support for 1.11 snapshot (glow bug not yet fixed) & event cancellation on RPS interaction.
+#2.2.0
+^Fixed when RPS tries to measure the distance between outside world enitites
