@@ -1,2 +1,2 @@
-#2.2.0
-^Fixed when RPS tries to measure the distance between outside world enitites, inventory glow seams to have fixed itself in the latest release.
+#2.2.1
+^Increased the performance of the overall plugin. Test it out, let me know in SpigotMC.
