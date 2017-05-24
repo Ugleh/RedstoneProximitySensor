@@ -27,6 +27,7 @@ public class RPS {
 	private UUID ownerID;
 	private BukkitTask toCancel;
 	private int range = 5;
+	private double rangeSquared;
 	private boolean inverted = false;
 	private boolean ownerOnlyEdit = true;
 	private boolean triggered = false;
@@ -47,6 +48,8 @@ public class RPS {
 			// Not yet made
 			this.inverted = plugin.getgConfig().isDefaultInverted();
 			this.range = plugin.getgConfig().getDefaultRange();
+			this.rangeSquared = range * range;
+
 			// Default Settings
 			GeneralConfig gC = plugin.getgConfig();
 			
@@ -120,14 +123,14 @@ public class RPS {
 		return this.ownerOnlyEdit;
 	}
 	
-    public static Entity[]  getNearbyEntities(Location l, int radius){
+    public static Entity[]  getNearbyEntities(Location l, int radius, double radiusSquared){
         int chunkRadius = radius < 16 ? 1 : (radius - (radius % 16))/16;
         HashSet<Entity> radiusEntities = new HashSet<Entity>();
             for (int chX = 0 -chunkRadius; chX <= chunkRadius; chX ++){
                 for (int chZ = 0 -chunkRadius; chZ <= chunkRadius; chZ++){
                     int x=(int) l.getX(),y=(int) l.getY(),z=(int) l.getZ();
                     for (Entity e : new Location(l.getWorld(),x+(chX*16),y,z+(chZ*16)).getChunk().getEntities()){
-                        if (e.getLocation().distance(l) <= radius && e.getLocation().getBlock() != l.getBlock()) radiusEntities.add(e);
+                    	if (e.getLocation().distanceSquared(l) <= radiusSquared && e.getLocation().getBlock() != l.getBlock()) radiusEntities.add(e);
                     }
                 }
             }
@@ -135,7 +138,7 @@ public class RPS {
     }
     
 
-	//@Override
+//@Override
 	public void run() {
 		if (Bukkit.getWorld(this.location.getWorld()) == null)
 			return;
@@ -143,14 +146,14 @@ public class RPS {
 
 		triggered = false;
 		
-		Entity[] entityList = getNearbyEntities(this.getLocation(), this.range+1);
+		Entity[] entityList = getNearbyEntities(this.getLocation(), this.range, this.rangeSquared);
 		//for (Player p : location.getWorld().getPlayers()) {
 			//entityList.add(p);
 		//}
 		
 		for (Entity ent : entityList) {
 			if(ent.getWorld() != location.getWorld()) continue;
-			if ((ent.getLocation().distance(location) <= this.range)&& ((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().name()))
+			if (((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().name()))
 					|| (this.acceptedEntities.contains("PEACEFUL_ENTITY") && plugin.getgConfig().getPeacefulMobs().contains(ent.getType().name()))
 					|| (this.acceptedEntities.contains("PLAYER") && ent instanceof Player)
 					|| (this.acceptedEntities.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
@@ -269,6 +272,7 @@ public class RPS {
 
 	public void setRange(int range) {
 		this.range = range;
+		this.rangeSquared = range * range;
 	}
 
 	@SuppressWarnings("deprecation")

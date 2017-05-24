@@ -101,7 +101,7 @@ public class SensorConfig extends YamlConfiguration {
     private void createRunnable() {
 		// TODO Auto-generated method stub
 		RPSRunnable runnable = new RPSRunnable((RedstoneProximitySensor) plugin);
-		runnable.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, runnable, 0L, 2L));
+		runnable.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, runnable, 0L, 5L));
 
 	}
 
