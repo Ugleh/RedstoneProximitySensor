@@ -65,6 +65,7 @@ public class GeneralConfig extends YamlConfiguration{
 		hostileMobs.add(EntityType.SLIME.name());
 		hostileMobs.add(EntityType.WITCH.name());
 		hostileMobs.add(EntityType.WITHER.name());
+		hostileMobs.add(EntityType.WITHER_SKELETON.name());
 		hostileMobs.add(EntityType.ENDER_DRAGON.name());
 		hostileMobs.add(EntityType.ZOMBIE.name());
 		hostileMobs.add(EntityType.ENDERMAN.name());
