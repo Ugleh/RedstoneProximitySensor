@@ -148,11 +148,8 @@ public class RPS {
 		
 		 boolean isLoaded = location.getWorld().isChunkLoaded(location.getChunk());
 		 if(!isLoaded)
-		 {
-			 Bukkit.broadcastMessage("IsLoaded: " +  isLoaded);
 			 return;
 
-		 }
 				 
 		Entity[] entityList = getNearbyEntities(this.getLocation(), this.range, this.rangeSquared);
 		//for (Player p : location.getWorld().getPlayers()) {
