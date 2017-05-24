@@ -4,7 +4,10 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.utils.LocationDeserializationFix;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
+import com.ugleh.redstoneproximitysensor.utils.RPSRunnable;
+
 import org.bukkit.Bukkit;
+//import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -81,6 +84,7 @@ public class SensorConfig extends YamlConfiguration {
                 save();
             }
         	grabSensors();
+        	createRunnable();
     
         	} catch (IOException exception) {
             exception.printStackTrace();
@@ -94,7 +98,14 @@ public class SensorConfig extends YamlConfiguration {
        
     }
    
-    public void grabSensors() {
+    private void createRunnable() {
+		// TODO Auto-generated method stub
+		RPSRunnable runnable = new RPSRunnable((RedstoneProximitySensor) plugin);
+		runnable.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, runnable, 0L, 2L));
+
+	}
+
+	public void grabSensors() {
         sensorList.clear();
 		if(!this.isConfigurationSection("sensors")) return;
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
@@ -137,7 +148,7 @@ public class SensorConfig extends YamlConfiguration {
 		if(location != null)
 		{
 			RPS tempRPS = new RPS((RedstoneProximitySensor) plugin, location, placedBy, id, inConfig);
-			tempRPS.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, tempRPS, 0L, 2L));
+			//tempRPS.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, tempRPS, 0L, 2L));
 			sensorList.put(location.getSLoc(), tempRPS);
 			addToConfig(tempRPS);
 		}
@@ -171,7 +182,7 @@ public class SensorConfig extends YamlConfiguration {
 
 	public void removeSensor(String string) {
 		RPS brokenRPS = this.getSensorList().get(string);
-		brokenRPS.cancelTask();
+		//brokenRPS.cancelTask();
 		String uniqueID = brokenRPS.getUniqueID();
 		this.getSensorList().remove(string);
 		this.set("sensors." + uniqueID, null);

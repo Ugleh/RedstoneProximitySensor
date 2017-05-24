@@ -16,11 +16,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class RPS implements Runnable {
+public class RPS {
 	private UUID uniqueID;
 	private RPSLocation location;
 	private UUID ownerID;
@@ -118,18 +119,34 @@ public class RPS implements Runnable {
 	public boolean isownerOnlyEdit() {
 		return this.ownerOnlyEdit;
 	}
+	
+    public static Entity[]  getNearbyEntities(Location l, int radius){
+        int chunkRadius = radius < 16 ? 1 : (radius - (radius % 16))/16;
+        HashSet<Entity> radiusEntities = new HashSet<Entity>();
+            for (int chX = 0 -chunkRadius; chX <= chunkRadius; chX ++){
+                for (int chZ = 0 -chunkRadius; chZ <= chunkRadius; chZ++){
+                    int x=(int) l.getX(),y=(int) l.getY(),z=(int) l.getZ();
+                    for (Entity e : new Location(l.getWorld(),x+(chX*16),y,z+(chZ*16)).getChunk().getEntities()){
+                        if (e.getLocation().distance(l) <= radius && e.getLocation().getBlock() != l.getBlock()) radiusEntities.add(e);
+                    }
+                }
+            }
+        return radiusEntities.toArray(new Entity[radiusEntities.size()]);
+    }
+    
 
-	@Override
+	//@Override
 	public void run() {
 		if (Bukkit.getWorld(this.location.getWorld()) == null)
 			return;
 		Location location = this.getLocation();
 
 		triggered = false;
-		List<Entity> entityList = location.getWorld().getEntities();
-		for (Player p : location.getWorld().getPlayers()) {
-			entityList.add(p);
-		}
+		
+		Entity[] entityList = getNearbyEntities(this.getLocation(), this.range+1);
+		//for (Player p : location.getWorld().getPlayers()) {
+			//entityList.add(p);
+		//}
 		
 		for (Entity ent : entityList) {
 			if(ent.getWorld() != location.getWorld()) continue;
