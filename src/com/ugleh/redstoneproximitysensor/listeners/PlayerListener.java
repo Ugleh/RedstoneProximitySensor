@@ -184,6 +184,7 @@ public class PlayerListener implements Listener
 	public void InventoryClickEvent(InventoryClickEvent e)
 	{
 		if(e.getClickedInventory() == null) return;
+		if(!e.getWhoClicked().hasPermission("rps.menu")) return;
 		if(!(e.getInventory().getName().equals(invName) || e.getClickedInventory().getName().equals(invName))) return;
 		RPS selectedRPS = userSelectedRPS.get(e.getWhoClicked().getUniqueId());
 		

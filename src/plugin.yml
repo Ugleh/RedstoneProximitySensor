@@ -3,7 +3,7 @@ main: com.ugleh.redstoneproximitysensor.RedstoneProximitySensor
 description: A Sensor can be crafted that has proximity effects.
 author: Ugleh
 softdepend: [Towny, GriefPrevention]
-version: 2.2.2
+version: 2.2.4
 permissions:
   rps.create:
     description: Permission to craft proximity sensors.
@@ -17,6 +17,9 @@ permissions:
   rps.invisible:
     description: Permission given to prevent triggering of RPS.
     default: op
+  rps.menu:
+    description: Permission to use RPS GUI Menu.
+    default: true
   rps.button_invertpower:
     description: Permission to use said button.
     default: true

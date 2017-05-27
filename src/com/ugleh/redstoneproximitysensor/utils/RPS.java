@@ -33,7 +33,7 @@ public class RPS {
 	private boolean triggered = false;
 	public RedstoneProximitySensor plugin;
 	private List<String> acceptedEntities = new ArrayList<String>();
-
+	public GeneralConfig gC;
 	private Random random;
 
 	public RPS(RedstoneProximitySensor plugin, RPSLocation location2, UUID placedBy, UUID id, boolean inConfig) {
@@ -43,15 +43,15 @@ public class RPS {
 		this.uniqueID = id;
 
 		random = new Random();
+		gC = plugin.getgConfig();
 
 		if (!inConfig) {
-			// Not yet made
+			//Config not yet made
 			this.inverted = plugin.getgConfig().isDefaultInverted();
 			this.range = plugin.getgConfig().getDefaultRange();
 			this.rangeSquared = range * range;
 
 			// Default Settings
-			GeneralConfig gC = plugin.getgConfig();
 			
 			if (gC.isDefaultOwnerTrigger()) {
 				acceptedEntities.add("OWNER");
@@ -218,11 +218,11 @@ public class RPS {
 		if ((m.equals(Material.REDSTONE_TORCH_OFF))
 				|| (m.equals(Material.REDSTONE_TORCH_ON))) {
 			if (triggered) {
-				if(!this.inverted) spawnParticle(location.clone());
+				if(!this.inverted && gC.useParticles()) spawnParticle(location.clone());
 				setMaterial(b, !inverted);
 
 			} else {
-				if(this.inverted) spawnParticle(location.clone());
+				if(this.inverted && gC.useParticles()) spawnParticle(location.clone());
 				setMaterial(b, inverted);
 			}
 		} else {

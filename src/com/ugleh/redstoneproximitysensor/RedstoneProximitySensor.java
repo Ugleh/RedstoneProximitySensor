@@ -14,6 +14,7 @@ import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +27,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class RedstoneProximitySensor extends JavaPlugin {
-	public final String version = "2.2.2";
+	public final String version = "2.2.4";
 	private GeneralConfig gConfig;
 	private SensorConfig sensorConfig;
 	public ItemStack rps;
@@ -97,6 +98,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void createRecipes() {
 		rps = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
 		ItemMeta rpsMeta = rps.getItemMeta();
@@ -105,7 +107,16 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		rpsMeta.addEnchant(glow, 1, true);
 		rps.setItemMeta(rpsMeta);
 		ShapedRecipe rpsRecipe;
-		rpsRecipe = new ShapedRecipe(rps);
+		if(Bukkit.getBukkitVersion().startsWith("1.12")) //1.12 not yet released, so working with -pre's
+		{
+			NamespacedKey key = new NamespacedKey(this, this.getDescription().getName());
+			rpsRecipe = new ShapedRecipe(key, rps);
+
+		}else
+		{
+			rpsRecipe = new ShapedRecipe(rps);
+		}
+		 
 		rpsRecipe.shape("-R-", "-R-", "-R-");
 		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe);

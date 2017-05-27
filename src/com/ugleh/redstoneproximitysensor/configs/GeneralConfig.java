@@ -1,6 +1,8 @@
 package com.ugleh.redstoneproximitysensor.configs;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
@@ -14,6 +16,7 @@ public class GeneralConfig extends YamlConfiguration{
 
 	int maxRange = 20;
 	int defaultRange = 5;
+	public boolean useParticles = true;
 	public boolean updateChecker = true;
 	private boolean defaultInverted = false;
 	private boolean defaultOwnerTrigger = true;
@@ -51,6 +54,17 @@ public class GeneralConfig extends YamlConfiguration{
 		peacefulMobs.add(EntityType.WOLF.name());
 		peacefulMobs.add(EntityType.OCELOT.name());
 		
+		peacefulMobs.add(EntityType.DONKEY.name());
+		peacefulMobs.add(EntityType.LLAMA.name());
+		peacefulMobs.add(EntityType.ZOMBIE_HORSE.name());
+		peacefulMobs.add(EntityType.SQUID.name());
+		peacefulMobs.add(EntityType.MULE.name());
+		peacefulMobs.add(EntityType.POLAR_BEAR.name());
+		
+		if(Bukkit.getBukkitVersion().startsWith("1.12")) //1.12 not yet released, so working with -pre's
+		{
+			hostileMobs.add(EntityType.PARROT.name());
+		}
 	}
 
 	private void generateHostileMobsList() {
@@ -73,10 +87,25 @@ public class GeneralConfig extends YamlConfiguration{
 		hostileMobs.add(EntityType.SPIDER.name());
 		hostileMobs.add(EntityType.PIG_ZOMBIE.name());
 		hostileMobs.add(EntityType.SNOWMAN.name());
-	}
+		hostileMobs.add(EntityType.ZOMBIE_VILLAGER.name());
+		hostileMobs.add(EntityType.VINDICATOR.name());
+		hostileMobs.add(EntityType.EVOKER.name());
+		hostileMobs.add(EntityType.VEX.name());
+		hostileMobs.add(EntityType.ELDER_GUARDIAN.name());
+		hostileMobs.add(EntityType.STRAY.name());
+		hostileMobs.add(EntityType.SHULKER.name());
+		hostileMobs.add(EntityType.HUSK.name());
+		hostileMobs.add(EntityType.IRON_GOLEM.name());
+		
+		if(Bukkit.getBukkitVersion().startsWith("1.12")) //1.12 not yet released, so working with -pre's
+		{
+			hostileMobs.add(EntityType.ILLUSIONER.name());
+		}
+		}
 
 	private void grabSettings() {
 		updateChecker = plugin.getConfig().getBoolean("rps.update-checker");
+		useParticles = plugin.getConfig().getBoolean("rps.use-particles");
 		maxRange = plugin.getConfig().getInt("rps.maxRange");
 		defaultRange = plugin.getConfig().getInt("rps.defaultRange");
 		defaultInverted = plugin.getConfig().getBoolean("rps.defaultInverted");
@@ -109,6 +138,7 @@ public class GeneralConfig extends YamlConfiguration{
 	}
 	private void createDefaults() {
 		plugin.getConfig().addDefault("rps.maxRange", 20);
+		plugin.getConfig().addDefault("rps.use-particles", true);
 		plugin.getConfig().addDefault("rps.defaultRange", 5);
 		plugin.getConfig().addDefault("rps.defaultownerOnlyEdit", true);
 		plugin.getConfig().addDefault("rps.defaultInverted", false);
@@ -151,6 +181,9 @@ public class GeneralConfig extends YamlConfiguration{
 
 	public boolean isDeaultPlayerEntityTrigger() {
 		return deaultPlayerEntityTrigger;
+	}
+	public boolean useParticles() {
+		return useParticles;
 	}
 
 	public boolean isDefaultHostileEntityTrigger() {

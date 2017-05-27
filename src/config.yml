@@ -1,5 +1,6 @@
 rps:
   update-checker: true
+  use-particles: true
   maxRange: 20
   defaultRange: 5
   defaultownerOnlyEdit: true
