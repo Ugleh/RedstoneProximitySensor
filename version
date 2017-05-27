@@ -1,2 +1,2 @@
-#2.2.2
-^Fixed some major resource hogging in the plugin, Please report back at SpigotMC if you see a difference!
+#2.2.3
+^Added new and previously ignored mobs to mob lists, added config to disable particles and GUI menu.
