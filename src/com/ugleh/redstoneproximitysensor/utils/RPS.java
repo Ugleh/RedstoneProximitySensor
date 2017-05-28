@@ -36,9 +36,9 @@ public class RPS {
 	public GeneralConfig generalConfig;
 	private Random random;
 
-	public RPS(RedstoneProximitySensor plugin, RPSLocation location2, UUID placedBy, UUID id, boolean inConfig) {
+	public RPS(RedstoneProximitySensor plugin, RPSLocation location, UUID placedBy, UUID id, boolean inConfig) {
 		this.plugin = plugin;
-		this.location = location2;
+		this.location = location;
 		this.ownerID = placedBy;
 		this.uniqueID = id;
 
