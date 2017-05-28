@@ -52,31 +52,23 @@ public class RPS {
 			this.rangeSquared = range * range;
 
 			// Default Settings
-			
-			if (generalConfig.isDefaultOwnerTrigger()) {
+			if (generalConfig.isDefaultOwnerTrigger())
 				acceptedEntities.add("OWNER");
-			}
-			if (generalConfig.isDeaultPlayerEntityTrigger()) {
+			if (generalConfig.isDeaultPlayerEntityTrigger())
 				acceptedEntities.add("PLAYER");
-			}
-			if (generalConfig.isDefaultPeacefulEntityTrigger()) {
+			if (generalConfig.isDefaultPeacefulEntityTrigger())
 				acceptedEntities.add("PEACEFUL_ENTITY");
-			}
-			if (generalConfig.isDefaultDroppedItemsTrigger()) {
+			if (generalConfig.isDefaultDroppedItemsTrigger())
 				acceptedEntities.add("DROPPED_ITEM");
-			}
-			if (generalConfig.isDefaultHostileEntityTrigger()) {
+			if (generalConfig.isDefaultHostileEntityTrigger())
 				acceptedEntities.add("HOSTILE_ENTITY");
-			}
-			if (generalConfig.isDefaultInvisibleEntityTrigger()) {
+			if (generalConfig.isDefaultInvisibleEntityTrigger())
 				acceptedEntities.add("INVISIBLE_ENTITY");
-			}
-			if (generalConfig.isDefaultVehcileEntityTrigger()) {
+			if (generalConfig.isDefaultVehcileEntityTrigger())
 				acceptedEntities.add("VEHCILE_ENTITY");
-			}
-			if (generalConfig.isDefaultProjectileEntityTrigger()) {
+			if (generalConfig.isDefaultProjectileEntityTrigger())
 				acceptedEntities.add("PROJECTILE_ENTITY");
-			}
+			
 		}
 
 	}
