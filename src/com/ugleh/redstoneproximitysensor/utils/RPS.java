@@ -33,7 +33,7 @@ public class RPS {
 	private boolean triggered = false;
 	public RedstoneProximitySensor plugin;
 	private List<String> acceptedEntities = new ArrayList<String>();
-	public GeneralConfig gC;
+	public GeneralConfig generalConfig;
 	private Random random;
 
 	public RPS(RedstoneProximitySensor plugin, RPSLocation location2, UUID placedBy, UUID id, boolean inConfig) {
@@ -43,7 +43,7 @@ public class RPS {
 		this.uniqueID = id;
 
 		random = new Random();
-		gC = plugin.getgConfig();
+		generalConfig = plugin.getgConfig();
 
 		if (!inConfig) {
 			//Config not yet made
@@ -53,28 +53,28 @@ public class RPS {
 
 			// Default Settings
 			
-			if (gC.isDefaultOwnerTrigger()) {
+			if (generalConfig.isDefaultOwnerTrigger()) {
 				acceptedEntities.add("OWNER");
 			}
-			if (gC.isDeaultPlayerEntityTrigger()) {
+			if (generalConfig.isDeaultPlayerEntityTrigger()) {
 				acceptedEntities.add("PLAYER");
 			}
-			if (gC.isDefaultPeacefulEntityTrigger()) {
+			if (generalConfig.isDefaultPeacefulEntityTrigger()) {
 				acceptedEntities.add("PEACEFUL_ENTITY");
 			}
-			if (gC.isDefaultDroppedItemsTrigger()) {
+			if (generalConfig.isDefaultDroppedItemsTrigger()) {
 				acceptedEntities.add("DROPPED_ITEM");
 			}
-			if (gC.isDefaultHostileEntityTrigger()) {
+			if (generalConfig.isDefaultHostileEntityTrigger()) {
 				acceptedEntities.add("HOSTILE_ENTITY");
 			}
-			if (gC.isDefaultInvisibleEntityTrigger()) {
+			if (generalConfig.isDefaultInvisibleEntityTrigger()) {
 				acceptedEntities.add("INVISIBLE_ENTITY");
 			}
-			if (gC.isDefaultVehcileEntityTrigger()) {
+			if (generalConfig.isDefaultVehcileEntityTrigger()) {
 				acceptedEntities.add("VEHCILE_ENTITY");
 			}
-			if (gC.isDefaultProjectileEntityTrigger()) {
+			if (generalConfig.isDefaultProjectileEntityTrigger()) {
 				acceptedEntities.add("PROJECTILE_ENTITY");
 			}
 		}
@@ -218,11 +218,11 @@ public class RPS {
 		if ((m.equals(Material.REDSTONE_TORCH_OFF))
 				|| (m.equals(Material.REDSTONE_TORCH_ON))) {
 			if (triggered) {
-				if(!this.inverted && gC.useParticles()) spawnParticle(location.clone());
+				if(!this.inverted && generalConfig.useParticles()) spawnParticle(location.clone());
 				setMaterial(b, !inverted);
 
 			} else {
-				if(this.inverted && gC.useParticles()) spawnParticle(location.clone());
+				if(this.inverted && generalConfig.useParticles()) spawnParticle(location.clone());
 				setMaterial(b, inverted);
 			}
 		} else {
