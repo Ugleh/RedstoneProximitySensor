@@ -130,7 +130,6 @@ public class RPS {
     }
     
 
-//@Override
 	public void run() {
 		triggered = false;
 
@@ -243,10 +242,10 @@ public class RPS {
 		this.toCancel = task;
 	}
 
-	public void setData(boolean inv, int ran, List<String> acpent, boolean ownerEdit) {
+	public void setData(boolean inverted, int range, List<String> acpent, boolean ownerEdit) {
 		this.setAcceptedEntities(acpent);
-		this.setInverted(inv);
-		this.setRange(ran);
+		this.setInverted(inverted);
+		this.setRange(range);
 		this.setOwnerOnlyEdit(ownerEdit);
 
 	}
