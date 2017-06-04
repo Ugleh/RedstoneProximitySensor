@@ -27,7 +27,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class RedstoneProximitySensor extends JavaPlugin {
-	public final String version = "2.2.4";
+	public final String version = "2.2.5";
 	private GeneralConfig gConfig;
 	private SensorConfig sensorConfig;
 	public ItemStack rps;

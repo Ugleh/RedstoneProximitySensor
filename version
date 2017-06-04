@@ -1,2 +1,2 @@
-#2.2.4
-^Added new and previously ignored mobs to mob lists, added config to disable particles and GUI menu.
+#2.2.5
+^Now supporting 1.9 through 1.12-pre in the mob list to prevent errors thrown.
