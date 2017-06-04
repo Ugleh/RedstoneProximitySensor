@@ -27,12 +27,18 @@ public class GeneralConfig extends YamlConfiguration{
 	private boolean defaultInvisibleEntityTrigger = false;
 	private boolean defaultVehcileEntityTrigger = false;
 	private boolean defaultProjectileEntityTrigger = false;
-
+	
 	List<String> hostileMobs = new ArrayList<String>();
 	List<String> peacefulMobs = new ArrayList<String>();
 	
+	float bukkitVersion;
 	public GeneralConfig(RedstoneProximitySensor plugin) {
 		this.plugin = plugin;
+		
+		Bukkit.broadcastMessage("" + Bukkit.getVersion());
+		String[] ver = Bukkit.getBukkitVersion().split("-");
+		bukkitVersion = Float.parseFloat(ver[0]);
+
 		generateHostileMobsList();
 		generatePeacefulMobs();
 		reloadConfig();
@@ -41,6 +47,7 @@ public class GeneralConfig extends YamlConfiguration{
 	}
 
 	private void generatePeacefulMobs() {
+		
 		peacefulMobs.add(EntityType.BAT.name());
 		peacefulMobs.add(EntityType.CHICKEN.name());
 		peacefulMobs.add(EntityType.COW.name());
@@ -54,16 +61,23 @@ public class GeneralConfig extends YamlConfiguration{
 		peacefulMobs.add(EntityType.WOLF.name());
 		peacefulMobs.add(EntityType.OCELOT.name());
 		
-		peacefulMobs.add(EntityType.DONKEY.name());
-		peacefulMobs.add(EntityType.LLAMA.name());
-		peacefulMobs.add(EntityType.ZOMBIE_HORSE.name());
 		peacefulMobs.add(EntityType.SQUID.name());
-		peacefulMobs.add(EntityType.MULE.name());
-		peacefulMobs.add(EntityType.POLAR_BEAR.name());
-		
-		if(Bukkit.getBukkitVersion().startsWith("1.12")) //1.12 not yet released, so working with -pre's
+		if(bukkitVersion >= 1.10)
 		{
-			hostileMobs.add(EntityType.PARROT.name());
+			peacefulMobs.add(EntityType.POLAR_BEAR.name());
+			
+			if(bukkitVersion >= 1.11)
+			{
+				peacefulMobs.add(EntityType.LLAMA.name());
+				peacefulMobs.add(EntityType.DONKEY.name());
+				peacefulMobs.add(EntityType.MULE.name());
+				peacefulMobs.add(EntityType.ZOMBIE_HORSE.name());
+				
+				if(bukkitVersion >= 1.12) //1.12 not yet released, so working with -pre's
+				{
+					hostileMobs.add(EntityType.PARROT.name());
+				}
+			}
 		}
 	}
 
@@ -79,7 +93,6 @@ public class GeneralConfig extends YamlConfiguration{
 		hostileMobs.add(EntityType.SLIME.name());
 		hostileMobs.add(EntityType.WITCH.name());
 		hostileMobs.add(EntityType.WITHER.name());
-		hostileMobs.add(EntityType.WITHER_SKELETON.name());
 		hostileMobs.add(EntityType.ENDER_DRAGON.name());
 		hostileMobs.add(EntityType.ZOMBIE.name());
 		hostileMobs.add(EntityType.ENDERMAN.name());
@@ -88,18 +101,30 @@ public class GeneralConfig extends YamlConfiguration{
 		hostileMobs.add(EntityType.PIG_ZOMBIE.name());
 		hostileMobs.add(EntityType.SNOWMAN.name());
 		hostileMobs.add(EntityType.ZOMBIE_VILLAGER.name());
-		hostileMobs.add(EntityType.VINDICATOR.name());
-		hostileMobs.add(EntityType.EVOKER.name());
-		hostileMobs.add(EntityType.VEX.name());
 		hostileMobs.add(EntityType.ELDER_GUARDIAN.name());
-		hostileMobs.add(EntityType.STRAY.name());
-		hostileMobs.add(EntityType.SHULKER.name());
-		hostileMobs.add(EntityType.HUSK.name());
 		hostileMobs.add(EntityType.IRON_GOLEM.name());
-		
-		if(Bukkit.getBukkitVersion().startsWith("1.12")) //1.12 not yet released, so working with -pre's
+		if(bukkitVersion >= 1.9)
 		{
-			hostileMobs.add(EntityType.ILLUSIONER.name());
+			hostileMobs.add(EntityType.SHULKER.name());
+			
+			if(bukkitVersion >= 1.10)
+			{
+				hostileMobs.add(EntityType.STRAY.name());
+				hostileMobs.add(EntityType.HUSK.name());
+				
+				if(bukkitVersion >= 1.11)
+				{
+					hostileMobs.add(EntityType.WITHER_SKELETON.name());
+					hostileMobs.add(EntityType.VINDICATOR.name());
+					hostileMobs.add(EntityType.EVOKER.name());
+					hostileMobs.add(EntityType.VEX.name());
+					
+					if(bukkitVersion >= 1.12) //1.12 not yet released, so working with -pre's
+					{
+						hostileMobs.add(EntityType.ILLUSIONER.name());
+					}
+				}
+			}
 		}
 		}
 
