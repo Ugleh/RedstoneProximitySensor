@@ -35,10 +35,18 @@ public class GeneralConfig extends YamlConfiguration{
 	public GeneralConfig(RedstoneProximitySensor plugin) {
 		this.plugin = plugin;
 		
-		Bukkit.broadcastMessage("" + Bukkit.getVersion());
 		String[] ver = Bukkit.getBukkitVersion().split("-");
+		String[] checkperiods = ver[0].split(".");
+		if(checkperiods.length > 2)
+		{
+		int i = ver[0].lastIndexOf(".");
+		String[] vers =  {ver[0].substring(0, i), ver[0].substring(i)};
+		
+		bukkitVersion = Float.parseFloat(vers[0]);
+		}else{
 		bukkitVersion = Float.parseFloat(ver[0]);
 
+		}
 		generateHostileMobsList();
 		generatePeacefulMobs();
 		reloadConfig();
