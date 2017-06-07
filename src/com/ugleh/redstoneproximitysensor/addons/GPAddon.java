@@ -2,6 +2,7 @@ package com.ugleh.redstoneproximitysensor.addons;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,7 +58,7 @@ public class GPAddon extends AddonTemplate{
 	}
 
 	@Override
-	public boolean checkTrigger(List<String> acceptedEntities, Entity e, Location l)
+	public boolean checkTrigger(List<String> acceptedEntities, Entity e, Location l, UUID ownerID)
 	{
 		if(!acceptedEntities.contains(flagName))return false;
 		if(!(e instanceof Player)) return false;

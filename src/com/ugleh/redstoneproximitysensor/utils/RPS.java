@@ -13,7 +13,6 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,7 +24,6 @@ public class RPS {
 	private UUID uniqueID;
 	private RPSLocation location;
 	private UUID ownerID;
-	private BukkitTask toCancel;
 	private int range = 5;
 	private double rangeSquared;
 	private boolean inverted = false;
@@ -70,11 +68,6 @@ public class RPS {
 				acceptedEntities.add("PROJECTILE_ENTITY");
 			
 		}
-
-	}
-
-	public void cancelTask() {
-		this.toCancel.cancel();
 
 	}
 
@@ -156,7 +149,7 @@ public class RPS {
 					|| (this.acceptedEntities.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
 					|| (this.acceptedEntities.contains("PROJECTILE_ENTITY") && ent instanceof Projectile)
 					|| (this.acceptedEntities.contains("VEHICLE_ENTITY") && ent instanceof Vehicle)
-					|| (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(acceptedEntities, ent, this.getLocation())))) {
+					|| (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(acceptedEntities, ent, this.getLocation(), ownerID)))) {
 				
 				//If Owner is set to false and player is set to true, I will continue on.
 				if((!this.acceptedEntities.contains("OWNER")) && this.acceptedEntities.contains("PLAYER"))
@@ -236,10 +229,6 @@ public class RPS {
 
 	public void setAcceptedEntities(List<String> acceptedEntities) {
 		this.acceptedEntities = acceptedEntities;
-	}
-
-	public void setCancelTask(BukkitTask task) {
-		this.toCancel = task;
 	}
 
 	public void setData(boolean inverted, int range, List<String> acpent, boolean ownerEdit) {

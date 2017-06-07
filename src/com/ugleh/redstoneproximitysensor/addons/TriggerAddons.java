@@ -2,6 +2,7 @@ package com.ugleh.redstoneproximitysensor.addons;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -18,6 +19,7 @@ public class TriggerAddons {
 		instance = this;
 		initTowny();
 		initGP();
+		initFactions();
 	}
 
 	private void initTowny()
@@ -26,6 +28,15 @@ public class TriggerAddons {
 		if(plug !=null && plug.isEnabled())
 		{
 			triggeredAddons.add(new TownyAddon(getSlot()));
+		}
+	}
+	
+	private void initFactions()
+	{
+		Plugin plug = RedstoneProximitySensor.getInstance().getServer().getPluginManager().getPlugin("LegacyFactions");
+		if(plug !=null && plug.isEnabled())
+		{
+			triggeredAddons.add(new LegacyFactionsAddon(getSlot()));
 		}
 	}
 	
@@ -52,10 +63,10 @@ public class TriggerAddons {
 		return instance;
 	}
 
-	public boolean triggerCheck(List<String> acceptedEntities, Entity ent, Location l) {
+	public boolean triggerCheck(List<String> acceptedEntities, Entity ent, Location l, UUID ownerID) {
 		for(AddonTemplate addon : triggeredAddons)
 		{
-			if(addon.checkTrigger(acceptedEntities, ent, l)) return true;
+			if(addon.checkTrigger(acceptedEntities, ent, l, ownerID)) return true;
 		}
 		return false;
 	}

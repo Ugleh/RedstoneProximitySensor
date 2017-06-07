@@ -5,9 +5,6 @@ import com.ugleh.redstoneproximitysensor.utils.LocationDeserializationFix;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
 import com.ugleh.redstoneproximitysensor.utils.RPSRunnable;
-
-import org.bukkit.Bukkit;
-//import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -99,9 +96,9 @@ public class SensorConfig extends YamlConfiguration {
     }
    
     private void createRunnable() {
-		// TODO Auto-generated method stub
+		@SuppressWarnings("unused")
 		RPSRunnable runnable = new RPSRunnable((RedstoneProximitySensor) plugin);
-		runnable.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, runnable, 0L, 5L));
+		
 
 	}
 
