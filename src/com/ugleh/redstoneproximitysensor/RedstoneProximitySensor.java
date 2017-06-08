@@ -25,9 +25,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class RedstoneProximitySensor extends JavaPlugin {
-	public final String version = "2.2.7";
+	public String version;
 	private GeneralConfig gConfig;
 	private SensorConfig sensorConfig;
 	public ItemStack rps;
@@ -44,9 +45,8 @@ public class RedstoneProximitySensor extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-
 		instance = this;
-		
+		version =  getDescription().getVersion();
 		// Init configs.
 		languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
 		gConfig = new GeneralConfig(this);
@@ -68,7 +68,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		// Setting command Executors.
 		this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS(this));
 		this.getServer().getPluginCommand("ignorerps").setExecutor(new CommandIgnoreRPS(this));
-		
 
 		
 
@@ -77,6 +76,8 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		createRecipes();
 		initUpdateAlert();
 		initMetrics();
+		this.getLogger().log(Level.INFO, "Plugin has started!");
+		this.getLogger().log(Level.INFO, "RPS's Loaded: " + getSensorConfig().getSensorList().size());
 	}
 
 	private void initMetrics() {
