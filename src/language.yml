@@ -54,5 +54,5 @@ language:
   lang_button_tt_lore: Click to have the town this RPS is placed in triggered by its residents.
   lang_button_gptrigger: GP Trustee Trigger
   lang_button_gp_lore: Click to have your Grief Prevention Trustee's trigger the RPS.
-  button_lfactiontrigger: Factions Member Trigger
-  lang_button_lf_lore: Click to have your Faction Members trigger the RPS.
+  button_lfactiontrigger: LegacyFactions Member Trigger
+  lang_button_lf_lore: Click to have your LegacyFaction Members trigger the RPS.
