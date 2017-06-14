@@ -29,7 +29,7 @@ public class LegacyFactionsAddon extends AddonTemplate{
 	private void createButton()
 	{
 		List<String> lore = pl().WordWrapLore(pl().langString("lang_button_lf_lore"));
-		pl().addTrigger(new Trigger(pl().guiMenu, "button_lfactiontrigger", new ItemStack(Material.FENCE), slot, "button_lfactiontrigger", flagName, "lang_button_true", "lang_button_false", lore, pl().glow));
+		pl().addTrigger(new Trigger(pl().guiMenu, "button_lfactiontrigger", new ItemStack(Material.FENCE), slot, "lang_button_lftrigger", flagName, "lang_button_true", "lang_button_false", lore, pl().glow));
 
 	}
 	private RedstoneProximitySensor getInstance()
