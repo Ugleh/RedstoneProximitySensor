@@ -1,7 +1,6 @@
 package com.ugleh.redstoneproximitysensor.configs;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.utils.LocationDeserializationFix;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
 import com.ugleh.redstoneproximitysensor.utils.RPSRunnable;
@@ -44,7 +43,6 @@ public class SensorConfig extends YamlConfiguration {
         this.plugin = plugin;
         this.defaults = defaultsName;
         //Fix previous version issues:
-        new LocationDeserializationFix();
         this.file = new File(plugin.getDataFolder(), fileName);
         reload();
     }
