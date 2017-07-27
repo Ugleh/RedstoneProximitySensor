@@ -142,15 +142,15 @@ public class RPS {
 		
 		for (Entity ent : entityList) {
 			if(ent.getWorld() != location.getWorld()) continue;
-			if (((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().name()))
-					|| (this.acceptedEntities.contains("PEACEFUL_ENTITY") && plugin.getgConfig().getPeacefulMobs().contains(ent.getType().name()))
+			if (((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().toString()))
+					|| (this.acceptedEntities.contains("PEACEFUL_ENTITY") && plugin.getgConfig().getPeacefulMobs().contains(ent.getType().toString()))
 					|| (this.acceptedEntities.contains("PLAYER") && ent instanceof Player)
 					|| (this.acceptedEntities.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
 					|| (this.acceptedEntities.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
 					|| (this.acceptedEntities.contains("PROJECTILE_ENTITY") && ent instanceof Projectile)
 					|| (this.acceptedEntities.contains("VEHICLE_ENTITY") && ent instanceof Vehicle)
 					|| (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(acceptedEntities, ent, this.getLocation(), ownerID)))) {
-				
+
 				//If Owner is set to false and player is set to true, I will continue on.
 				if((!this.acceptedEntities.contains("OWNER")) && this.acceptedEntities.contains("PLAYER"))
 				{
@@ -217,13 +217,16 @@ public class RPS {
 
 	@SuppressWarnings("deprecation")
 	private void setMaterial(Block b, boolean c) {
-		try
+		if(!b.getType().equals(getSensorMaterial(c)))
 		{
-			b.setTypeIdAndData(getSensorMaterial(c).getId(), b.getData(), true);
 
-		}catch(NoSuchMethodError e)
-		{
-			b.setType(getSensorMaterial(c));
+			try
+			{
+				b.setTypeIdAndData(getSensorMaterial(c).getId(), b.getData(), true);
+			}catch(NoSuchMethodError e)
+			{
+				b.setType(getSensorMaterial(c));
+			}
 		}
 	}
 
