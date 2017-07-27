@@ -4,7 +4,6 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,85 +55,59 @@ public class GeneralConfig extends YamlConfiguration{
 
 	private void generatePeacefulMobs() {
 		
-		peacefulMobs.add(EntityType.BAT.name());
-		peacefulMobs.add(EntityType.CHICKEN.name());
-		peacefulMobs.add(EntityType.COW.name());
-		peacefulMobs.add(EntityType.MUSHROOM_COW.name());
-		peacefulMobs.add(EntityType.PIG.name());
-		peacefulMobs.add(EntityType.RABBIT.name());
-		peacefulMobs.add(EntityType.SHEEP.name());
-		peacefulMobs.add(EntityType.SQUID.name());
-		peacefulMobs.add(EntityType.VILLAGER.name());
-		peacefulMobs.add(EntityType.HORSE.name());
-		peacefulMobs.add(EntityType.WOLF.name());
-		peacefulMobs.add(EntityType.OCELOT.name());
-		
-		peacefulMobs.add(EntityType.SQUID.name());
-		if(bukkitVersion >= 1.10)
-		{
-			peacefulMobs.add(EntityType.POLAR_BEAR.name());
-			
-			if(bukkitVersion >= 1.11)
-			{
-				peacefulMobs.add(EntityType.LLAMA.name());
-				peacefulMobs.add(EntityType.DONKEY.name());
-				peacefulMobs.add(EntityType.MULE.name());
-				peacefulMobs.add(EntityType.ZOMBIE_HORSE.name());
-				
-				if(bukkitVersion >= 1.12) //1.12 not yet released, so working with -pre's
-				{
-					hostileMobs.add(EntityType.PARROT.name());
-				}
-			}
-		}
+		peacefulMobs.add("BAT");
+		peacefulMobs.add("CHICKEN");
+		peacefulMobs.add("COW");
+		peacefulMobs.add("MUSHROOM_COW");
+		peacefulMobs.add("PIG");
+		peacefulMobs.add("RABBIT");
+		peacefulMobs.add("SHEEP");
+		peacefulMobs.add("SQUID");
+		peacefulMobs.add("VILLAGER");
+		peacefulMobs.add("HORSE");
+		peacefulMobs.add("WOLF");
+		peacefulMobs.add("OCELOT");
+		peacefulMobs.add("SQUID");
+		peacefulMobs.add("POLAR_BEAR");
+		peacefulMobs.add("LLAMA");
+		peacefulMobs.add("DONKEY");
+		peacefulMobs.add("MULE");
+		peacefulMobs.add("ZOMBIE_HORSE");
+		peacefulMobs.add("PARROT");
 	}
 
-	private void generateHostileMobsList() {
-		hostileMobs.add(EntityType.BLAZE.name());
-		hostileMobs.add(EntityType.CREEPER.name());
-		hostileMobs.add(EntityType.GUARDIAN.name());
-		hostileMobs.add(EntityType.ENDERMITE.name());
-		hostileMobs.add(EntityType.GHAST.name());
-		hostileMobs.add(EntityType.MAGMA_CUBE.name());
-		hostileMobs.add(EntityType.SILVERFISH.name());
-		hostileMobs.add(EntityType.SKELETON.name());
-		hostileMobs.add(EntityType.SLIME.name());
-		hostileMobs.add(EntityType.WITCH.name());
-		hostileMobs.add(EntityType.WITHER.name());
-		hostileMobs.add(EntityType.ENDER_DRAGON.name());
-		hostileMobs.add(EntityType.ZOMBIE.name());
-		hostileMobs.add(EntityType.ENDERMAN.name());
-		hostileMobs.add(EntityType.CAVE_SPIDER.name());
-		hostileMobs.add(EntityType.SPIDER.name());
-		hostileMobs.add(EntityType.PIG_ZOMBIE.name());
-		hostileMobs.add(EntityType.SNOWMAN.name());
-		hostileMobs.add(EntityType.ZOMBIE_VILLAGER.name());
-		hostileMobs.add(EntityType.ELDER_GUARDIAN.name());
-		hostileMobs.add(EntityType.IRON_GOLEM.name());
-		if(bukkitVersion >= 1.9)
-		{
-			hostileMobs.add(EntityType.SHULKER.name());
-			
-			if(bukkitVersion >= 1.10)
-			{
-				hostileMobs.add(EntityType.STRAY.name());
-				hostileMobs.add(EntityType.HUSK.name());
-				
-				if(bukkitVersion >= 1.11)
-				{
-					hostileMobs.add(EntityType.WITHER_SKELETON.name());
-					hostileMobs.add(EntityType.VINDICATOR.name());
-					hostileMobs.add(EntityType.EVOKER.name());
-					hostileMobs.add(EntityType.VEX.name());
-					
-					if(bukkitVersion >= 1.12) //1.12 not yet released, so working with -pre's
-					{
-						hostileMobs.add(EntityType.ILLUSIONER.name());
-					}
-				}
-			}
-		}
-		}
+	private void generateHostileMobsList() 
+	{
+		hostileMobs.add("BLAZE");
+		hostileMobs.add("CREEPER");
+		hostileMobs.add("GUARDIAN");
+		hostileMobs.add("ENDERMITE");
+		hostileMobs.add("GHAST");
+		hostileMobs.add("MAGMA_CUBE");
+		hostileMobs.add("SILVERFISH");
+		hostileMobs.add("SKELETON");
+		hostileMobs.add("SLIME");
+		hostileMobs.add("WITCH");
+		hostileMobs.add("WITHER");
+		hostileMobs.add("ENDER_DRAGON");
+		hostileMobs.add("ZOMBIE");
+		hostileMobs.add("ENDERMAN");
+		hostileMobs.add("CAVE_SPIDER");
+		hostileMobs.add("SPIDER");
+		hostileMobs.add("PIG_ZOMBIE");
+		hostileMobs.add("SNOWMAN");
+		hostileMobs.add("ZOMBIE_VILLAGER");
+		hostileMobs.add("ELDER_GUARDIAN");
+		hostileMobs.add("IRON_GOLEM");
+		hostileMobs.add("SHULKER");
+		hostileMobs.add("STRAY");
+		hostileMobs.add("HUSK");
+		hostileMobs.add("WITHER_SKELETON");
+		hostileMobs.add("VINDICATOR");
+		hostileMobs.add("EVOKER");
+		hostileMobs.add("VEX");
+		hostileMobs.add("ILLUSIONER");
+	}
 
 	private void grabSettings() {
 		updateChecker = plugin.getConfig().getBoolean("rps.update-checker");
