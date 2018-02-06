@@ -28,7 +28,7 @@ public class TriggerAddons {
 		Plugin plug = RedstoneProximitySensor.getInstance().getServer().getPluginManager().getPlugin("Towny");
 		if(plug !=null && plug.isEnabled())
 		{
-			triggeredAddons.add(new TownyAddon(getSlot()));
+			triggeredAddons.add(new TownyAddon());
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class TriggerAddons {
 		Plugin plug = RedstoneProximitySensor.getInstance().getServer().getPluginManager().getPlugin("LegacyFactions");
 		if(plug !=null && plug.isEnabled())
 		{
-			triggeredAddons.add(new LegacyFactionsAddon(getSlot()));
+			triggeredAddons.add(new LegacyFactionsAddon());
 		}
 	}
 	
@@ -46,7 +46,7 @@ public class TriggerAddons {
 		Plugin plug = RedstoneProximitySensor.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
 		if(plug !=null && plug.isEnabled())
 		{
-			triggeredAddons.add(new GPAddon(getSlot()));
+			triggeredAddons.add(new GPAddon());
 		}
 	}
 	public int getSlot() {
