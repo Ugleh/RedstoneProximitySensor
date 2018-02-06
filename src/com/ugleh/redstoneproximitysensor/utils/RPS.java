@@ -30,7 +30,7 @@ public class RPS {
 	private boolean ownerOnlyEdit = true;
 	private boolean triggered = false;
 	public RedstoneProximitySensor plugin;
-	private List<String> acceptedEntities = new ArrayList<String>();
+	private List<String> activeFlags = new ArrayList<String>();
 	public GeneralConfig generalConfig;
 	private Random random;
 
@@ -51,28 +51,28 @@ public class RPS {
 
 			// Default Settings
 			if (generalConfig.isDefaultOwnerTrigger())
-				acceptedEntities.add("OWNER");
+				activeFlags.add("OWNER");
 			if (generalConfig.isDeaultPlayerEntityTrigger())
-				acceptedEntities.add("PLAYER");
+				activeFlags.add("PLAYER");
 			if (generalConfig.isDefaultPeacefulEntityTrigger())
-				acceptedEntities.add("PEACEFUL_ENTITY");
+				activeFlags.add("PEACEFUL_ENTITY");
 			if (generalConfig.isDefaultDroppedItemsTrigger())
-				acceptedEntities.add("DROPPED_ITEM");
+				activeFlags.add("DROPPED_ITEM");
 			if (generalConfig.isDefaultHostileEntityTrigger())
-				acceptedEntities.add("HOSTILE_ENTITY");
+				activeFlags.add("HOSTILE_ENTITY");
 			if (generalConfig.isDefaultInvisibleEntityTrigger())
-				acceptedEntities.add("INVISIBLE_ENTITY");
+				activeFlags.add("INVISIBLE_ENTITY");
 			if (generalConfig.isDefaultVehcileEntityTrigger())
-				acceptedEntities.add("VEHCILE_ENTITY");
+				activeFlags.add("VEHCILE_ENTITY");
 			if (generalConfig.isDefaultProjectileEntityTrigger())
-				acceptedEntities.add("PROJECTILE_ENTITY");
+				activeFlags.add("PROJECTILE_ENTITY");
 			
 		}
 
 	}
 
 	public List<String> getAcceptedEntities() {
-		return acceptedEntities;
+		return activeFlags;
 	}
 
 	public Location getLocation() {
@@ -142,17 +142,17 @@ public class RPS {
 		
 		for (Entity ent : entityList) {
 			if(ent.getWorld() != location.getWorld()) continue;
-			if (((this.acceptedEntities.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().toString()))
-					|| (this.acceptedEntities.contains("PEACEFUL_ENTITY") && plugin.getgConfig().getPeacefulMobs().contains(ent.getType().toString()))
-					|| (this.acceptedEntities.contains("PLAYER") && ent instanceof Player)
-					|| (this.acceptedEntities.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
-					|| (this.acceptedEntities.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
-					|| (this.acceptedEntities.contains("PROJECTILE_ENTITY") && ent instanceof Projectile)
-					|| (this.acceptedEntities.contains("VEHICLE_ENTITY") && ent instanceof Vehicle)
-					|| (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(acceptedEntities, ent, this.getLocation(), ownerID)))) {
+			if (((this.activeFlags.contains("HOSTILE_ENTITY") && plugin.getgConfig().getHostileMobs().contains(ent.getType().toString()))
+					|| (this.activeFlags.contains("PEACEFUL_ENTITY") && plugin.getgConfig().getPeacefulMobs().contains(ent.getType().toString()))
+					|| (this.activeFlags.contains("PLAYER") && ent instanceof Player)
+					|| (this.activeFlags.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
+					|| (this.activeFlags.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
+					|| (this.activeFlags.contains("PROJECTILE_ENTITY") && ent instanceof Projectile)
+					|| (this.activeFlags.contains("VEHICLE_ENTITY") && ent instanceof Vehicle)
+					|| (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(activeFlags, ent, this.getLocation(), ownerID)))) {
 
 				//If Owner is set to false and player is set to true, I will continue on.
-				if((!this.acceptedEntities.contains("OWNER")) && this.acceptedEntities.contains("PLAYER"))
+				if((!this.activeFlags.contains("OWNER")) && this.activeFlags.contains("PLAYER"))
 				{
 					if(ent.getUniqueId().equals(this.getOwner()))
 					{
@@ -180,7 +180,7 @@ public class RPS {
 				}
 
 				// Check if entity is invisible
-				if (!this.acceptedEntities.contains("INVISIBLE_ENTITY")) {
+				if (!this.activeFlags.contains("INVISIBLE_ENTITY")) {
 					if (ent instanceof LivingEntity) {
 						LivingEntity le = (LivingEntity) ent;
 						boolean isInvisible = false;
@@ -225,7 +225,7 @@ public class RPS {
 	}
 
 	public void setAcceptedEntities(List<String> acceptedEntities) {
-		this.acceptedEntities = acceptedEntities;
+		this.activeFlags = acceptedEntities;
 	}
 
 	public void setData(boolean inverted, int range, List<String> acpent, boolean ownerEdit) {
