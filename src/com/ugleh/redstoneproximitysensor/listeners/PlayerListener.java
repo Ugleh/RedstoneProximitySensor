@@ -185,7 +185,6 @@ public class PlayerListener implements Listener
 		if(!e.getWhoClicked().hasPermission("rps.menu")) return;
 		if(!(e.getInventory().getName().equals(invName) || e.getClickedInventory().getName().equals(invName))) return;
 		RPS selectedRPS = userSelectedRPS.get(e.getWhoClicked().getUniqueId());
-		
 		e.setCancelled(true);
 		
 		
@@ -242,7 +241,7 @@ public class PlayerListener implements Listener
 			}else if(displayName.startsWith(ChatColor.BLUE + langString("lang_button_range")))
 			{
 				//Range
-				int newRange = 0;
+				int newRange = selectedRPS.getRange();
 				if(e.getClick().isLeftClick())
 				{
 					playToggleSound(playerWhoClicked);
