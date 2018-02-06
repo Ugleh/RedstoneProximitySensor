@@ -185,7 +185,11 @@ public class PlayerListener implements Listener
 		if(!e.getWhoClicked().hasPermission("rps.menu")) return;
 		if(!(e.getInventory().getName().equals(invName) || e.getClickedInventory().getName().equals(invName))) return;
 		RPS selectedRPS = userSelectedRPS.get(e.getWhoClicked().getUniqueId());
+		
+		//We understand that the inventory we are currently in is the RPS Menu so lets cancel any future click events now.
 		e.setCancelled(true);
+		//If it isn't a left click or a right click just return, we dont want players trying to do anything else but L or R click.
+        if(!(e.isRightClick() || e.isLeftClick())) return;
 		
 		
 		if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName())
