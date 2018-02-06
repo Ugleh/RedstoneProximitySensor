@@ -24,13 +24,13 @@ public class Trigger {
 	private String suffixTwo;
 	
 	public Trigger(String trigger_permission, ItemStack button_material, int slot_number, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped) {
-		PlayerListener pl = RedstoneProximitySensor.getInstance().playerListener;
+		PlayerListener pl = PlayerListener.instance;
 		this.item = button_material;
 		this.displayNamePrefix = langString(button_title) + ": ";
 		this.lore = loreTextWrapped;
 		this.flagName = sensor_flag;
 		this.slot = slot_number;
-		this.glow = pl.glow;
+		this.glow = RedstoneProximitySensor.getInstance().glow;
 		String suffixOnePre = langString(toggle_off);
 		this.suffixOne = suffixOnePre.substring(0, 1).toUpperCase() + suffixOnePre.substring(1);
 		String suffixTwoPre = langString(toggle_on);
@@ -56,7 +56,7 @@ public class Trigger {
 		this.lore = loreTextWrapped;
 		this.flagName = sensor_flag;
 		this.slot = ta.getSlot();
-		this.glow = pl.glow;
+		this.glow = RedstoneProximitySensor.getInstance().glow;
 		String suffixOnePre = langString(toggle_off);
 		this.suffixOne = suffixOnePre.substring(0, 1).toUpperCase() + suffixOnePre.substring(1);
 		String suffixTwoPre = langString(toggle_on);

@@ -27,7 +27,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.utils.Trigger;
-import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
 public class PlayerListener implements Listener
@@ -47,7 +46,6 @@ public class PlayerListener implements Listener
 	private HashMap<UUID, RPS> userSelectedRPS = new HashMap<UUID, RPS>();
 	private HashMap<UUID, RPS> userCopiedRPS = new HashMap<UUID, RPS>();
 	private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<UUID, Inventory>();
-	public Glow glow;
 	public static PlayerListener instance;
 	public int menuSize = 27;
 	
@@ -55,7 +53,6 @@ public class PlayerListener implements Listener
 	{
 		instance = this;
 		invName = ChatColor.BLUE + langString("lang_main_inventoryname");
-		glow = new Glow(1234);
 		createMenu();
 	}
 	
@@ -347,14 +344,14 @@ public class PlayerListener implements Listener
 		ItemMeta itemMeta = button.getItemMeta();
 		if(buttonStatus)
 		{
-			itemMeta.addEnchant(glow, 1, true);
+			itemMeta.addEnchant(getInstance().glow, 1, true);
 			String suffix = langString("lang_button_true");
 			suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
 			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + suffix);
 		}
 		else
 		{
-			itemMeta.removeEnchant(glow);
+			itemMeta.removeEnchant(getInstance().glow);
 			String suffix = langString("lang_button_false");
 			suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
 			itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + suffix);

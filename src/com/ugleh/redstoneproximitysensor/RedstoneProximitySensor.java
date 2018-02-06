@@ -37,7 +37,8 @@ public class RedstoneProximitySensor extends JavaPlugin {
 	private LanguageConfig languageConfig;
 	private TriggerAddons triggerAddons;
 	public boolean needsUpdate = false;
-	
+	public Glow glow;
+
 	//Listeners
 	public PlayerListener playerListener;
 	public SensorListener sensorListener;
@@ -50,6 +51,9 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		// Init configs.
 		languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
 		gConfig = new GeneralConfig(this);
+		
+		//Create Glow
+		glow = new Glow(1234);
 		
 		// Init Listeners
 		this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
