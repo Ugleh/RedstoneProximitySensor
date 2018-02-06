@@ -111,12 +111,20 @@ public class SensorConfig extends YamlConfiguration {
 				sensorSec.set("ownerOnlyTrigger", null);
 				this.toggleAcceptedEntities(uniqueID, "OWNER");
 			}
-			String worldName = sensorSec.getString("location.world");
-			Double x = Double.parseDouble(sensorSec.getString("location.x"));
-			Double y = Double.parseDouble(sensorSec.getString("location.y"));
-            Double z = Double.parseDouble(sensorSec.getString("location.z"));
-            RPSLocation location = new RPSLocation(worldName, x, y, z);
-            this.addSensor(location, UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
+			if(sensorSec.contains("location.world"))
+			{
+				String worldName = sensorSec.getString("location.world");
+				Double x = Double.parseDouble(sensorSec.getString("location.x"));
+				Double y = Double.parseDouble(sensorSec.getString("location.y"));
+	            Double z = Double.parseDouble(sensorSec.getString("location.z"));
+	            RPSLocation location = new RPSLocation(worldName, x, y, z);
+	            this.addSensor(location, UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
+			}else
+			{
+				this.set("sensors." + uniqueID, null);
+				this.save();
+
+			}
 
 		}
 	}

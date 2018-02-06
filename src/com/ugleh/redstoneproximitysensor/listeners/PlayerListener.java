@@ -49,6 +49,7 @@ public class PlayerListener implements Listener
 	private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<UUID, Inventory>();
 	public Glow glow;
 	public static PlayerListener instance;
+	public int menuSize = 27;
 	
 	public PlayerListener()
 	{
@@ -74,7 +75,7 @@ public class PlayerListener implements Listener
 	}
 	private void createMenu()
 	{
-		guiMenu = Bukkit.createInventory(null, 18, invName);
+		guiMenu = Bukkit.createInventory(null, menuSize, invName);
 		
 		//Setting button, Invert Power
 		List<String> lore = WordWrapLore(langString("lang_button_invertpower_lore"));
@@ -98,35 +99,35 @@ public class PlayerListener implements Listener
 
 		//Trigger button, Owner Trigger
 		lore = WordWrapLore(langString("lang_button_ot_lore"));
-		addTrigger(new Trigger(guiMenu, "button_ownertrigger", new ItemStack(Material.SKULL_ITEM, 1, (short)3), 4, "lang_button_ownertrigger", "OWNER", "lang_button_true", "lang_button_false", lore, glow));
+		addTrigger(new Trigger("button_ownertrigger", new ItemStack(Material.SKULL_ITEM, 1, (short)3), 4, "lang_button_ownertrigger", "OWNER", "lang_button_true", "lang_button_false", lore));
 
 		//Trigger button, Player Entity Trigger
 		lore = WordWrapLore(langString("lang_button_pet1_lore"));
-		addTrigger(new Trigger(guiMenu, "button_playerentitytrigger", new ItemStack(Material.DIAMOND_SWORD, 1), 5, "lang_button_playerentitytrigger", "PLAYER", "lang_button_true", "lang_button_false", lore, glow));
+		addTrigger(new Trigger("button_playerentitytrigger", new ItemStack(Material.DIAMOND_SWORD, 1), 5, "lang_button_playerentitytrigger", "PLAYER", "lang_button_true", "lang_button_false", lore));
 		
 		//Trigger button, Hostile Entity Trigger
 		lore = WordWrapLore(langString("lang_button_het_lore"));
-		addTrigger(new Trigger(guiMenu, "button_hostileentitiestrigger", new ItemStack(Material.SKULL_ITEM, 1, (short)2), 6, "lang_button_hostileentitytrigger", "HOSTILE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));
+		addTrigger(new Trigger("button_hostileentitiestrigger", new ItemStack(Material.SKULL_ITEM, 1, (short)2), 6, "lang_button_hostileentitytrigger", "HOSTILE_ENTITY", "lang_button_true", "lang_button_false", lore));
 
 		//Trigger button, Peaceful Entity Trigger
 		lore = WordWrapLore(langString("lang_button_pet2_lore"));
-		addTrigger(new Trigger(guiMenu, "button_peacefulentitiestrigger", new ItemStack(Material.COOKED_BEEF, 1), 7, "lang_button_peacefulentitytrigger", "PEACEFUL_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+		addTrigger(new Trigger("button_peacefulentitiestrigger", new ItemStack(Material.COOKED_BEEF, 1), 7, "lang_button_peacefulentitytrigger", "PEACEFUL_ENTITY", "lang_button_true", "lang_button_false", lore));		
 		
 		//Trigger button, Dropped Items Trigger
 		lore = WordWrapLore(langString("lang_button_dit_lore"));
-		addTrigger(new Trigger(guiMenu, "button_droppeditemtrigger", new ItemStack(Material.PUMPKIN_SEEDS, 1), 8, "lang_button_droppeditemtrigger", "DROPPED_ITEM", "lang_button_true", "lang_button_false", lore, glow));		
+		addTrigger(new Trigger("button_droppeditemtrigger", new ItemStack(Material.PUMPKIN_SEEDS, 1), 8, "lang_button_droppeditemtrigger", "DROPPED_ITEM", "lang_button_true", "lang_button_false", lore));		
 		
 		//Trigger button, Invisible Entity Trigger
 		lore = WordWrapLore(langString("lang_button_iet_lore"));
-		addTrigger(new Trigger(guiMenu, "button_invisibleentitiestrigger", new ItemStack(Material.FERMENTED_SPIDER_EYE, 1), 17, "lang_button_invisibleentitytrigger", "INVISIBLE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+		addTrigger(new Trigger("button_invisibleentitiestrigger", new ItemStack(Material.FERMENTED_SPIDER_EYE, 1), 17, "lang_button_invisibleentitytrigger", "INVISIBLE_ENTITY", "lang_button_true", "lang_button_false", lore));		
 
 		//Trigger button, Invisible Entity Trigger
 		lore = WordWrapLore(langString("lang_button_pt_lore"));
-		addTrigger(new Trigger(guiMenu, "button_projectiletrigger", new ItemStack(Material.ARROW, 1), 16, "lang_button_projectiletrigger", "PROJECTILE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+		addTrigger(new Trigger("button_projectiletrigger", new ItemStack(Material.ARROW, 1), 16, "lang_button_projectiletrigger", "PROJECTILE_ENTITY", "lang_button_true", "lang_button_false", lore));		
 
 		//Trigger button, Invisible Entity Trigger
 		lore = WordWrapLore(langString("lang_button_vt_lore"));
-		addTrigger(new Trigger(guiMenu, "button_vehicletrigger", new ItemStack(Material.MINECART, 1), 15, "lang_button_vehicletrigger", "VEHICLE_ENTITY", "lang_button_true", "lang_button_false", lore, glow));		
+		addTrigger(new Trigger("button_vehicletrigger", new ItemStack(Material.MINECART, 1), 15, "lang_button_vehicletrigger", "VEHICLE_ENTITY", "lang_button_true", "lang_button_false", lore));		
 	}
 	
 
@@ -325,7 +326,7 @@ public class PlayerListener implements Listener
 	{
 		userSelectedRPS.put(p.getUniqueId(), selectedRPS);
 		if(!userSelectedInventory.containsKey(p.getUniqueId()))
-		{Inventory tempMenu = Bukkit.createInventory(null, 18, invName);
+		{Inventory tempMenu = Bukkit.createInventory(null, menuSize, invName);
 		tempMenu.setContents(guiMenu.getContents());
 		userSelectedInventory.put(p.getUniqueId(), tempMenu);	
 		}

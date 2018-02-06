@@ -30,7 +30,7 @@ public class TownyAddon extends AddonTemplate{
 	private void createButton()
 	{
 		List<String> lore = pl().WordWrapLore(pl().langString("lang_button_tt_lore"));
-		pl().addTrigger(new Trigger(pl().guiMenu, "button_townytrigger", new ItemStack(Material.BEACON), slot, "lang_button_townytrigger", "TOWNY", "lang_button_true", "lang_button_false", lore, pl().glow));
+		pl().addTrigger(new Trigger("button_townytrigger", new ItemStack(Material.BEACON), slot, "lang_button_townytrigger", "TOWNY", "lang_button_true", "lang_button_false", lore));
 
 	}
 	private RedstoneProximitySensor getInstance()

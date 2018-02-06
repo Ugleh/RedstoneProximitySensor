@@ -36,7 +36,7 @@ public class GPAddon extends AddonTemplate{
 	private void createButton()
 	{
 		List<String> lore = WordWrapLore(pl().langString("lang_button_gp_lore"));
-		pl().addTrigger(new Trigger(pl().guiMenu, "button_gptrigger", new ItemStack(Material.GOLD_SPADE), slot, "lang_button_gptrigger", flagName, "lang_button_true", "lang_button_false", lore, pl().glow));
+		pl().addTrigger(new Trigger("button_gptrigger", new ItemStack(Material.GOLD_SPADE), slot, "lang_button_gptrigger", flagName, "lang_button_true", "lang_button_false", lore));
 
 	}
 	

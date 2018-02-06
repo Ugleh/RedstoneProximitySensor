@@ -130,7 +130,7 @@ public class RPS {
 			return;
 		Location location = this.getLocation();
 		
-		 boolean isLoaded = location.getWorld().isChunkLoaded(location.getChunk());
+		 boolean isLoaded = location.getWorld().isChunkLoaded(location.getBlockX()>>4,location.getBlockZ()>>4);
 		 if(!isLoaded)
 			 return;
 
@@ -215,18 +215,12 @@ public class RPS {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	private void setMaterial(Block b, boolean c) {
 		if(!b.getType().equals(getSensorMaterial(c)))
 		{
 
-			try
-			{
-				b.setTypeIdAndData(getSensorMaterial(c).getId(), b.getData(), true);
-			}catch(NoSuchMethodError e)
-			{
-				b.setType(getSensorMaterial(c));
-			}
+			b.setType(getSensorMaterial(c));
+
 		}
 	}
 

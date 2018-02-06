@@ -16,6 +16,7 @@ public class TriggerAddons {
 	public int latestSlot = 14;
 	public TriggerAddons()
 	{
+		latestSlot = RedstoneProximitySensor.getInstance().playerListener.menuSize - 1;
 		instance = this;
 		initTowny();
 		initGP();
@@ -48,7 +49,7 @@ public class TriggerAddons {
 			triggeredAddons.add(new GPAddon(getSlot()));
 		}
 	}
-	private int getSlot() {
+	public int getSlot() {
 		--latestSlot;
 		return latestSlot+1;
 	}
