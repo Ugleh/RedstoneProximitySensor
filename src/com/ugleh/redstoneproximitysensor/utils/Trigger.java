@@ -55,7 +55,7 @@ public class Trigger {
 	
 	public Trigger(String trigger_permission, ItemStack button_material, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped, AddonTemplate addon) {
 		PlayerListener pl = RedstoneProximitySensor.getInstance().playerListener;
-		TriggerAddons ta = RedstoneProximitySensor.getInstance().getTriggerAddons();
+		TriggerAddons ta = TriggerAddons.getInstance();
 		
 		setFields(
 				button_material
