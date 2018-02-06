@@ -420,8 +420,11 @@ public class PlayerListener implements Listener
 	public ItemStack getCopyButton() {
 		return copyButton;
 	}
-
-
+	
+	public List<Trigger> getTriggers()
+	{
+		return triggers;
+	}
 	public ItemStack setCopyButton(ItemStack copyButton)
 	{
 		this.copyButton = copyButton;
