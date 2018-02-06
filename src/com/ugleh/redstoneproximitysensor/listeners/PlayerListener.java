@@ -193,15 +193,16 @@ public class PlayerListener implements Listener
         if(!(e.isRightClick() || e.isLeftClick())) return;
 		
 		
+		//Check if user clicked a menu item.
 		if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName())
 		{
-			//Clicked a menu item
 			Trigger selectedTrigger = null;
 			for(Trigger t : this.triggers)
 			{
 				if(e.getCurrentItem().getItemMeta().getDisplayName().startsWith(t.getItem().getItemMeta().getDisplayName()))
 				{
 					selectedTrigger = t;
+
 				}
 			}
 			String perm = null;
@@ -281,7 +282,7 @@ public class PlayerListener implements Listener
 				if(displayName.startsWith(ChatColor.BLUE + t.getDisplayNamePrefix()))
 				{
 					playToggleSound(playerWhoClicked);
-					getInstance().getSensorConfig().toggleAcceptedEntities(selectedRPS, t.getFlag());
+					getInstance().getSensorConfig().toggleAcceptedEntities(selectedRPS, t);
 					break;
 				}
 			}
@@ -370,7 +371,7 @@ public class PlayerListener implements Listener
 
 		for(Trigger b : this.triggers)
 		{
-			b.toggleButton(selectedRPS, tempInv);
+			b.updateButtonStatus(selectedRPS, tempInv);
 		}
 	}
 	
