@@ -2,13 +2,11 @@ package com.ugleh.redstoneproximitysensor.addons;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.utils.RPS;
 public class TriggerAddons {
 	private static TriggerAddons instance;
 	public List<String> triggeredAddonFlags = new ArrayList<String>();
@@ -64,10 +62,10 @@ public class TriggerAddons {
 		return instance;
 	}
 
-	public boolean triggerCheck(List<String> acceptedEntities, Entity ent, Location l, UUID ownerID) {
+	public boolean triggerCheck(RPS rps, Entity ent) {
 		for(AddonTemplate addon : triggeredAddons)
 		{
-			if(addon.checkTrigger(acceptedEntities, ent, l, ownerID)) return true;
+			if(addon.checkTrigger(rps, ent)) return true;
 		}
 		return false;
 	}
