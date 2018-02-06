@@ -1,6 +1,7 @@
 package com.ugleh.redstoneproximitysensor.configs;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
 import com.ugleh.redstoneproximitysensor.utils.RPSRunnable;
@@ -108,11 +109,6 @@ public class SensorConfig extends YamlConfiguration {
 		for(String uniqueID : this.getConfigurationSection("sensors").getKeys(false))
 		{
 			ConfigurationSection sensorSec = this.getConfigurationSection("sensors." + uniqueID);
-			if(sensorSec.isBoolean("ownerOnlyTrigger") && !sensorSec.getList("acceptedEntities").contains("OWNER"))
-			{
-				sensorSec.set("ownerOnlyTrigger", null);
-				this.toggleAcceptedEntities(uniqueID, "OWNER");
-			}
 			if(sensorSec.contains("location.world"))
 			{
 				String worldName = sensorSec.getString("location.world");
@@ -156,6 +152,7 @@ public class SensorConfig extends YamlConfiguration {
 			//tempRPS.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin, tempRPS, 0L, 2L));
 			sensorList.put(location.getSLoc(), tempRPS);
 			addToConfig(tempRPS);
+			tellCustomTriggersRPSCreated(tempRPS);
 		}
 	}
 	
@@ -187,14 +184,32 @@ public class SensorConfig extends YamlConfiguration {
 
 	public void removeSensor(String string) {
 		RPS brokenRPS = this.getSensorList().get(string);
+		tellCustomTriggersRPSBroke(brokenRPS);
 		//brokenRPS.cancelTask();
 		String uniqueID = brokenRPS.getUniqueID();
 		this.getSensorList().remove(string);
 		this.set("sensors." + uniqueID, null);
 		this.save();
-
 	}
 
+	private void tellCustomTriggersRPSBroke(RPS brokenRPS) {
+		for(Trigger t : PlayerListener.instance.getTriggers())
+		{
+			if(t.addonTemplate != null)
+			{
+				t.addonTemplate.rpsRemoved(brokenRPS);
+			}
+		}
+	}
+	private void tellCustomTriggersRPSCreated(RPS createdRPS) {
+		for(Trigger t : PlayerListener.instance.getTriggers())
+		{
+			if(t.addonTemplate != null)
+			{
+				t.addonTemplate.rpsCreated(createdRPS);
+			}
+		}
+	}
 	public void setInverted(RPS selectedRPS, boolean b) {
 		this.set("sensors." + selectedRPS.getUniqueID() + ".inverted", b);
 		this.save();
@@ -208,19 +223,6 @@ public class SensorConfig extends YamlConfiguration {
 		this.save();
 		selectedRPS.setRange(newRange);
 		
-	}
-	
-	public void toggleAcceptedEntities(String uniqueID, String s) {
-		List<String> acceptedEntitiesConfig = this.getStringList("sensors." + uniqueID + ".acceptedEntities");
-		if(acceptedEntitiesConfig.contains(s))
-		{
-			acceptedEntitiesConfig.remove(s);
-		}else
-		{
-			acceptedEntitiesConfig.add(s);
-		}
-		this.set("sensors." + uniqueID + ".acceptedEntities", acceptedEntitiesConfig);
-		this.save();		
 	}
 	
 	public void toggleAcceptedEntities(RPS selectedRPS, Trigger t) {
