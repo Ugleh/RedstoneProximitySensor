@@ -1,6 +1,9 @@
 package com.ugleh.redstoneproximitysensor.utils;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
+import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
+
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,31 +23,55 @@ public class Trigger {
 	private String suffixOne;
 	private String suffixTwo;
 	
-	public Trigger(Inventory guiMenu, String perm, ItemStack itemStack, int slot, String nameNode, String flag, String suffixOne, String suffixTwo, List<String> lore, Glow glow) {
-		this.item = itemStack;
-		this.displayNamePrefix = langString(nameNode) + ": ";
-		this.lore = lore;
-		this.flagName = flag;
-		this.slot = slot;
-		this.glow = glow;
-		this.lore = lore;
-		this.suffixOne = langString(suffixOne);
-		this.suffixOne = this.suffixOne.substring(0, 1).toUpperCase() + this.suffixOne.substring(1);
-		this.suffixTwo = langString(suffixTwo);
-		this.suffixTwo = this.suffixTwo.substring(0, 1).toUpperCase() + this.suffixTwo.substring(1);
-		this.perm = perm;
+	public Trigger(String trigger_permission, ItemStack button_material, int slot_number, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped) {
+		PlayerListener pl = RedstoneProximitySensor.getInstance().playerListener;
+		this.item = button_material;
+		this.displayNamePrefix = langString(button_title) + ": ";
+		this.lore = loreTextWrapped;
+		this.flagName = sensor_flag;
+		this.slot = slot_number;
+		this.glow = pl.glow;
+		String suffixOnePre = langString(toggle_off);
+		this.suffixOne = suffixOnePre.substring(0, 1).toUpperCase() + suffixOnePre.substring(1);
+		String suffixTwoPre = langString(toggle_on);
+		this.suffixTwo = suffixTwoPre.substring(0, 1).toUpperCase() + suffixTwoPre.substring(1);
+		this.perm = trigger_permission;
 
 		
-		ItemMeta itemMeta = itemStack.getItemMeta();
+		ItemMeta itemMeta = button_material.getItemMeta();
 		itemMeta.setDisplayName(ChatColor.BLUE + this.displayNamePrefix);
 		itemMeta.setLore(this.lore);
-		itemStack.setItemMeta(itemMeta);
-		guiMenu.setItem(slot, itemStack);
+		button_material.setItemMeta(itemMeta);
+		pl.guiMenu.setItem(slot, button_material);
 
 	}
+	
+	public Trigger(String trigger_permission, ItemStack button_material, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped) {
+		PlayerListener pl = RedstoneProximitySensor.getInstance().playerListener;
+		TriggerAddons ta = RedstoneProximitySensor.getInstance().getTriggerAddons();
+		
+		
+		this.item = button_material;
+		this.displayNamePrefix = langString(button_title) + ": ";
+		this.lore = loreTextWrapped;
+		this.flagName = sensor_flag;
+		this.slot = ta.getSlot();
+		this.glow = pl.glow;
+		String suffixOnePre = langString(toggle_off);
+		this.suffixOne = suffixOnePre.substring(0, 1).toUpperCase() + suffixOnePre.substring(1);
+		String suffixTwoPre = langString(toggle_on);
+		this.suffixTwo = suffixTwoPre.substring(0, 1).toUpperCase() + suffixTwoPre.substring(1);
+		this.perm = trigger_permission;
 
+		
+		ItemMeta itemMeta = button_material.getItemMeta();
+		itemMeta.setDisplayName(ChatColor.BLUE + this.displayNamePrefix);
+		itemMeta.setLore(this.lore);
+		button_material.setItemMeta(itemMeta);
+		pl.guiMenu.setItem(slot, button_material);
 
-
+	}
+	
 
 	public void toggleButton(RPS selectedRPS, Inventory tempInv) {
 		ItemMeta itemMeta = item.getItemMeta();
@@ -63,7 +90,14 @@ public class Trigger {
 	
 	private String langString(String key)
 	{
-		return RedstoneProximitySensor.getInstance().getLang().get(key);
+		if(RedstoneProximitySensor.getInstance().getLang().containsKey(key))
+		{
+			return RedstoneProximitySensor.getInstance().getLang().get(key);
+
+		}else
+		{
+			return key;
+		}
 	}
 	public String getDisplayNamePrefix() {
 		return displayNamePrefix;
