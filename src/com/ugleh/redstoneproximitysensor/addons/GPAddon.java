@@ -2,7 +2,6 @@ package com.ugleh.redstoneproximitysensor.addons;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,7 +22,7 @@ public class GPAddon extends AddonTemplate{
     private static DataStore dataStore;
 	public GPAddon()
 	{
-		createButton();
+		CreateButton();
 	}
 
     private static DataStore getDataStore() {
@@ -32,7 +31,7 @@ public class GPAddon extends AddonTemplate{
         }
         return dataStore;
     }
-	private void createButton()
+	private void CreateButton()
 	{
 		List<String> lore = WordWrapLore(pl().langString("lang_button_gp_lore"));
 		pl().addTrigger(new Trigger("button_gptrigger", new ItemStack(Material.GOLD_SPADE), "lang_button_gptrigger", flagName, "lang_button_true", "lang_button_false", lore, this));
@@ -57,9 +56,10 @@ public class GPAddon extends AddonTemplate{
 	}
 
 	@Override
-	public boolean checkTrigger(List<String> acceptedEntities, Entity e, Location l, UUID ownerID)
+	public boolean checkTrigger(RPS rps, Entity e)
 	{
-		if(!acceptedEntities.contains(flagName))return false;
+		Location l = rps.getLocation();
+		if(!rps.getAcceptedEntities().contains(flagName))return false;
 		if(!(e instanceof Player)) return false;
 		Claim claim = getDataStore().getClaimAt(l, true, null);
 		return claim != null && claim.allowBuild((Player)e, null) == null;
@@ -67,5 +67,17 @@ public class GPAddon extends AddonTemplate{
 
 	@Override
 	public void buttonPressed(Boolean on, RPS affectedRPS) {
+	}
+
+	@Override
+	public void rpsCreated(RPS affectedRPS) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void rpsRemoved(RPS affectedRPS) {
+		// TODO Auto-generated method stub
+		
 	}
 }

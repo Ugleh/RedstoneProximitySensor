@@ -1,7 +1,6 @@
 package com.ugleh.redstoneproximitysensor.addons;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,10 +22,10 @@ public class TownyAddon extends AddonTemplate{
 	public String flagName = "TOWNY";
 	public TownyAddon()
 	{
-		createButton();
+		CreateButton();
 	}
 	
-	private void createButton()
+	private void CreateButton()
 	{
 		List<String> lore = pl().WordWrapLore(pl().langString("lang_button_tt_lore"));
 		pl().addTrigger(new Trigger("button_townytrigger", new ItemStack(Material.BEACON), "lang_button_townytrigger", "TOWNY", "lang_button_true", "lang_button_false", lore, this));
@@ -43,8 +42,9 @@ public class TownyAddon extends AddonTemplate{
 	}
 
 	@Override
-	public boolean checkTrigger(List<String> acceptedEntities, Entity e, Location l, UUID ownerID) {
-		if(!acceptedEntities.contains(flagName))return false;
+	public boolean checkTrigger(RPS rps, Entity e) {
+		Location l = rps.getLocation();
+		if(!rps.getAcceptedEntities().contains(flagName))return false;
 		if(!(e instanceof Player)) return false;
 		if(TownyUniverse.isWilderness(l.getBlock())) return false;
 		try {
@@ -76,6 +76,18 @@ public class TownyAddon extends AddonTemplate{
 	@Override
 	public void buttonPressed(Boolean on, RPS affectedRPS)
 	{
+		
+	}
+
+	@Override
+	public void rpsCreated(RPS affectedRPS) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void rpsRemoved(RPS affectedRPS) {
+		// TODO Auto-generated method stub
 		
 	}
 	
