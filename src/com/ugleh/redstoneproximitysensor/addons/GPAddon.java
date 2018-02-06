@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
+import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.Trigger;
 
 import me.ryanhamshire.GriefPrevention.Claim;
@@ -19,11 +20,9 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
  
 public class GPAddon extends AddonTemplate{
 	public String flagName = "GP";
-	public int slot;
     private static DataStore dataStore;
-	public GPAddon(int slotNumber)
+	public GPAddon()
 	{
-		this.slot = slotNumber;
 		createButton();
 	}
 
@@ -36,7 +35,7 @@ public class GPAddon extends AddonTemplate{
 	private void createButton()
 	{
 		List<String> lore = WordWrapLore(pl().langString("lang_button_gp_lore"));
-		pl().addTrigger(new Trigger("button_gptrigger", new ItemStack(Material.GOLD_SPADE), slot, "lang_button_gptrigger", flagName, "lang_button_true", "lang_button_false", lore));
+		pl().addTrigger(new Trigger("button_gptrigger", new ItemStack(Material.GOLD_SPADE), "lang_button_gptrigger", flagName, "lang_button_true", "lang_button_false", lore, this));
 
 	}
 	
@@ -64,5 +63,9 @@ public class GPAddon extends AddonTemplate{
 		if(!(e instanceof Player)) return false;
 		Claim claim = getDataStore().getClaimAt(l, true, null);
 		return claim != null && claim.allowBuild((Player)e, null) == null;
+	}
+
+	@Override
+	public void buttonPressed(Boolean on, RPS affectedRPS) {
 	}
 }

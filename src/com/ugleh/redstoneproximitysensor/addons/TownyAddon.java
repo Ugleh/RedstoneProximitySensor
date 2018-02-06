@@ -16,21 +16,20 @@ import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
+import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.Trigger;
  
 public class TownyAddon extends AddonTemplate{
 	public String flagName = "TOWNY";
-	public int slot;
-	public TownyAddon(int slotNumber)
+	public TownyAddon()
 	{
-		this.slot = slotNumber;
 		createButton();
 	}
 	
 	private void createButton()
 	{
 		List<String> lore = pl().WordWrapLore(pl().langString("lang_button_tt_lore"));
-		pl().addTrigger(new Trigger("button_townytrigger", new ItemStack(Material.BEACON), slot, "lang_button_townytrigger", "TOWNY", "lang_button_true", "lang_button_false", lore));
+		pl().addTrigger(new Trigger("button_townytrigger", new ItemStack(Material.BEACON), "lang_button_townytrigger", "TOWNY", "lang_button_true", "lang_button_false", lore, this));
 
 	}
 	private RedstoneProximitySensor getInstance()
@@ -72,6 +71,12 @@ public class TownyAddon extends AddonTemplate{
 			e1.printStackTrace();
 		}
 		return true;
+	}
+
+	@Override
+	public void buttonPressed(Boolean on, RPS affectedRPS)
+	{
+		
 	}
 	
 }

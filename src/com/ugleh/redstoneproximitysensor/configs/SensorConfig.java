@@ -4,6 +4,8 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
 import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
 import com.ugleh.redstoneproximitysensor.utils.RPSRunnable;
+import com.ugleh.redstoneproximitysensor.utils.Trigger;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -221,14 +223,18 @@ public class SensorConfig extends YamlConfiguration {
 		this.save();		
 	}
 	
-	public void toggleAcceptedEntities(RPS selectedRPS, String s) {
+	public void toggleAcceptedEntities(RPS selectedRPS, Trigger t) {
+		//Here we toggle the trigger
+		String flag = t.getFlag();
 		List<String> acceptedEntitiesConfig = this.getStringList("sensors." + selectedRPS.getUniqueID() + ".acceptedEntities");
-		if(acceptedEntitiesConfig.contains(s))
+		if(acceptedEntitiesConfig.contains(flag))
 		{
-			acceptedEntitiesConfig.remove(s);
+			acceptedEntitiesConfig.remove(flag);
+			if(t.addonTemplate != null) t.addonTemplate.buttonPressed(false, selectedRPS);
 		}else
 		{
-			acceptedEntitiesConfig.add(s);
+			acceptedEntitiesConfig.add(flag);
+			if(t.addonTemplate != null) t.addonTemplate.buttonPressed(true, selectedRPS);
 		}
 		this.set("sensors." + selectedRPS.getUniqueID() + ".acceptedEntities", acceptedEntitiesConfig);
 		this.save();

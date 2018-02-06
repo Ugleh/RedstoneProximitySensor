@@ -1,6 +1,7 @@
 package com.ugleh.redstoneproximitysensor.utils;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.addons.AddonTemplate;
 import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
 import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
 
@@ -22,58 +23,74 @@ public class Trigger {
 	private Glow glow;
 	private String suffixOne;
 	private String suffixTwo;
+	public AddonTemplate addonTemplate;
 	
 	public Trigger(String trigger_permission, ItemStack button_material, int slot_number, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped) {
 		PlayerListener pl = PlayerListener.instance;
-		this.item = button_material;
-		this.displayNamePrefix = langString(button_title) + ": ";
-		this.lore = loreTextWrapped;
-		this.flagName = sensor_flag;
-		this.slot = slot_number;
-		this.glow = RedstoneProximitySensor.getInstance().glow;
-		String suffixOnePre = langString(toggle_off);
-		this.suffixOne = suffixOnePre.substring(0, 1).toUpperCase() + suffixOnePre.substring(1);
-		String suffixTwoPre = langString(toggle_on);
-		this.suffixTwo = suffixTwoPre.substring(0, 1).toUpperCase() + suffixTwoPre.substring(1);
-		this.perm = trigger_permission;
-
+		setFields(
+				button_material
+				,langString(button_title) + ": "
+				,loreTextWrapped
+				,sensor_flag
+				,slot_number
+				,RedstoneProximitySensor.getInstance().glow
+				,langString(toggle_off).substring(0, 1).toUpperCase() + langString(toggle_off).substring(1)
+				,langString(toggle_on).substring(0, 1).toUpperCase() + langString(toggle_on).substring(1)
+				,trigger_permission
+				,null
+				);
 		
-		ItemMeta itemMeta = button_material.getItemMeta();
-		itemMeta.setDisplayName(ChatColor.BLUE + this.displayNamePrefix);
-		itemMeta.setLore(this.lore);
-		button_material.setItemMeta(itemMeta);
-		pl.guiMenu.setItem(slot, button_material);
+		SetupButtonData();
+		pl.guiMenu.setItem(this.slot, this.item);
 
 	}
 	
-	public Trigger(String trigger_permission, ItemStack button_material, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped) {
+	private void SetupButtonData() {
+		ItemMeta itemMeta = this.item.getItemMeta();
+		itemMeta.setDisplayName(ChatColor.BLUE + this.displayNamePrefix);
+		itemMeta.setLore(this.lore);
+		this.item.setItemMeta(itemMeta);
+		
+	}
+	
+	public Trigger(String trigger_permission, ItemStack button_material, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped, AddonTemplate addon) {
 		PlayerListener pl = RedstoneProximitySensor.getInstance().playerListener;
 		TriggerAddons ta = RedstoneProximitySensor.getInstance().getTriggerAddons();
 		
+		setFields(
+				button_material
+				,langString(button_title) + ": "
+				,loreTextWrapped
+				,sensor_flag
+				,ta.getSlot()
+				,RedstoneProximitySensor.getInstance().glow
+				,langString(toggle_off).substring(0, 1).toUpperCase() + langString(toggle_off).substring(1)
+				,langString(toggle_on).substring(0, 1).toUpperCase() + langString(toggle_on).substring(1)
+				,trigger_permission
+				,addon
+				);
 		
-		this.item = button_material;
-		this.displayNamePrefix = langString(button_title) + ": ";
-		this.lore = loreTextWrapped;
-		this.flagName = sensor_flag;
-		this.slot = ta.getSlot();
-		this.glow = RedstoneProximitySensor.getInstance().glow;
-		String suffixOnePre = langString(toggle_off);
-		this.suffixOne = suffixOnePre.substring(0, 1).toUpperCase() + suffixOnePre.substring(1);
-		String suffixTwoPre = langString(toggle_on);
-		this.suffixTwo = suffixTwoPre.substring(0, 1).toUpperCase() + suffixTwoPre.substring(1);
-		this.perm = trigger_permission;
-
-		
-		ItemMeta itemMeta = button_material.getItemMeta();
-		itemMeta.setDisplayName(ChatColor.BLUE + this.displayNamePrefix);
-		itemMeta.setLore(this.lore);
-		button_material.setItemMeta(itemMeta);
+		SetupButtonData();
 		pl.guiMenu.setItem(slot, button_material);
 
 	}
-	
 
-	public void toggleButton(RPS selectedRPS, Inventory tempInv) {
+	private void setFields(ItemStack button_material, String button_title, List<String> loreTextWrapped, String sensor_flag,
+			int slot, Glow glow, String suf_off, String suf_on, String trigger_permission, AddonTemplate addon) {
+		this.item = button_material;
+		this.displayNamePrefix = button_title;
+		this.lore = loreTextWrapped;
+		this.flagName = sensor_flag;
+		this.slot = slot;
+		this.glow = glow;
+		this.suffixOne = suf_off;
+		this.suffixTwo = suf_on;
+		this.perm = trigger_permission;
+		this.addonTemplate = addon;
+		
+	}
+
+	public void updateButtonStatus(RPS selectedRPS, Inventory tempInv) {
 		ItemMeta itemMeta = item.getItemMeta();
 		if(selectedRPS.getAcceptedEntities().contains(flagName))
 		{
@@ -110,9 +127,6 @@ public class Trigger {
 	{
 		return item;
 	}
-
-
-
 
 	public String getPerm() {
 		return perm;
