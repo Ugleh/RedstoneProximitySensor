@@ -202,11 +202,11 @@ public class RPS {
 		if ((m.equals(Material.REDSTONE_TORCH_OFF))
 				|| (m.equals(Material.REDSTONE_TORCH_ON))) {
 			if (triggered) {
-				if(!this.inverted && generalConfig.useParticles()) spawnParticle(location.clone());
+				if(!this.inverted && generalConfig.useParticles()) spawnParticle(location);
 				setMaterial(b, !inverted);
 
 			} else {
-				if(this.inverted && generalConfig.useParticles()) spawnParticle(location.clone());
+				if(this.inverted && generalConfig.useParticles()) spawnParticle(location);
 				setMaterial(b, inverted);
 			}
 		} else {
@@ -257,20 +257,17 @@ public class RPS {
 		this.rangeSquared = range * range;
 	}
 
-	@SuppressWarnings("deprecation")
 	private void spawnParticle(Location loc) {
 		double d0 = loc.getX() + random.nextDouble() * 0.6D + 0.2D;
 		double d1 = loc.getY() + random.nextDouble() * 0.6D + 0.2D;
 		double d2 = loc.getZ() + random.nextDouble() * 0.6D + 0.2D;
 
-		// loc.getWorld().spawnParticle(Particle.SMOKE_NORMAL, d0, d1, d2, 0,
-		// 0.0D, 0.0D, 0.0D);
-		int red = 199;
-		int green = 21;
-		int blue = 133;
+		float red = 199f / 255f;
+		float green = 21f / 255f;
+		float blue = 133f / 255f;
 		Location loc2 = new Location(loc.getWorld(), d0, d1, d2);
-		loc.getWorld().spigot().playEffect(loc2, Effect.COLOURED_DUST, 0, 0, (float) red / 255, (float) green / 255,
-				(float) blue / 255, 1, 0, 5);
+
+		loc.getWorld().spawnParticle(Particle.REDSTONE, loc2.getX(), loc2.getY(), loc2.getZ(), 0, red,green, blue); 
 	}
 
 	public void pasteSettings(RPS originalRPS) {
