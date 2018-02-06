@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -284,7 +285,6 @@ public class PlayerListener implements Listener
 					break;
 				}
 			}
-			
 			showGUIMenu((Player)playerWhoClicked, selectedRPS);
 
 		}
@@ -305,9 +305,10 @@ public class PlayerListener implements Listener
 	public void DisplayMenuEvent(PlayerInteractEvent e)
 	{
 		if(e.getClickedBlock() == null) return;
+		if(e.getHand().equals(EquipmentSlot.OFF_HAND)) return;
 		Location l = e.getClickedBlock().getLocation();
 		Player p = e.getPlayer();
-
+		
 		//Check if player is right clicking a block
 		if(!(e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) return;
 		//User Right clicked an RPS
@@ -324,6 +325,7 @@ public class PlayerListener implements Listener
 
 	private void showGUIMenu(Player p, RPS selectedRPS)
 	{
+		
 		userSelectedRPS.put(p.getUniqueId(), selectedRPS);
 		if(!userSelectedInventory.containsKey(p.getUniqueId()))
 		{Inventory tempMenu = Bukkit.createInventory(null, menuSize, invName);
