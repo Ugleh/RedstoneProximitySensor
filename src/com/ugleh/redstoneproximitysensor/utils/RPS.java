@@ -149,7 +149,7 @@ public class RPS {
 					|| (this.activeFlags.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
 					|| (this.activeFlags.contains("PROJECTILE_ENTITY") && ent instanceof Projectile)
 					|| (this.activeFlags.contains("VEHICLE_ENTITY") && ent instanceof Vehicle)
-					|| (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(activeFlags, ent, this.getLocation(), ownerID)))) {
+					|| (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(this, ent)))) {
 
 				//If Owner is set to false and player is set to true, I will continue on.
 				if((!this.activeFlags.contains("OWNER")) && this.activeFlags.contains("PLAYER"))
