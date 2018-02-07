@@ -1,2 +1,2 @@
-#2.3.4
-^Fixed RPS Torch placed on block side breaking when toggled.
+#2.3.5
+^Fixed Torch not triggering some stuff, like dispensers 
