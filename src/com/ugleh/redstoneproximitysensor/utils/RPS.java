@@ -5,6 +5,7 @@ import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
 import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -219,9 +220,11 @@ public class RPS {
 		if(!b.getType().equals(getSensorMaterial(c)))
 		{
 
-			b.setType(getSensorMaterial(c));
-
-		}
+		      BlockState state = b.getState();
+		      state.setType(getSensorMaterial(c));
+		      state.setData(b.getState().getData());
+		      state.update(true, true);
+		 }
 	}
 
 	public void setAcceptedEntities(List<String> acceptedEntities) {
