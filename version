@@ -1,2 +1,2 @@
-#2.3.5
-^Fixed Torch not triggering some stuff, like dispensers 
+#2.3.6
+^Readded support for 1.8.8
