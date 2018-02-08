@@ -294,19 +294,30 @@ public class PlayerListener implements Listener
 
 	private void playRejectSound(Player p)
 	{
-		p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
-	}
+		try {
+			p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.3F);
+			} catch (NoSuchFieldError error) {
+				p.playSound(p.getLocation(), Sound.valueOf("ORB_PICKUP"), 0.5F, 0.3F);
+			}	}
 	
 	private void playToggleSound(Player p)
 	{
-		p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 1F);
+		try {
+			p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 1F);
+			} catch (NoSuchFieldError error) {
+				p.playSound(p.getLocation(), Sound.valueOf("ORB_PICKUP"), 0.5F, 1F);
+			}
 	}
 
 	@EventHandler
 	public void DisplayMenuEvent(PlayerInteractEvent e)
 	{
 		if(e.getClickedBlock() == null) return;
-		if(e.getHand().equals(EquipmentSlot.OFF_HAND)) return;
+		try {
+			if(e.getHand().equals(EquipmentSlot.OFF_HAND)) return;
+			} catch (NoSuchMethodError error) {
+			  // ignore (older version)
+			}
 		Location l = e.getClickedBlock().getLocation();
 		Player p = e.getPlayer();
 		

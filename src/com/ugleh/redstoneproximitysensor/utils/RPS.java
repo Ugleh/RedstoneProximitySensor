@@ -260,6 +260,7 @@ public class RPS {
 		this.rangeSquared = range * range;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void spawnParticle(Location loc) {
 		double d0 = loc.getX() + random.nextDouble() * 0.6D + 0.2D;
 		double d1 = loc.getY() + random.nextDouble() * 0.6D + 0.2D;
@@ -270,7 +271,13 @@ public class RPS {
 		float blue = 133f / 255f;
 		Location loc2 = new Location(loc.getWorld(), d0, d1, d2);
 
-		loc.getWorld().spawnParticle(Particle.REDSTONE, loc2.getX(), loc2.getY(), loc2.getZ(), 0, red,green, blue); 
+		try {
+			loc.getWorld().spawnParticle(Particle.REDSTONE, loc2.getX(), loc2.getY(), loc2.getZ(), 0, red,green, blue); 
+			} catch (NoSuchMethodError | NoClassDefFoundError error) {
+				loc.getWorld().spigot().playEffect(loc2, Effect.COLOURED_DUST, 0, 0, (float) red, (float) green,
+						(float) blue, 1, 0, 5);
+				}
+
 	}
 
 	public void pasteSettings(RPS originalRPS) {
