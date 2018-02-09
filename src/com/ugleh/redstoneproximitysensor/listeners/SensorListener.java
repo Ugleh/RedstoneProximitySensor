@@ -60,7 +60,6 @@ public class SensorListener implements Listener {
 		if(!(e.getItemInHand() != null && e.getItemInHand().hasItemMeta() && e.getItemInHand().getItemMeta().hasDisplayName())) return;
 		//Check if item is a RP Sensor.
 		if((!e.getItemInHand().getItemMeta().getDisplayName().equals(getInstance().rps.getItemMeta().getDisplayName()))) return;
-		if((e.getBlock().getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.REDSTONE_TORCH_OFF)) || (e.getBlock().getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.REDSTONE_TORCH_ON))) return;
 		if(e.getPlayer().hasPermission("rps.place"))
 		{
 			getInstance().getSensorConfig().addSensor(RPSLocation.getRPSLoc(e.getBlock().getLocation()), e.getPlayer().getUniqueId(), UUID.randomUUID());	
