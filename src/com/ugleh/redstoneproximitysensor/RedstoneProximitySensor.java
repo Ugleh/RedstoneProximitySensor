@@ -112,16 +112,14 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		rpsMeta.addEnchant(glow, 1, true);
 		rps.setItemMeta(rpsMeta);
 		ShapedRecipe rpsRecipe;
-		if(Bukkit.getBukkitVersion().startsWith("1.12")) //1.12 not yet released, so working with -pre's
-		{
+		try {
 			NamespacedKey key = new NamespacedKey(this, this.getDescription().getName());
 			rpsRecipe = new ShapedRecipe(key, rps);
 
-		}else
-		{
-			rpsRecipe = new ShapedRecipe(rps);
-		}
-		 
+			} catch (NoClassDefFoundError error) {
+				rpsRecipe = new ShapedRecipe(rps);
+			}
+
 		rpsRecipe.shape("-R-", "-R-", "-R-");
 		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe);
