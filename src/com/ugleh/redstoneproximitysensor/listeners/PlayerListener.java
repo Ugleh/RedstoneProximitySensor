@@ -315,7 +315,7 @@ public class PlayerListener implements Listener
 		if(e.getClickedBlock() == null) return;
 		try {
 			if(e.getHand().equals(EquipmentSlot.OFF_HAND)) return;
-			} catch (NoSuchMethodError error) {
+			} catch (NoSuchMethodError | NullPointerException error) {
 			  // ignore (older version)
 			}
 		Location l = e.getClickedBlock().getLocation();
