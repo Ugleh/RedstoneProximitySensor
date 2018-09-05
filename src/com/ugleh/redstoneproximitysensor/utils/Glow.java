@@ -1,13 +1,14 @@
 package com.ugleh.redstoneproximitysensor.utils;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 
 public class Glow extends Enchantment {
 
-	public Glow(int id) {
-		super(id);
+	public Glow(NamespacedKey key) {
+		super(key);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -38,7 +39,7 @@ public class Glow extends Enchantment {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "Glow";
+		return null;
 	}
 
 	@Override
@@ -58,5 +59,5 @@ public class Glow extends Enchantment {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 }
