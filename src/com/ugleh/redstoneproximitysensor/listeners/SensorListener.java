@@ -20,7 +20,7 @@ public class SensorListener implements Listener {
 	@EventHandler
 	public void BlockRedstoneEvent(BlockRedstoneEvent e)
 	{
-		if(!(e.getBlock().getType().equals(Material.REDSTONE_TORCH))) return;
+		if(!((e.getBlock().getType().equals(Material.REDSTONE_TORCH)) || (e.getBlock().getType().equals(Material.REDSTONE_WALL_TORCH)))) return;
 		if(getInstance().getSensorConfig().getSensorList().containsKey(RPSLocation.getSLoc(e.getBlock().getLocation())))
 		{
 			e.setNewCurrent(e.getOldCurrent());

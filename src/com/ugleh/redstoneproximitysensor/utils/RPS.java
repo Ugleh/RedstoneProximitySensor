@@ -193,7 +193,7 @@ public class RPS {
 		} 
 		Block b = location.getBlock();
 		Material m = b.getType();
-		if (m.equals(Material.REDSTONE_TORCH)) {
+		if (m.equals(Material.REDSTONE_TORCH) || m.equals(Material.REDSTONE_WALL_TORCH)) {
 			if (triggered) {
 				if(!this.inverted && generalConfig.useParticles()) spawnParticle(location);
 				setLitState(b, !inverted);
