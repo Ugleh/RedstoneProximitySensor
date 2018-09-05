@@ -3,9 +3,11 @@ package com.ugleh.redstoneproximitysensor.utils;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
 import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
+
+
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -67,7 +69,6 @@ public class RPS {
 				activeFlags.add("VEHCILE_ENTITY");
 			if (generalConfig.isDefaultProjectileEntityTrigger())
 				activeFlags.add("PROJECTILE_ENTITY");
-			
 		}
 
 	}
@@ -87,15 +88,7 @@ public class RPS {
 	public int getRange() {
 		return range;
 	}
-
-	private Material getSensorMaterial(boolean inv) {
-		if (!inv) {
-			return Material.REDSTONE_TORCH_OFF;
-		} else {
-			return Material.REDSTONE_TORCH_ON;
-		}
-
-	}
+	
 
 	public String getUniqueID() {
 		return this.uniqueID.toString();
@@ -163,7 +156,7 @@ public class RPS {
 				}
 				if(ent instanceof Player)
 				{
-					Player pl = (Player) ent;
+					Player pl = (Player) ent;	
 					if(pl.getGameMode().equals(GameMode.SPECTATOR))
 					{
 						triggered = false;
@@ -200,15 +193,14 @@ public class RPS {
 		} 
 		Block b = location.getBlock();
 		Material m = b.getType();
-		if ((m.equals(Material.REDSTONE_TORCH_OFF))
-				|| (m.equals(Material.REDSTONE_TORCH_ON))) {
+		if (m.equals(Material.REDSTONE_TORCH)) {
 			if (triggered) {
 				if(!this.inverted && generalConfig.useParticles()) spawnParticle(location);
-				setMaterial(b, !inverted);
+				setLitState(b, !inverted);
 
 			} else {
 				if(this.inverted && generalConfig.useParticles()) spawnParticle(location);
-				setMaterial(b, inverted);
+				setLitState(b, inverted);
 			}
 		} else {
 			plugin.getSensorConfig().removeSensor(RPSLocation.getSLoc(location));
@@ -216,15 +208,15 @@ public class RPS {
 
 	}
 
-	private void setMaterial(Block b, boolean c) {
-		if(!b.getType().equals(getSensorMaterial(c)))
+	private void setLitState(Block b, boolean c) {
+		Lightable data = (Lightable) b.getBlockData();
+		//Is the current lit setting the same as the inverted setting for said RPS Torch, if not, trigger the change.
+		if(data.isLit() != c)
 		{
+			data.setLit(c);
+			b.setBlockData(data);
 
-		      BlockState state = b.getState();
-		      state.setType(getSensorMaterial(c));
-		      state.setData(b.getState().getData());
-		      state.update(true, true);
-		 }
+		}
 	}
 
 	public void setAcceptedEntities(List<String> acceptedEntities) {
@@ -260,23 +252,16 @@ public class RPS {
 		this.rangeSquared = range * range;
 	}
 
-	@SuppressWarnings("deprecation")
 	private void spawnParticle(Location loc) {
 		double d0 = loc.getX() + random.nextDouble() * 0.6D + 0.2D;
 		double d1 = loc.getY() + random.nextDouble() * 0.6D + 0.2D;
 		double d2 = loc.getZ() + random.nextDouble() * 0.6D + 0.2D;
 
-		float red = 199f / 255f;
-		float green = 21f / 255f;
-		float blue = 133f / 255f;
+		int red = 199;
+		int green = 21;
+		int blue = 133;
 		Location loc2 = new Location(loc.getWorld(), d0, d1, d2);
-
-		try {
-			loc.getWorld().spawnParticle(Particle.REDSTONE, loc2.getX(), loc2.getY(), loc2.getZ(), 0, red,green, blue); 
-			} catch (NoSuchMethodError | NoClassDefFoundError error) {
-				loc.getWorld().spigot().playEffect(loc2, Effect.COLOURED_DUST, 0, 0, (float) red, (float) green,
-						(float) blue, 1, 0, 5);
-				}
+		loc.getWorld().spawnParticle(Particle.REDSTONE, new Location(loc.getWorld(), loc2.getX(), loc2.getY(), loc2.getZ()), 1, new Particle.DustOptions(Color.fromRGB(red,green, blue), 1));
 
 	}
 
