@@ -103,25 +103,18 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void createRecipes() {
-		rps = new ItemStack(Material.LEGACY_REDSTONE_TORCH_ON, 1);
+		rps = new ItemStack(Material.REDSTONE_TORCH, 1);
 		ItemMeta rpsMeta = rps.getItemMeta();
 		rpsMeta.setDisplayName(ChatColor.RED + this.langString("lang_main_itemname"));
 		Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
 		rpsMeta.addEnchant(glow, 1, true);
 		rps.setItemMeta(rpsMeta);
 		ShapedRecipe rpsRecipe;
-		try {
-			NamespacedKey key = new NamespacedKey(this, this.getDescription().getName());
-			rpsRecipe = new ShapedRecipe(key, rps);
-
-			} catch (NoClassDefFoundError error) {
-				rpsRecipe = new ShapedRecipe(rps);
-			}
-
+		NamespacedKey key = new NamespacedKey(this, this.getDescription().getName());
+		rpsRecipe = new ShapedRecipe(key, rps);
 		rpsRecipe.shape("-R-", "-R-", "-R-");
-		rpsRecipe.setIngredient('R', Material.LEGACY_REDSTONE_TORCH_ON);
+		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH);
 		this.getServer().addRecipe(rpsRecipe);
 
 	}
