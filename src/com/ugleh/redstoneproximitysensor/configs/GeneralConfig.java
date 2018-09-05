@@ -60,15 +60,6 @@ public class GeneralConfig extends YamlConfiguration{
 		peacefulMobs.add("MULE");
 		peacefulMobs.add("ZOMBIE_HORSE");
 		peacefulMobs.add("PARROT");
-		peacefulMobs.add("TURTLE");
-		peacefulMobs.add("TROPICAL_FISH");
-		peacefulMobs.add("ARMOR_STAND");
-		peacefulMobs.add("COD");
-		peacefulMobs.add("DOLPHIN");
-		peacefulMobs.add("EGG");
-		peacefulMobs.add("SALMON");
-		peacefulMobs.add("PUFFERFISH");
-		peacefulMobs.add("GIANT");
 	}
 
 	private void generateHostileMobsList() 
@@ -102,8 +93,6 @@ public class GeneralConfig extends YamlConfiguration{
 		hostileMobs.add("EVOKER");
 		hostileMobs.add("VEX");
 		hostileMobs.add("ILLUSIONER");
-		hostileMobs.add("DROWNED");
-		hostileMobs.add("PHANTOM");
 	}
 
 	private void grabSettings() {
