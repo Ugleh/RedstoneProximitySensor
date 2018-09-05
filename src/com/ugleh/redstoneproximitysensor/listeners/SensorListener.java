@@ -60,11 +60,14 @@ public class SensorListener implements Listener {
 		if(!(e.getItemInHand() != null && e.getItemInHand().hasItemMeta() && e.getItemInHand().getItemMeta().hasDisplayName())) return;
 		//Check if item is a RP Sensor.
 		if((!e.getItemInHand().getItemMeta().getDisplayName().equals(getInstance().rps.getItemMeta().getDisplayName()))) return;
+		//Permission?
 		if(e.getPlayer().hasPermission("rps.place"))
 		{
+			//Add Sensor
 			getInstance().getSensorConfig().addSensor(RPSLocation.getRPSLoc(e.getBlock().getLocation()), e.getPlayer().getUniqueId(), UUID.randomUUID());	
 		}else
 		{
+			//Do not add Sensor, let em know why.
 			e.setCancelled(true);
 			e.getPlayer().sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_restriction_place"));
 		}
