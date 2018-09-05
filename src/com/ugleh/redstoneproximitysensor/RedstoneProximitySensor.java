@@ -53,7 +53,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		gConfig = new GeneralConfig(this);
 		
 		//Create Glow
-		glow = new Glow(1234);
+		glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
 		
 		// Init Listeners
 		this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
@@ -105,10 +105,10 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
 	@SuppressWarnings("deprecation")
 	private void createRecipes() {
-		rps = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
+		rps = new ItemStack(Material.LEGACY_REDSTONE_TORCH_ON, 1);
 		ItemMeta rpsMeta = rps.getItemMeta();
 		rpsMeta.setDisplayName(ChatColor.RED + this.langString("lang_main_itemname"));
-		Glow glow = new Glow(1234);
+		Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
 		rpsMeta.addEnchant(glow, 1, true);
 		rps.setItemMeta(rpsMeta);
 		ShapedRecipe rpsRecipe;
@@ -121,7 +121,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
 			}
 
 		rpsRecipe.shape("-R-", "-R-", "-R-");
-		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH_ON);
+		rpsRecipe.setIngredient('R', Material.LEGACY_REDSTONE_TORCH_ON);
 		this.getServer().addRecipe(rpsRecipe);
 
 	}
@@ -148,7 +148,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
 			e.printStackTrace();
 		}
 		try {
-			Glow glow = new Glow(1234);
+			Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
 			Enchantment.registerEnchantment(glow);
 		} catch (IllegalArgumentException e) {
 
