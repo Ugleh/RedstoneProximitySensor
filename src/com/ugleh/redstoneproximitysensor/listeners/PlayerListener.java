@@ -71,13 +71,14 @@ public class PlayerListener implements Listener
 		button.setItemMeta(itemMeta);
 		guiMenu.setItem(slot, button);
 	}
+	@SuppressWarnings("deprecation")
 	private void createMenu()
 	{
 		guiMenu = Bukkit.createInventory(null, menuSize, invName);
 		
 		//Setting button, Invert Power
 		List<String> lore = WordWrapLore(langString("lang_button_invertpower_lore"));
-		createItem(invertedButton = new ItemStack(Material.WOOL, 1, (short) 14), "button_invertpower", "lang_button_invertpower", lore, 0);
+		createItem(invertedButton = new ItemStack(Material.RED_WOOL, 1, (short) 14), "button_invertpower", "lang_button_invertpower", lore, 0);
 		
 		//Setting button, Range
 		lore = WordWrapLore(langString("lang_button_r_lore"));
@@ -93,11 +94,11 @@ public class PlayerListener implements Listener
 
 		//Setting button, Copy Settings Button
 		lore = WordWrapLore(langString("lang_button_p_lore"));
-		createItem(setPasteButton(new ItemStack(Material.INK_SACK, 1)), "button_paste", "lang_button_paste", lore, 10);		
+		createItem(setPasteButton(new ItemStack(Material.INK_SAC, 1)), "button_paste", "lang_button_paste", lore, 10);		
 
 		//Trigger button, Owner Trigger
 		lore = WordWrapLore(langString("lang_button_ot_lore"));
-		addTrigger(new Trigger("button_ownertrigger", new ItemStack(Material.SKULL_ITEM, 1, (short)3), 4, "lang_button_ownertrigger", "OWNER", "lang_button_true", "lang_button_false", lore));
+		addTrigger(new Trigger("button_ownertrigger", new ItemStack(Material.LEGACY_SKULL_ITEM, 1, (short)3), 4, "lang_button_ownertrigger", "OWNER", "lang_button_true", "lang_button_false", lore));
 
 		//Trigger button, Player Entity Trigger
 		lore = WordWrapLore(langString("lang_button_pet1_lore"));
@@ -105,7 +106,7 @@ public class PlayerListener implements Listener
 		
 		//Trigger button, Hostile Entity Trigger
 		lore = WordWrapLore(langString("lang_button_het_lore"));
-		addTrigger(new Trigger("button_hostileentitiestrigger", new ItemStack(Material.SKULL_ITEM, 1, (short)2), 6, "lang_button_hostileentitytrigger", "HOSTILE_ENTITY", "lang_button_true", "lang_button_false", lore));
+		addTrigger(new Trigger("button_hostileentitiestrigger", new ItemStack(Material.SKELETON_SKULL, 1, (short)2), 6, "lang_button_hostileentitytrigger", "HOSTILE_ENTITY", "lang_button_true", "lang_button_false", lore));
 
 		//Trigger button, Peaceful Entity Trigger
 		lore = WordWrapLore(langString("lang_button_pet2_lore"));
@@ -313,18 +314,17 @@ public class PlayerListener implements Listener
 	public void DisplayMenuEvent(PlayerInteractEvent e)
 	{
 		if(e.getClickedBlock() == null) return;
-		try {
-			if(e.getHand().equals(EquipmentSlot.OFF_HAND)) return;
-			} catch (NoSuchMethodError | NullPointerException error) {
-			  // ignore (older version)
-			}
+		if(e.getHand().equals(EquipmentSlot.OFF_HAND)) return;
+
 		Location l = e.getClickedBlock().getLocation();
 		Player p = e.getPlayer();
-		
+
 		//Check if player is right clicking a block
 		if(!(e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) return;
 		//User Right clicked an RPS
+		
 		if(!(getInstance().getSensorConfig().getSensorList().containsKey(RPSLocation.getSLoc(l)))) return;
+		
 		e.setCancelled(true);
 		RPS selectedRPS = getInstance().getSensorConfig().getSensorList().get(RPSLocation.getSLoc(l));
 		if(((selectedRPS.getOwner().equals(p.getUniqueId())) && selectedRPS.isownerOnlyEdit()) || (!selectedRPS.isownerOnlyEdit()))
@@ -405,11 +405,11 @@ public class PlayerListener implements Listener
 		ItemMeta tempIBMeta = invertedButton.getItemMeta();
 		if(selectedRPS.isInverted())
 		{
-			invertedButton.setDurability((short)7);
+			invertedButton.setType(Material.GRAY_WOOL);
 			tempIBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.GRAY + langString("lang_button_inverted"));
 		}else
 		{
-			invertedButton.setDurability((short)14);
+			invertedButton.setType(Material.RED_WOOL);
 			tempIBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.RED + langString("lang_button_notinverted"));
 		}
 		
