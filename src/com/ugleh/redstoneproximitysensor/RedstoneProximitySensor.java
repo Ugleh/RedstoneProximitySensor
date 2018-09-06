@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 public class RedstoneProximitySensor extends JavaPlugin {
-	public String version;
 	private GeneralConfig gConfig;
 	private SensorConfig sensorConfig;
 	public ItemStack rps;
@@ -47,7 +46,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
-		version =  getDescription().getVersion();
 		// Init configs.
 		languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
 		gConfig = new GeneralConfig(this);
@@ -151,7 +149,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
 	}
 
 	public String getVersion() {
-		return this.version;
+		return getDescription().getVersion();
 	}
 
 	public static RedstoneProximitySensor getInstance() {
