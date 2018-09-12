@@ -314,6 +314,7 @@ public class PlayerListener implements Listener
 	public void DisplayMenuEvent(PlayerInteractEvent e)
 	{
 		if(e.getClickedBlock() == null) return;
+		if(e.getHand() == null) return;
 		if(e.getHand().equals(EquipmentSlot.OFF_HAND)) return;
 
 		Location l = e.getClickedBlock().getLocation();
@@ -321,8 +322,8 @@ public class PlayerListener implements Listener
 
 		//Check if player is right clicking a block
 		if(!(e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) return;
+	
 		//User Right clicked an RPS
-		
 		if(!(getInstance().getSensorConfig().getSensorList().containsKey(RPSLocation.getSLoc(l)))) return;
 		
 		e.setCancelled(true);
