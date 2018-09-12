@@ -1,5 +1,6 @@
 rps:
   update-checker: true
+  sqlite: false
   use-particles: true
   maxRange: 20
   defaultRange: 5

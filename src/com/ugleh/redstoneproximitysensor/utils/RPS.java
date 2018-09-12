@@ -19,7 +19,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -33,7 +32,7 @@ public class RPS {
 	private boolean ownerOnlyEdit = true;
 	private boolean triggered = false;
 	public RedstoneProximitySensor plugin;
-	private List<String> activeFlags = new ArrayList<String>();
+	private ArrayList<String> activeFlags = new ArrayList<String>();
 	public GeneralConfig generalConfig;
 	private Random random;
 
@@ -73,7 +72,7 @@ public class RPS {
 
 	}
 
-	public List<String> getAcceptedEntities() {
+	public ArrayList<String> getAcceptedEntities() {
 		return activeFlags;
 	}
 
@@ -219,11 +218,11 @@ public class RPS {
 		}
 	}
 
-	public void setAcceptedEntities(List<String> acceptedEntities) {
+	public void setAcceptedEntities(ArrayList<String> acceptedEntities) {
 		this.activeFlags = acceptedEntities;
 	}
 
-	public void setData(boolean inverted, int range, List<String> acpent, boolean ownerEdit) {
+	public void setData(boolean inverted, int range, ArrayList<String> acpent, boolean ownerEdit) {
 		this.setAcceptedEntities(acpent);
 		this.setInverted(inverted);
 		this.setRange(range);
@@ -270,7 +269,7 @@ public class RPS {
 		this.setInverted(originalRPS.inverted);
 		this.setOwnerOnlyEdit(originalRPS.ownerOnlyEdit);
 		this.setRange(originalRPS.range);
-		plugin.getSensorConfig().savePaste(this.getUniqueID(), this.getAcceptedEntities(), this.isInverted(), this.isownerOnlyEdit(), this.getRange());
-
+		//plugin.getSensorConfig().savePaste(this.getUniqueID(), this.getAcceptedEntities(), this.isInverted(), this.isownerOnlyEdit(), this.getRange());
+		plugin.getSensorConfig().savePaste(this);
 	}
 }

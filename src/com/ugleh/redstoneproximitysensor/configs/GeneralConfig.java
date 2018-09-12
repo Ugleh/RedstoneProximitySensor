@@ -16,6 +16,7 @@ public class GeneralConfig extends YamlConfiguration{
 	int defaultRange = 5;
 	public boolean useParticles = true;
 	public boolean updateChecker = true;
+	public boolean sqlite = false;
 	private boolean defaultInverted = false;
 	private boolean defaultOwnerTrigger = true;
 	private boolean deaultPlayerEntityTrigger = true;
@@ -108,6 +109,7 @@ public class GeneralConfig extends YamlConfiguration{
 
 	private void grabSettings() {
 		updateChecker = plugin.getConfig().getBoolean("rps.update-checker");
+		sqlite = plugin.getConfig().getBoolean("rps.sqlite", false);
 		useParticles = plugin.getConfig().getBoolean("rps.use-particles");
 		maxRange = plugin.getConfig().getInt("rps.maxRange");
 		defaultRange = plugin.getConfig().getInt("rps.defaultRange");
@@ -142,6 +144,7 @@ public class GeneralConfig extends YamlConfiguration{
 	private void createDefaults() {
 		plugin.getConfig().addDefault("rps.maxRange", 20);
 		plugin.getConfig().addDefault("rps.use-particles", true);
+		plugin.getConfig().addDefault("rps.sqlite", false);
 		plugin.getConfig().addDefault("rps.defaultRange", 5);
 		plugin.getConfig().addDefault("rps.defaultownerOnlyEdit", true);
 		plugin.getConfig().addDefault("rps.defaultInverted", false);
@@ -203,6 +206,10 @@ public class GeneralConfig extends YamlConfiguration{
 
 	public boolean isDefaultInvisibleEntityTrigger() {
 		return defaultInvisibleEntityTrigger;
+	}
+	
+	public boolean isSQLite() {
+		return sqlite;
 	}
 
 	public List<String> getHostileMobs() {

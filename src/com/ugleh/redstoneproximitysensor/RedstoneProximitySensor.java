@@ -8,9 +8,12 @@ import com.ugleh.redstoneproximitysensor.configs.LanguageConfig;
 import com.ugleh.redstoneproximitysensor.configs.SensorConfig;
 import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
 import com.ugleh.redstoneproximitysensor.listeners.SensorListener;
+import com.ugleh.redstoneproximitysensor.sqlite.Database;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.Metrics;
 import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
+import com.ugleh.redstoneproximitysensor.sqlite.SQLite;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -42,14 +45,24 @@ public class RedstoneProximitySensor extends JavaPlugin {
 	public PlayerListener playerListener;
 	public SensorListener sensorListener;
 	
+	private Database db;
 	
 	@Override
 	public void onEnable() {
 		instance = this;
+		
+		
+
 		// Init configs.
 		languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
 		gConfig = new GeneralConfig(this);
 		
+		if(this.getgConfig().sqlite)
+		{
+			this.db = new SQLite(this);
+			this.db.load();
+
+		}
 		//Create Glow
 		glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
 		
@@ -61,7 +74,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		
 		// Add existing sensors back
 		sensorConfig = new SensorConfig(this, "sensors.yml", "sensors.yml");
-		
+
 		if(gConfig.updateChecker)
 			needsUpdate = new UpdateChecker(this.getVersion()).needsUpdate;
 		// Setup Glow
@@ -176,4 +189,8 @@ public class RedstoneProximitySensor extends JavaPlugin {
 		this.triggerAddons = triggerAddons;
 	}
 	
+	
+	public Database getDatabase() {
+        return this.db;
+    }
 }
