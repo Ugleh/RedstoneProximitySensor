@@ -1,2 +1,2 @@
-#2.3.8
-^Updated RPS to 1.13+, if you do not have 1.13 DO NOT DOWNLOAD. Update only supports 1.13+
+#2.3.9
+^Fixed a NullPointerException that was introduced into 1.13.
