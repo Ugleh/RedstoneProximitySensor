@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.utils.RPS;
+import com.ugleh.redstoneproximitysensor.utils.Trigger;
 public class TriggerAddons {
 	private static TriggerAddons instance;
 	public List<String> triggeredAddonFlags = new ArrayList<String>();
@@ -47,7 +48,14 @@ public class TriggerAddons {
 			triggeredAddons.add(new GPAddon());
 		}
 	}
+	
+	@Deprecated
 	public int getSlot() {
+		return getNextAvaliableSlot();
+	}
+	
+	
+	public int getNextAvaliableSlot() {
 		--latestSlot;
 		return latestSlot+1;
 	}
@@ -68,6 +76,11 @@ public class TriggerAddons {
 			if(addon.checkTrigger(rps, ent)) return true;
 		}
 		return false;
+	}
+	
+	public void addTrigger(Trigger trigger)
+	{
+		RedstoneProximitySensor.getInstance().playerListener.addTrigger(trigger);
 	}
 
 }

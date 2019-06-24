@@ -62,7 +62,7 @@ public class Trigger {
 				,langString(button_title) + ": "
 				,loreTextWrapped
 				,sensor_flag
-				,ta.getSlot()
+				,ta.getNextAvaliableSlot()
 				,RedstoneProximitySensor.getInstance().glow
 				,langString(toggle_off).substring(0, 1).toUpperCase() + langString(toggle_off).substring(1)
 				,langString(toggle_on).substring(0, 1).toUpperCase() + langString(toggle_on).substring(1)

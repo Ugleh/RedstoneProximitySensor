@@ -1,2 +1,2 @@
-#2.3.9
-^Fixed a NullPointerException that was introduced into 1.13.
+#2.4.0
+^Rerouted deprecated inv#getName to invView#getTitle & add 1.14 mobs

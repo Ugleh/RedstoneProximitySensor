@@ -183,9 +183,10 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void InventoryClickEvent(InventoryClickEvent e)
 	{
+		if(e.getInventory() == null) return;
 		if(e.getClickedInventory() == null) return;
 		if(!e.getWhoClicked().hasPermission("rps.menu")) return;
-		if(!(e.getInventory().getName().equals(invName) || e.getClickedInventory().getName().equals(invName))) return;
+		if(!(e.getView().getTitle().equals(invName) || e.getView().getTitle().equals(invName))) return;
 		RPS selectedRPS = userSelectedRPS.get(e.getWhoClicked().getUniqueId());
 		
 		//We understand that the inventory we are currently in is the RPS Menu so lets cancel any future click events now.

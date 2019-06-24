@@ -42,7 +42,11 @@ public class GeneralConfig extends YamlConfiguration{
 
 	private void generatePeacefulMobs() {
 		
+		peacefulMobs.add("WANDERING_TRADER");
+		peacefulMobs.add("PANDA");
 		peacefulMobs.add("BAT");
+		peacefulMobs.add("CAT");
+		peacefulMobs.add("FOX");
 		peacefulMobs.add("CHICKEN");
 		peacefulMobs.add("COW");
 		peacefulMobs.add("MUSHROOM_COW");
@@ -74,6 +78,8 @@ public class GeneralConfig extends YamlConfiguration{
 
 	private void generateHostileMobsList() 
 	{
+		hostileMobs.add("PILLAGER");
+		hostileMobs.add("RAVAGER");
 		hostileMobs.add("BLAZE");
 		hostileMobs.add("CREEPER");
 		hostileMobs.add("GUARDIAN");
