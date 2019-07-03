@@ -1,2 +1,2 @@
-#2.4.0
-^Rerouted deprecated inv#getName to invView#getTitle & add 1.14 mobs
+#2.4.1
+^Added Shift-Click ignore menu for building blocks next to/on top of the RPS, as well as Shift-Place hotkey
