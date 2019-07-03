@@ -7,57 +7,48 @@ import org.bukkit.inventory.ItemStack;
 
 public class Glow extends Enchantment {
 
-	public Glow(NamespacedKey key) {
-		super(key);
-		// TODO Auto-generated constructor stub
-	}
+    public Glow(NamespacedKey key) {
+        super(key);
+    }
 
-	@Override
-	public boolean canEnchantItem(ItemStack arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean canEnchantItem(ItemStack arg0) {
+        return false;
+    }
 
-	@Override
-	public boolean conflictsWith(Enchantment arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean conflictsWith(Enchantment arg0) {
+        return false;
+    }
 
-	@Override
-	public EnchantmentTarget getItemTarget() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public EnchantmentTarget getItemTarget() {
+        return null;
+    }
 
-	@Override
-	public int getMaxLevel() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getMaxLevel() {
+        return 0;
+    }
 
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getName() {
+        return null;
+    }
 
-	@Override
-	public int getStartLevel() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getStartLevel() {
+        return 0;
+    }
 
-	@Override
-	public boolean isCursed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isCursed() {
+        return false;
+    }
 
-	@Override
-	public boolean isTreasure() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
+    @Override
+    public boolean isTreasure() {
+        return false;
+    }
+
 }

@@ -23,7 +23,7 @@ language:
   lang_button_inverted: Inverted
   lang_button_notinverted: Not Inverted
   lang_button_invertpower: Invert Power
-  lang_button_invertpower_lore: Toggle the sensors power to be inverted when triggered.  
+  lang_button_invertpower_lore: Toggle the sensors power to be inverted when triggered.
   lang_button_range: Range
   lang_button_r_lore: Left Click to increase range, Right Click to decrease range.
   lang_button_copy: Copy

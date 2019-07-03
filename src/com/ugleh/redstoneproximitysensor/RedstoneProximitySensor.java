@@ -9,11 +9,10 @@ import com.ugleh.redstoneproximitysensor.configs.SensorConfig;
 import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
 import com.ugleh.redstoneproximitysensor.listeners.SensorListener;
 import com.ugleh.redstoneproximitysensor.sqlite.Database;
+import com.ugleh.redstoneproximitysensor.sqlite.SQLite;
 import com.ugleh.redstoneproximitysensor.utils.Glow;
 import com.ugleh.redstoneproximitysensor.utils.Metrics;
 import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
-import com.ugleh.redstoneproximitysensor.sqlite.SQLite;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,166 +30,161 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 public class RedstoneProximitySensor extends JavaPlugin {
-	private GeneralConfig gConfig;
-	private SensorConfig sensorConfig;
-	public ItemStack rps;
-	public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED;
-	public static RedstoneProximitySensor instance;
-	private LanguageConfig languageConfig;
-	private TriggerAddons triggerAddons;
-	public boolean needsUpdate = false;
-	public Glow glow;
+    public static RedstoneProximitySensor instance;
+    public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED;
+    public ItemStack rps;
+    public boolean needsUpdate = false;
+    public Glow glow;
+    //Listeners
+    public PlayerListener playerListener;
+    public SensorListener sensorListener;
+    private GeneralConfig gConfig;
+    private SensorConfig sensorConfig;
+    private LanguageConfig languageConfig;
+    private TriggerAddons triggerAddons;
+    private Database db;
 
-	//Listeners
-	public PlayerListener playerListener;
-	public SensorListener sensorListener;
-	
-	private Database db;
-	
-	@Override
-	public void onEnable() {
-		instance = this;
-		
-		
+    public static RedstoneProximitySensor getInstance() {
+        return instance;
+    }
 
-		// Init configs.
-		languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
-		gConfig = new GeneralConfig(this);
-		
-		if(this.getgConfig().sqlite)
-		{
-			this.db = new SQLite(this);
-			this.db.load();
+    @Override
+    public void onEnable() {
+        instance = this;
 
-		}
-		//Create Glow
-		glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
-		
-		// Init Listeners
-		this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
-		this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
-		//Register addons
-		setTriggerAddons(new TriggerAddons());
-		
-		// Add existing sensors back
-		sensorConfig = new SensorConfig(this, "sensors.yml", "sensors.yml");
 
-		if(gConfig.updateChecker)
-			needsUpdate = new UpdateChecker(this.getVersion()).needsUpdate;
-		// Setup Glow
-		registerGlow();
+        // Init configs.
+        languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
+        gConfig = new GeneralConfig(this);
 
-		// Setting command Executors.
-		this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS(this));
-		this.getServer().getPluginCommand("ignorerps").setExecutor(new CommandIgnoreRPS(this));
+        if (this.getgConfig().sqlite) {
+            this.db = new SQLite(this);
+            this.db.load();
 
-		
+        }
+        //Create Glow
+        glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
 
-		// Others
+        // Init Listeners
+        this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
+        this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
+        //Register addons
+        setTriggerAddons(new TriggerAddons());
 
-		createRecipes();
-		initUpdateAlert();
-		initMetrics();
-		this.getLogger().log(Level.INFO, "Plugin has started!");
-		this.getLogger().log(Level.INFO, "RPS's Loaded: " + getSensorConfig().getSensorList().size());
-	}
+        // Add existing sensors back
+        sensorConfig = new SensorConfig(this, "sensors.yml", "sensors.yml");
 
-	private void initMetrics() {
-		try {
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (IOException e) {
-			// Failed to submit the stats :-(
-		}
-	}
+        if (gConfig.updateChecker)
+            needsUpdate = new UpdateChecker(this.getVersion()).needsUpdate;
+        // Setup Glow
+        registerGlow();
 
-	private void initUpdateAlert() {
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (p.isOp() && this.needsUpdate) {
-				p.sendMessage(getInstance().chatPrefix + ChatColor.DARK_RED + langString("lang_update_notice"));
-				p.sendMessage(getInstance().chatPrefix + ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
+        // Setting command Executors.
+        this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS(this));
+        this.getServer().getPluginCommand("ignorerps").setExecutor(new CommandIgnoreRPS(this));
 
-			}
-		}
-	}
 
-	private void createRecipes() {
-		rps = new ItemStack(Material.REDSTONE_TORCH, 1);
-		ItemMeta rpsMeta = rps.getItemMeta();
-		rpsMeta.setDisplayName(ChatColor.RED + this.langString("lang_main_itemname"));
-		Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
-		rpsMeta.addEnchant(glow, 1, true);
-		rps.setItemMeta(rpsMeta);
-		ShapedRecipe rpsRecipe;
-		NamespacedKey key = new NamespacedKey(this, this.getDescription().getName());
-		rpsRecipe = new ShapedRecipe(key, rps);
-		rpsRecipe.shape("-R-", "-R-", "-R-");
-		rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH);
-		this.getServer().addRecipe(rpsRecipe);
+        // Others
 
-	}
+        createRecipes();
+        initUpdateAlert();
+        initMetrics();
+        this.getLogger().log(Level.INFO, "Plugin has started!");
+        this.getLogger().log(Level.INFO, "RPS's Loaded: " + getSensorConfig().getSensorList().size());
+    }
 
-	@Override
-	public void onDisable() {
+    private void initMetrics() {
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+            // Failed to submit the stats :-(
+        }
+    }
 
-	}
+    private void initUpdateAlert() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.isOp() && this.needsUpdate) {
+                p.sendMessage(getInstance().chatPrefix + ChatColor.DARK_RED + langString("lang_update_notice"));
+                p.sendMessage(getInstance().chatPrefix + ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
 
-	public GeneralConfig getgConfig() {
-		return gConfig;
-	}
+            }
+        }
+    }
 
-	public SensorConfig getSensorConfig() {
-		return sensorConfig;
-	}
+    private void createRecipes() {
+        rps = new ItemStack(Material.REDSTONE_TORCH, 1);
+        ItemMeta rpsMeta = rps.getItemMeta();
+        rpsMeta.setDisplayName(ChatColor.RED + this.langString("lang_main_itemname"));
+        Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
+        rpsMeta.addEnchant(glow, 1, true);
+        rps.setItemMeta(rpsMeta);
+        ShapedRecipe rpsRecipe;
+        NamespacedKey key = new NamespacedKey(this, this.getDescription().getName());
+        rpsRecipe = new ShapedRecipe(key, rps);
+        rpsRecipe.shape("-R-", "-R-", "-R-");
+        rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH);
+        this.getServer().addRecipe(rpsRecipe);
 
-	private void registerGlow() {
-		try {
-			Field f = Enchantment.class.getDeclaredField("acceptingNew");
-			f.setAccessible(true);
-			f.set(null, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
-			Enchantment.registerEnchantment(glow);
-		} catch (IllegalArgumentException e) {
+    }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void onDisable() {
 
-	public String getVersion() {
-		return getDescription().getVersion();
-	}
+    }
 
-	public static RedstoneProximitySensor getInstance() {
-		return instance;
-	}
+    public GeneralConfig getgConfig() {
+        return gConfig;
+    }
 
-	public HashMap<String, String> getLang() {
-		return languageConfig.getLanguageNodes();
-	}
+    public SensorConfig getSensorConfig() {
+        return sensorConfig;
+    }
 
-	public String langString(String key) {
-		return getInstance().getLang().get(key);
-	}
+    private void registerGlow() {
+        try {
+            Field f = Enchantment.class.getDeclaredField("acceptingNew");
+            f.setAccessible(true);
+            f.set(null, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
+            Enchantment.registerEnchantment(glow);
+        } catch (IllegalArgumentException e) {
 
-	public LanguageConfig getLanguageConfig() {
-		return languageConfig;
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public TriggerAddons getTriggerAddons() {
-		return triggerAddons;
-	}
+    public String getVersion() {
+        return getDescription().getVersion();
+    }
 
-	public void setTriggerAddons(TriggerAddons triggerAddons) {
-		this.triggerAddons = triggerAddons;
-	}
-	
-	
-	public Database getDatabase() {
+    public HashMap<String, String> getLang() {
+        return languageConfig.getLanguageNodes();
+    }
+
+    public String langString(String key) {
+        return getInstance().getLang().get(key);
+    }
+
+    public LanguageConfig getLanguageConfig() {
+        return languageConfig;
+    }
+
+    public TriggerAddons getTriggerAddons() {
+        return triggerAddons;
+    }
+
+    public void setTriggerAddons(TriggerAddons triggerAddons) {
+        this.triggerAddons = triggerAddons;
+    }
+
+
+    public Database getDatabase() {
         return this.db;
     }
 }
