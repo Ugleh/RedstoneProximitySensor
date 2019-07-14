@@ -3,7 +3,7 @@ main: com.ugleh.redstoneproximitysensor.RedstoneProximitySensor
 description: A Sensor can be crafted that has proximity effects.
 author: Ugleh
 softdepend: [Towny, GriefPrevention, LegacyFactions]
-version: 2.4.2
+version: 2.4.3
 api-version: 1.13
 permissions:
   rps.create:
@@ -12,6 +12,12 @@ permissions:
   rps.debug:
     description: Permission to view debug text.
     default: false
+  rps.list:
+    description: Permission to use list command.
+    default: true
+  rps.list.player:
+    description: Permission to use list command with player arg.
+    default: op
   rps.place:
     description: Permission to place down proximity sensors.
     default: true
@@ -74,6 +80,10 @@ commands:
     description: The admin command for RPS control.
     permission: rps.admin
     default: op
+  rpslist:
+    description: The command to view your RPS sensors.
+    permission: rps.list
+    default: true
   ignorerps:
     description: The command to toggle ignore the RPS or not.
     permission: rps.invisible

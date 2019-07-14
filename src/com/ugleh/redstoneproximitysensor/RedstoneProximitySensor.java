@@ -3,6 +3,7 @@ package com.ugleh.redstoneproximitysensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
 import com.ugleh.redstoneproximitysensor.commands.CommandIgnoreRPS;
 import com.ugleh.redstoneproximitysensor.commands.CommandRPS;
+import com.ugleh.redstoneproximitysensor.commands.CommandRPSList;
 import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
 import com.ugleh.redstoneproximitysensor.configs.LanguageConfig;
 import com.ugleh.redstoneproximitysensor.configs.SensorConfig;
@@ -80,8 +81,9 @@ public class RedstoneProximitySensor extends JavaPlugin {
         registerGlow();
 
         // Setting command Executors.
-        this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS(this));
-        this.getServer().getPluginCommand("ignorerps").setExecutor(new CommandIgnoreRPS(this));
+        this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS());
+        this.getServer().getPluginCommand("ignorerps").setExecutor(new CommandIgnoreRPS());
+        this.getServer().getPluginCommand("rpslist").setExecutor(new CommandRPSList());
 
 
         // Others

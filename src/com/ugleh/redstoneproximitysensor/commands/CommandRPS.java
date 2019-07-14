@@ -10,24 +10,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class CommandRPS implements CommandExecutor {
-    private RedstoneProximitySensor plugin;
-
-    public CommandRPS(RedstoneProximitySensor redstoneProximitySensor) {
-        this.plugin = redstoneProximitySensor;
-    }
-
+	
     @Override
     public boolean onCommand(CommandSender sender, Command command, String rawCommand, String[] args) {
         if (args.length == 0) notEnoughArgs(sender);
-        if (args.length >= 1) enoughArgs(sender, args);
+        else if (args.length >= 1) enoughArgs(sender, args);
         return false;
     }
 
     private void enoughArgs(CommandSender sender, String[] args) {
         if (args[0].equalsIgnoreCase("reload")) {
-            plugin.getgConfig().reloadConfig();
-            plugin.getLanguageConfig().reload();
-            plugin.getSensorConfig().reload();
+            getInstance().getgConfig().reloadConfig();
+            getInstance().getLanguageConfig().reload();
+            getInstance().getSensorConfig().reload();
             sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_reload"));
         } else if (args[0].equalsIgnoreCase("give")) {
             if (args.length > 1) {
@@ -39,7 +34,7 @@ public class CommandRPS implements CommandExecutor {
                         //Give amount
                         int amount = Integer.parseInt(args[2]);
                         if (amount > 0) {
-                            ItemStack rpsStack = plugin.rps.clone();
+                            ItemStack rpsStack = getInstance().rps.clone();
                             rpsStack.setAmount(amount);
                             givePlayer.getInventory().addItem(rpsStack);
                             sender.sendMessage(getInstance().chatPrefix + "Given RPS * " + amount + " to " + givePlayer.getName());
@@ -49,7 +44,7 @@ public class CommandRPS implements CommandExecutor {
                         }
                     } else {
                         //Give 1
-                        ItemStack rpsStack = plugin.rps.clone();
+                        ItemStack rpsStack = getInstance().rps.clone();
                         rpsStack.setAmount(1);
                         givePlayer.getInventory().addItem(rpsStack);
                         sender.sendMessage(getInstance().chatPrefix + "Given RPS * 1 to " + givePlayer.getName());
@@ -68,10 +63,11 @@ public class CommandRPS implements CommandExecutor {
     }
 
     private void notEnoughArgs(CommandSender sender) {
-        sender.sendMessage(getInstance().chatPrefix + "Redstone Proximity Sensor - Version: " + ChatColor.GREEN + this.plugin.getVersion());
+        sender.sendMessage(getInstance().chatPrefix + "Redstone Proximity Sensor - Version: " + ChatColor.GREEN + this.getInstance().getVersion());
         sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_invalidargs"));
         sender.sendMessage(getInstance().chatPrefix + "/rps reload");
         sender.sendMessage(getInstance().chatPrefix + "/rps give <player> [amount]");
+        sender.sendMessage(getInstance().chatPrefix + "/rpslist [player]");
 
     }
 

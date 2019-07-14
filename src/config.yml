@@ -14,3 +14,10 @@ rps:
   defaultInvisibleEntityTrigger: false
   defaultVehcileEntityTrigger: false
   defaultProjectileEntityTrigger: false
+  limiter:
+    player:
+      amount: 40
+      default: true
+    admin:
+      amount: -1
+      default: op

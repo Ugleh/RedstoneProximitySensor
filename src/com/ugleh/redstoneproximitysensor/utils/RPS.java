@@ -13,6 +13,7 @@ import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.*;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -197,6 +198,11 @@ public class RPS {
                                 isInvisible = true;
                             }
                         }
+                        if(ent instanceof Player)
+                        {
+                        	if(isVanished((Player) ent))
+                        		isInvisible = true;
+                        }
                         if (isInvisible)
                             continue;
                     }
@@ -222,6 +228,13 @@ public class RPS {
 
     }
 
+    private boolean isVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) return true;
+        }
+        return false;
+}
+    
     private void setLitState(Block b, boolean c) {
         Lightable data = (Lightable) b.getBlockData();
         //Is the current lit setting the same as the inverted setting for said RPS Torch, if not, trigger the change.

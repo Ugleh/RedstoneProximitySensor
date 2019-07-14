@@ -6,6 +6,7 @@ language:
   lang_update_desc: Description
   lang_update_link: Link
   lang_restriction_place: You do not have permission to place that.
+  lang_restriction_place_limit: You have reached your limit of RPS sensors to place. Use '/rpslist' to find where they are.
   lang_restriction_owneronly: This RPS can only be modified by its owner.
   lang_restriction_owneronly_button: Only the owner can modify that setting.
   lang_restriction_permission: You do not have permissions to use this modifier.

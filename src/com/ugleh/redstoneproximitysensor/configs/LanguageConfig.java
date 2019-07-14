@@ -1,6 +1,5 @@
 package com.ugleh.redstoneproximitysensor.configs;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -66,7 +65,6 @@ public class LanguageConfig extends YamlConfiguration {
             if (defaults != null) {
                 InputStreamReader reader = new InputStreamReader(plugin.getResource(defaults));
                 FileConfiguration defaultsConfig = YamlConfiguration.loadConfiguration(reader);
-                update13();
                 setDefaults(defaultsConfig);
                 options().copyDefaults(true);
 
@@ -93,13 +91,6 @@ public class LanguageConfig extends YamlConfiguration {
             String langString = this.getString("language." + languageID);
             languageNodes.put(languageID, langString);
         }
-    }
-
-    private void update13() {
-        if (!this.isConfigurationSection("language")) return;
-        ConfigurationSection cs = this.getConfigurationSection("language");
-        cs.set("lang_button_owneronlytrigger", null);
-        cs.set("lang_button_oot_lore", null);
     }
 
     /**

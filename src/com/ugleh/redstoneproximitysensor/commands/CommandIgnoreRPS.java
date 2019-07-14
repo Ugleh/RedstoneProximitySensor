@@ -8,12 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandIgnoreRPS implements CommandExecutor {
-    RedstoneProximitySensor plugin;
-
-    public CommandIgnoreRPS(RedstoneProximitySensor plugin) {
-        this.plugin = plugin;
-    }
-
+	
     @Override
     public boolean onCommand(CommandSender sender, Command command, String prefix, String[] args) {
         if (!(sender instanceof Player)) return notPlayerNotification(sender);

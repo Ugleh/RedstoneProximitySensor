@@ -1,11 +1,20 @@
 package com.ugleh.redstoneproximitysensor.configs;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class GeneralConfig extends YamlConfiguration {
     public boolean useParticles = true;
@@ -27,6 +36,8 @@ public class GeneralConfig extends YamlConfiguration {
     private boolean defaultVehcileEntityTrigger = false;
     private boolean defaultProjectileEntityTrigger = false;
 
+    
+    public HashMap<String, Integer> permissionLimiters = new HashMap<String, Integer>();
     public GeneralConfig(RedstoneProximitySensor plugin) {
         this.plugin = plugin;
 
@@ -118,21 +129,69 @@ public class GeneralConfig extends YamlConfiguration {
         defaultInverted = plugin.getConfig().getBoolean("rps.defaultInverted");
 
         defaultOwnerTrigger = plugin.getConfig().getBoolean("rps.defaultOwnerTrigger");
-        ;
         deaultPlayerEntityTrigger = plugin.getConfig().getBoolean("rps.defaultPlayerEntityTrigger");
-        ;
         defaultHostileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultHostileEntityTrigger");
-        ;
         defaultPeacefulEntityTrigger = plugin.getConfig().getBoolean("rps.defaultPeacefulEntityTrigger");
-        ;
         defaultDroppedItemsTrigger = plugin.getConfig().getBoolean("rps.defaultDroppedItemsTrigger");
-        ;
         defaultInvisibleEntityTrigger = plugin.getConfig().getBoolean("rps.defaultInvisibleEntityTrigger");
-        ;
         defaultVehcileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultVehcileEntityTrigger");
-        ;
         defaultProjectileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultProjectileEntityTrigger");
-        ;
+        
+        grabLimitPermissions();
+
+    }
+    
+    private void grabLimitPermissions()
+    {
+    	//If it is missing, add a default permission of infinite count to the list.
+    	if(!plugin.getConfig().isSet("rps.limiter"))
+    	{
+        	permissionLimiters.put("rps.limiter.default", -1);
+        	plugin.getServer().getPluginManager().addPermission(new Permission("rps.limiter.default", PermissionDefault.TRUE));
+        	plugin.getConfig().set("rps.limiter.default.default", true);
+        	plugin.getConfig().set("rps.limiter.default.amount", -1);
+        	plugin.saveConfig();
+    		return;
+    	}
+        for (String key : plugin.getConfig().getConfigurationSection("rps.limiter").getKeys(true)) {
+    		//Check if subkey "default" exists, if it does grab the PermissionDefault of it, if not set to DEFAULT_PERMISSION.
+        	PermissionDefault pd = Permission.DEFAULT_PERMISSION;
+            	if(plugin.getConfig().isSet("rps.limiter."  + key + ".default"))
+            	{
+            		pd = PermissionDefault.getByName(plugin.getConfig().getString("rps.limiter."  + key + ".default"));    
+            		if (pd == null)
+            			throw new IllegalArgumentException("'default' key in RedstoneProximitySensor Config contained unknown value");
+            	}
+            	
+            	plugin.getServer().getPluginManager().addPermission(new Permission("rps.limiter."  + key, pd));
+            	
+            	//Check if subkey "amount" exists, if it does grab the amount, if not set it to -1 (infinite)
+            	int limiterAmount = -1;
+            	if(plugin.getConfig().isSet("rps.limiter."  + key + ".amount")) {
+            		limiterAmount = plugin.getConfig().getInt("rps.limiter."  + key + ".amount");
+            	}
+        	permissionLimiters.put("rps.limiter."  + key, limiterAmount);
+        }
+        
+        List<Map.Entry<String, Integer> > list = new LinkedList<Map.Entry<String, Integer> >(permissionLimiters.entrySet()); 
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() { 
+            public int compare(Map.Entry<String, Integer> o1,  
+                               Map.Entry<String, Integer> o2) 
+            { 
+                return (o2.getValue()).compareTo(o1.getValue()); 
+            } 
+        });
+        
+        permissionLimiters = new LinkedHashMap<String, Integer>(); 
+        for (Map.Entry<String, Integer> aa : list) { 
+        	permissionLimiters.put(aa.getKey(), aa.getValue()); 
+        }
+        
+        if(permissionLimiters.isEmpty())
+        {
+        	permissionLimiters.put("rps.limiter.default", -1);
+        	plugin.getServer().getPluginManager().addPermission(new Permission("rps.limiter.default", Permission.DEFAULT_PERMISSION));
+        }
     }
 
     public void reloadConfig() {
@@ -155,6 +214,7 @@ public class GeneralConfig extends YamlConfiguration {
     private void createDefaults() {
         plugin.getConfig().addDefault("rps.maxRange", 20);
         plugin.getConfig().addDefault("rps.use-particles", true);
+        plugin.getConfig().addDefault("rps.update-checker", true);
         plugin.getConfig().addDefault("rps.sqlite", false);
         plugin.getConfig().addDefault("rps.defaultRange", 5);
         plugin.getConfig().addDefault("rps.defaultownerOnlyEdit", true);
@@ -168,7 +228,7 @@ public class GeneralConfig extends YamlConfiguration {
         plugin.getConfig().addDefault("rps.defaultVehcileEntityTrigger", false);
         plugin.getConfig().addDefault("rps.defaultProjectileEntityTrigger", false);
 
-        plugin.getConfig().options().copyDefaults(true);
+        plugin.getConfig().options().copyDefaults(false);
         plugin.saveConfig();
     }
 

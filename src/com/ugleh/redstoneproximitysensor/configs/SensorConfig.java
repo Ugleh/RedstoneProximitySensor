@@ -7,6 +7,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 public class SensorConfig extends YamlConfiguration {
@@ -24,36 +26,19 @@ public class SensorConfig extends YamlConfiguration {
     private String defaults;
     private JavaPlugin plugin;
     private HashMap<String, RPS> sensorList = new HashMap<String, RPS>();
-
-    /**
-     * Creates new PluginFile, without defaults
-     *
-     * @param plugin   - Your plugin
-     * @param fileName - Name of the file
-     */
+    
     public SensorConfig(JavaPlugin plugin, String fileName) {
         this(plugin, fileName, fileName);
     }
-
-    /**
-     * Creates new PluginFile, with defaults
-     *
-     * @param plugin       - Your plugin
-     * @param fileName     - Name of the file
-     * @param defaultsName - Name of the defaults
-     */
+    
     public SensorConfig(JavaPlugin plugin, String fileName, String defaultsName) {
         this.plugin = plugin;
         this.defaults = defaultsName;
-        // Fix previous version issues:
         this.file = new File(plugin.getDataFolder(), fileName);
         this.sqlite = RedstoneProximitySensor.instance.getgConfig().sqlite;
         reload();
     }
-
-    /**
-     * Reload configuration
-     */
+    
     public void reload() {
         if (!sqlite) {
 
@@ -139,10 +124,7 @@ public class SensorConfig extends YamlConfiguration {
             }
         }
     }
-
-    /**
-     * Save configuration
-     */
+    
     public void save() {
 
         try {
@@ -243,6 +225,27 @@ public class SensorConfig extends YamlConfiguration {
 
         }
 
+    }
+    
+    public boolean canPlaceLimiterCheck(Player player) {
+    	int rpsCount = countPlayerSensors(player);
+    	GeneralConfig gc = RedstoneProximitySensor.instance.getgConfig();
+    	if(player.isOp())
+    		return true;
+    	
+    	for(Entry<String, Integer> limiter : gc.permissionLimiters.entrySet()) {
+    		if(player.hasPermission(limiter.getKey()) && (limiter.getValue() == -1 || rpsCount < limiter.getValue()))
+    			return true;
+    	}    	
+    	return false;
+    }
+    private int countPlayerSensors(Player player) {
+    	int count = 0;
+        for (Entry<String, RPS> rpsEntry : sensorList.entrySet()) {
+        	if(rpsEntry.getValue().getOwner().equals(player.getUniqueId()))
+        		count++;
+        }
+        return count;
     }
 
     private void tellCustomTriggersRPSBroke(RPS brokenRPS) {
