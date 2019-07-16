@@ -150,14 +150,11 @@ public class RPS {
 
 
         Entity[] entityList = getNearbyEntities(this.getLocation(), this.range, this.rangeSquared);
-        //for (Player p : location.getWorld().getPlayers()) {
-        //entityList.add(p);
-        //}
 
         for (Entity ent : entityList) {
             if (ent.getWorld() != location.getWorld()) continue;
-            if(        (this.activeFlags.contains("HOSTILE_ENTITY") && Mobs.isHostile(ent.getType()))
-                    || (this.activeFlags.contains("PEACEFUL_ENTITY") && Mobs.isPeaceful(ent.getType()))
+            if(        (this.activeFlags.contains("HOSTILE_ENTITY") && isSupportedEntity(ent) && Mobs.isHostile(ent.getType()))
+                    || (this.activeFlags.contains("PEACEFUL_ENTITY") && isSupportedEntity(ent) && Mobs.isPeaceful(ent.getType()))
                     || (this.activeFlags.contains("PLAYER") && ent instanceof Player)
                     || (this.activeFlags.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
                     || (this.activeFlags.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
@@ -229,7 +226,11 @@ public class RPS {
 
     }
 
-    private boolean isVanished(Player player) {
+    private boolean isSupportedEntity(Entity entity) {
+    	return plugin.getgConfig().isSupportedEntity(entity.getType());
+	}
+
+	private boolean isVanished(Player player) {
         for (MetadataValue meta : player.getMetadata("vanished")) {
             if (meta.asBoolean()) return true;
         }

@@ -3,10 +3,12 @@ package com.ugleh.redstoneproximitysensor.configs;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,7 +34,7 @@ public class GeneralConfig extends YamlConfiguration {
     private boolean defaultInvisibleEntityTrigger = false;
     private boolean defaultVehcileEntityTrigger = false;
     private boolean defaultProjectileEntityTrigger = false;
-
+    private List<EntityType> supportedEntities = new ArrayList<EntityType>();
     
     public HashMap<String, Integer> permissionLimiters = new HashMap<String, Integer>();
     public GeneralConfig(RedstoneProximitySensor plugin) {
@@ -58,6 +60,9 @@ public class GeneralConfig extends YamlConfiguration {
         defaultVehcileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultVehcileEntityTrigger");
         defaultProjectileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultProjectileEntityTrigger");
         
+        for(Mobs mob : Mobs.values()) {
+        	supportedEntities.add(mob.getEntityType());
+        }
         grabLimitPermissions();
 
     }
@@ -153,6 +158,9 @@ public class GeneralConfig extends YamlConfiguration {
         plugin.saveConfig();
     }
 
+    public boolean isSupportedEntity(EntityType entityType) {
+    	return supportedEntities.contains(entityType);
+    }
     public int getMaxRange() {
         return maxRange;
     }

@@ -99,11 +99,13 @@ public boolean isTameable() {
 }
 
 public static Mobs getMob(EntityType entityType) {
-	for(Mobs mob : Mobs.values()) {
+	//I no longer check if it exists here, I do in the RPS class.
+/*	for(Mobs mob : Mobs.values()) {
 		if (mob.getEntityType().equals(entityType))
 			return mob;
 	}
-	return null;
+	return null;*/
+	return Mobs.valueOf(entityType.name());
 }
 
 public static boolean isHostile(EntityType entityType) {
