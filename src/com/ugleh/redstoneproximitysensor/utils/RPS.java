@@ -151,26 +151,26 @@ public class RPS {
 
         Entity[] entityList = getNearbyEntities(this.getLocation(), this.range, this.rangeSquared);
 
-        for (Entity ent : entityList) {
-            if (ent.getWorld() != location.getWorld()) continue;
-            if(        (this.activeFlags.contains("HOSTILE_ENTITY") && isSupportedEntity(ent) && Mobs.isHostile(ent.getType()))
-                    || (this.activeFlags.contains("PEACEFUL_ENTITY") && isSupportedEntity(ent) && Mobs.isPeaceful(ent.getType()))
-                    || (this.activeFlags.contains("PLAYER") && ent instanceof Player)
-                    || (this.activeFlags.contains("OWNER") && ent.getUniqueId().equals(this.ownerID))
-                    || (this.activeFlags.contains("DROPPED_ITEM") && ent.getType().name().equals("DROPPED_ITEM"))
-                    || (this.activeFlags.contains("PROJECTILE_ENTITY") && ent instanceof Projectile)
-                    || (this.activeFlags.contains("VEHICLE_ENTITY") && ent instanceof Vehicle)
-                    || (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(this, ent))) {
+        for (Entity entity : entityList) {
+            if (entity.getWorld() != location.getWorld()) continue;
+            if(        (this.activeFlags.contains("HOSTILE_ENTITY") && isSupportedEntity(entity) && Mobs.isHostile(entity.getType()))
+                    || (this.activeFlags.contains("PEACEFUL_ENTITY") && isSupportedEntity(entity) && Mobs.isPeaceful(entity.getType()))
+                    || (this.activeFlags.contains("PLAYER") && entity instanceof Player)
+                    || (this.activeFlags.contains("OWNER") && entity.getUniqueId().equals(this.ownerID))
+                    || (this.activeFlags.contains("DROPPED_ITEM") && entity.getType().name().equals("DROPPED_ITEM"))
+                    || (this.activeFlags.contains("PROJECTILE_ENTITY") && entity instanceof Projectile)
+                    || (this.activeFlags.contains("VEHICLE_ENTITY") && entity instanceof Vehicle)
+                    || (TriggerAddons.getInstance() != null && TriggerAddons.getInstance().triggerCheck(this, entity))) {
 
                 //If Owner is set to false and player is set to true, I will continue on.
                 if ((!this.activeFlags.contains("OWNER")) && this.activeFlags.contains("PLAYER")) {
-                    if (ent.getUniqueId().equals(this.getOwner())) {
+                    if (entity.getUniqueId().equals(this.getOwner())) {
                         triggered = false;
                         continue;
                     }
                 }
-                if (ent instanceof Player) {
-                    Player pl = (Player) ent;
+                if (entity instanceof Player) {
+                    Player pl = (Player) entity;
                     if (pl.getGameMode().equals(GameMode.SPECTATOR)) {
                         triggered = false;
                         continue;
@@ -178,8 +178,8 @@ public class RPS {
                 }
                 // Check if entity is player and that player has invisible, if
                 // so continue on.
-                if (ent.getType().equals(EntityType.PLAYER)) {
-                    Player p = (Player) ent;
+                if (entity.getType().equals(EntityType.PLAYER)) {
+                    Player p = (Player) entity;
                     if (RedstoneProximitySensor.getInstance().playerListener.rpsIgnoreList.contains(p.getUniqueId())) {
                         triggered = false;
                         continue;
@@ -188,17 +188,17 @@ public class RPS {
 
                 // Check if entity is invisible
                 if (!this.activeFlags.contains("INVISIBLE_ENTITY")) {
-                    if (ent instanceof LivingEntity) {
-                        LivingEntity le = (LivingEntity) ent;
+                    if (entity instanceof LivingEntity) {
+                        LivingEntity le = (LivingEntity) entity;
                         boolean isInvisible = false;
                         for (PotionEffect effect : le.getActivePotionEffects()) {
                             if (effect.getType().equals(PotionEffectType.INVISIBILITY)) {
                                 isInvisible = true;
                             }
                         }
-                        if(ent instanceof Player)
+                        if(entity instanceof Player)
                         {
-                        	if(isVanished((Player) ent))
+                        	if(isVanished((Player) entity))
                         		isInvisible = true;
                         }
                         if (isInvisible)
