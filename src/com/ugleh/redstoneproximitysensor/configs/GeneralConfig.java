@@ -7,7 +7,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -24,8 +23,6 @@ public class GeneralConfig extends YamlConfiguration {
     File file;
     int maxRange = 20;
     int defaultRange = 5;
-    List<String> hostileMobs = new ArrayList<String>();
-    List<String> peacefulMobs = new ArrayList<String>();
     private boolean defaultInverted = false;
     private boolean defaultOwnerTrigger = true;
     private boolean deaultPlayerEntityTrigger = true;
@@ -40,86 +37,10 @@ public class GeneralConfig extends YamlConfiguration {
     public HashMap<String, Integer> permissionLimiters = new HashMap<String, Integer>();
     public GeneralConfig(RedstoneProximitySensor plugin) {
         this.plugin = plugin;
-
-        generateHostileMobsList();
-        generatePeacefulMobs();
         reloadConfig();
 
 
     }
-
-    private void generatePeacefulMobs() {
-
-        peacefulMobs.add("WANDERING_TRADER");
-        peacefulMobs.add("PANDA");
-        peacefulMobs.add("BAT");
-        peacefulMobs.add("CAT");
-        peacefulMobs.add("FOX");
-        peacefulMobs.add("CHICKEN");
-        peacefulMobs.add("COW");
-        peacefulMobs.add("MUSHROOM_COW");
-        peacefulMobs.add("PIG");
-        peacefulMobs.add("RABBIT");
-        peacefulMobs.add("SHEEP");
-        peacefulMobs.add("SQUID");
-        peacefulMobs.add("VILLAGER");
-        peacefulMobs.add("HORSE");
-        peacefulMobs.add("WOLF");
-        peacefulMobs.add("OCELOT");
-        peacefulMobs.add("SQUID");
-        peacefulMobs.add("POLAR_BEAR");
-        peacefulMobs.add("LLAMA");
-        peacefulMobs.add("DONKEY");
-        peacefulMobs.add("MULE");
-        peacefulMobs.add("ZOMBIE_HORSE");
-        peacefulMobs.add("PARROT");
-        peacefulMobs.add("TURTLE");
-        peacefulMobs.add("TROPICAL_FISH");
-        peacefulMobs.add("ARMOR_STAND");
-        peacefulMobs.add("COD");
-        peacefulMobs.add("DOLPHIN");
-        peacefulMobs.add("EGG");
-        peacefulMobs.add("SALMON");
-        peacefulMobs.add("PUFFERFISH");
-        peacefulMobs.add("GIANT");
-    }
-
-    private void generateHostileMobsList() {
-        hostileMobs.add("PILLAGER");
-        hostileMobs.add("RAVAGER");
-        hostileMobs.add("BLAZE");
-        hostileMobs.add("CREEPER");
-        hostileMobs.add("GUARDIAN");
-        hostileMobs.add("ENDERMITE");
-        hostileMobs.add("GHAST");
-        hostileMobs.add("MAGMA_CUBE");
-        hostileMobs.add("SILVERFISH");
-        hostileMobs.add("SKELETON");
-        hostileMobs.add("SLIME");
-        hostileMobs.add("WITCH");
-        hostileMobs.add("WITHER");
-        hostileMobs.add("ENDER_DRAGON");
-        hostileMobs.add("ZOMBIE");
-        hostileMobs.add("ENDERMAN");
-        hostileMobs.add("CAVE_SPIDER");
-        hostileMobs.add("SPIDER");
-        hostileMobs.add("PIG_ZOMBIE");
-        hostileMobs.add("SNOWMAN");
-        hostileMobs.add("ZOMBIE_VILLAGER");
-        hostileMobs.add("ELDER_GUARDIAN");
-        hostileMobs.add("IRON_GOLEM");
-        hostileMobs.add("SHULKER");
-        hostileMobs.add("STRAY");
-        hostileMobs.add("HUSK");
-        hostileMobs.add("WITHER_SKELETON");
-        hostileMobs.add("VINDICATOR");
-        hostileMobs.add("EVOKER");
-        hostileMobs.add("VEX");
-        hostileMobs.add("ILLUSIONER");
-        hostileMobs.add("DROWNED");
-        hostileMobs.add("PHANTOM");
-    }
-
     private void grabSettings() {
         updateChecker = plugin.getConfig().getBoolean("rps.update-checker");
         sqlite = plugin.getConfig().getBoolean("rps.sqlite", false);
@@ -282,14 +203,6 @@ public class GeneralConfig extends YamlConfiguration {
 
     public boolean isSQLite() {
         return sqlite;
-    }
-
-    public List<String> getHostileMobs() {
-        return hostileMobs;
-    }
-
-    public List<String> getPeacefulMobs() {
-        return peacefulMobs;
     }
 
     public boolean isDefaultVehcileEntityTrigger() {
