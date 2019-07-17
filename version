@@ -1,2 +1,2 @@
-#2.4.3
-^Added vanish plugin support, sensor limitation per permissions, and a rpslist command.
+#2.4.4
+^Added Neutral Entities Trigger, Tab Completion and new args for rps command.
