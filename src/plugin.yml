@@ -6,6 +6,12 @@ softdepend: [Towny, GriefPrevention, LegacyFactions]
 version: 2.4.3
 api-version: 1.13
 permissions:
+  rps.admin:
+    description: Permission to use RPS Give/Reload command.
+    default: op
+  rps.command:
+    description: Permission to use the RPS command.
+    default: true
   rps.create:
     description: Permission to craft proximity sensors.
     default: true
@@ -54,6 +60,9 @@ permissions:
   rps.button_peacefulentitiestrigger:
     description: Permission to use said button.
     default: true
+  rps.button_neutralentitiestrigger:
+    description: Permission to use said button.
+    default: true
   rps.button_droppeditemtrigger:
     description: Permission to use said button.
     default: true
@@ -78,8 +87,8 @@ permissions:
 commands:
   rps:
     description: The admin command for RPS control.
-    permission: rps.admin
-    default: op
+    permission: rps.command
+    default: true
   rpslist:
     description: The command to view your RPS sensors.
     permission: rps.list

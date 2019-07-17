@@ -1,23 +1,25 @@
 package com.ugleh.redstoneproximitysensor;
 
 import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
-import com.ugleh.redstoneproximitysensor.commands.CommandIgnoreRPS;
-import com.ugleh.redstoneproximitysensor.commands.CommandRPS;
-import com.ugleh.redstoneproximitysensor.commands.CommandRPSList;
-import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
-import com.ugleh.redstoneproximitysensor.configs.LanguageConfig;
-import com.ugleh.redstoneproximitysensor.configs.SensorConfig;
-import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
-import com.ugleh.redstoneproximitysensor.listeners.SensorListener;
+import com.ugleh.redstoneproximitysensor.command.CommandIgnoreRPS;
+import com.ugleh.redstoneproximitysensor.command.CommandRPS;
+import com.ugleh.redstoneproximitysensor.command.CommandRPSList;
+import com.ugleh.redstoneproximitysensor.config.GeneralConfig;
+import com.ugleh.redstoneproximitysensor.config.LanguageConfig;
+import com.ugleh.redstoneproximitysensor.config.SensorConfig;
+import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
+import com.ugleh.redstoneproximitysensor.listener.SensorListener;
 import com.ugleh.redstoneproximitysensor.sqlite.Database;
 import com.ugleh.redstoneproximitysensor.sqlite.SQLite;
-import com.ugleh.redstoneproximitysensor.utils.Glow;
-import com.ugleh.redstoneproximitysensor.utils.Metrics;
-import com.ugleh.redstoneproximitysensor.utils.UpdateChecker;
+import com.ugleh.redstoneproximitysensor.tabcomplete.TabCompleterRPS;
+import com.ugleh.redstoneproximitysensor.util.Glow;
+import com.ugleh.redstoneproximitysensor.util.Metrics;
+import com.ugleh.redstoneproximitysensor.util.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,9 +38,11 @@ public class RedstoneProximitySensor extends JavaPlugin {
     public ItemStack rps;
     public boolean needsUpdate = false;
     public Glow glow;
+
     //Listeners
     public PlayerListener playerListener;
     public SensorListener sensorListener;
+
     private GeneralConfig gConfig;
     private SensorConfig sensorConfig;
     private LanguageConfig languageConfig;
@@ -54,7 +58,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
         instance = this;
 
 
-        // Init configs.
+        // Init config.
         languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
         gConfig = new GeneralConfig(this);
 
@@ -70,7 +74,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
         this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
         //Register addons
-        setTriggerAddons(new TriggerAddons());
+        triggerAddons = new TriggerAddons();
 
         // Add existing sensors back
         sensorConfig = new SensorConfig(this, "sensors.yml", "sensors.yml");
@@ -81,18 +85,22 @@ public class RedstoneProximitySensor extends JavaPlugin {
         registerGlow();
 
         // Setting command Executors.
-        this.getServer().getPluginCommand("rps").setExecutor(new CommandRPS());
-        this.getServer().getPluginCommand("ignorerps").setExecutor(new CommandIgnoreRPS());
-        this.getServer().getPluginCommand("rpslist").setExecutor(new CommandRPSList());
+        PluginCommand rps = getCommand("rps");
+        PluginCommand ignorerps = getCommand("ignorerps");
+        PluginCommand rpslist = getCommand("rpslist");
 
+        rps.setExecutor(new CommandRPS());
+        rps.setTabCompleter(new TabCompleterRPS());
+        ignorerps.setExecutor(new CommandIgnoreRPS());
+        rpslist.setExecutor(new CommandRPSList());
 
         // Others
-
         createRecipes();
         initUpdateAlert();
         initMetrics();
         this.getLogger().log(Level.INFO, "Plugin has started!");
         this.getLogger().log(Level.INFO, "RPS's Loaded: " + getSensorConfig().getSensorList().size());
+
     }
 
     private void initMetrics() {
@@ -154,7 +162,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
         try {
             Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
             Enchantment.registerEnchantment(glow);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -176,15 +184,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
     public LanguageConfig getLanguageConfig() {
         return languageConfig;
     }
-
-    public TriggerAddons getTriggerAddons() {
-        return triggerAddons;
-    }
-
-    public void setTriggerAddons(TriggerAddons triggerAddons) {
-        this.triggerAddons = triggerAddons;
-    }
-
 
     public Database getDatabase() {
         return this.db;

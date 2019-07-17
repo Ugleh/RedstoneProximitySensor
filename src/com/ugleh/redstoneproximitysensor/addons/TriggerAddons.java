@@ -1,8 +1,8 @@
 package com.ugleh.redstoneproximitysensor.addons;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.utils.RPS;
-import com.ugleh.redstoneproximitysensor.utils.Trigger;
+import com.ugleh.redstoneproximitysensor.util.RPS;
+import com.ugleh.redstoneproximitysensor.util.Trigger;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 

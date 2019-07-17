@@ -1,8 +1,8 @@
-package com.ugleh.redstoneproximitysensor.configs;
+package com.ugleh.redstoneproximitysensor.config;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
-import com.ugleh.redstoneproximitysensor.utils.*;
+import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
+import com.ugleh.redstoneproximitysensor.util.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;

@@ -1,6 +1,6 @@
 package com.ugleh.redstoneproximitysensor.addons;
 
-import com.ugleh.redstoneproximitysensor.utils.RPS;
+import com.ugleh.redstoneproximitysensor.util.RPS;
 import org.bukkit.entity.Entity;
 
 public abstract class AddonTemplate {

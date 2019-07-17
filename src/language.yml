@@ -10,6 +10,7 @@ language:
   lang_restriction_owneronly: This RPS can only be modified by its owner.
   lang_restriction_owneronly_button: Only the owner can modify that setting.
   lang_restriction_permission: You do not have permissions to use this modifier.
+  lang_restriction_permission_command: You do not have permissions to use this command.
   lang_restriction_craft: You do not have permission to craft that.
   lang_restriction_paste: You have not previously copied an RPS torch.
   lang_command_playerunknown: Player not found.
@@ -43,6 +44,8 @@ language:
   lang_button_het_lore: Click to have the RPS trigger from Hostile Entities.
   lang_button_peacefulentitytrigger: Peaceful Entities Trigger
   lang_button_pet2_lore: Click to have the RPS trigger from Peaceful Entities.
+  lang_button_neutralentitiestrigger: Neutral Entities Trigger
+  lang_button_net_lore: Click to have the RPS trigger from Neutral Entities.
   lang_button_droppeditemtrigger: Dropped Items Trigger
   lang_button_dit_lore: Click to have the RPS trigger from Dropped Items.
   lang_button_invisibleentitytrigger: Invisible Entities Trigger

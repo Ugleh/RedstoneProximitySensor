@@ -10,6 +10,7 @@ rps:
   defaultPlayerEntityTrigger: true
   defaultHostileEntityTrigger: false
   defaultPeacefulEntityTrigger: false
+  defaultNeutralEntityTrigger: false
   defaultDroppedItemsTrigger: false
   defaultInvisibleEntityTrigger: false
   defaultVehcileEntityTrigger: false

@@ -1,4 +1,4 @@
-package com.ugleh.redstoneproximitysensor.commands;
+package com.ugleh.redstoneproximitysensor.command;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import org.bukkit.ChatColor;

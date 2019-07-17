@@ -1,4 +1,4 @@
-package com.ugleh.redstoneproximitysensor.utils;
+package com.ugleh.redstoneproximitysensor.util;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;

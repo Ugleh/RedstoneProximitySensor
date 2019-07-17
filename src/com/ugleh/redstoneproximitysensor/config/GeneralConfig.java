@@ -1,4 +1,4 @@
-package com.ugleh.redstoneproximitysensor.configs;
+package com.ugleh.redstoneproximitysensor.config;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
@@ -30,11 +30,12 @@ public class GeneralConfig extends YamlConfiguration {
     private boolean deaultPlayerEntityTrigger = true;
     private boolean defaultHostileEntityTrigger = false;
     private boolean defaultPeacefulEntityTrigger = false;
+    private boolean defaultNeutralEntityTrigger = false;
     private boolean defaultDroppedItemsTrigger = false;
     private boolean defaultInvisibleEntityTrigger = false;
     private boolean defaultVehcileEntityTrigger = false;
     private boolean defaultProjectileEntityTrigger = false;
-    private List<EntityType> supportedEntities = new ArrayList<EntityType>();
+    private List<String> supportedEntities = new ArrayList<String>();
     
     public HashMap<String, Integer> permissionLimiters = new HashMap<String, Integer>();
     public GeneralConfig(RedstoneProximitySensor plugin) {
@@ -55,13 +56,14 @@ public class GeneralConfig extends YamlConfiguration {
         deaultPlayerEntityTrigger = plugin.getConfig().getBoolean("rps.defaultPlayerEntityTrigger");
         defaultHostileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultHostileEntityTrigger");
         defaultPeacefulEntityTrigger = plugin.getConfig().getBoolean("rps.defaultPeacefulEntityTrigger");
+        defaultNeutralEntityTrigger = plugin.getConfig().getBoolean("rps.defaultNeutralEntityTrigger");
         defaultDroppedItemsTrigger = plugin.getConfig().getBoolean("rps.defaultDroppedItemsTrigger");
         defaultInvisibleEntityTrigger = plugin.getConfig().getBoolean("rps.defaultInvisibleEntityTrigger");
         defaultVehcileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultVehcileEntityTrigger");
         defaultProjectileEntityTrigger = plugin.getConfig().getBoolean("rps.defaultProjectileEntityTrigger");
         
         for(Mobs mob : Mobs.values()) {
-        	supportedEntities.add(mob.getEntityType());
+        	supportedEntities.add(mob.getEntityTypeName());
         }
         grabLimitPermissions();
 
@@ -149,6 +151,7 @@ public class GeneralConfig extends YamlConfiguration {
         plugin.getConfig().addDefault("rps.defaultPlayerEntityTrigger", true);
         plugin.getConfig().addDefault("rps.defaultHostileEntityTrigger", false);
         plugin.getConfig().addDefault("rps.defaultPeacefulEntityTrigger", false);
+        plugin.getConfig().addDefault("defaultNeutralEntityTrigger", false);
         plugin.getConfig().addDefault("rps.defaultDroppedItemsTrigger", false);
         plugin.getConfig().addDefault("rps.defaultInvisibleEntityTrigger", false);
         plugin.getConfig().addDefault("rps.defaultVehcileEntityTrigger", false);
@@ -159,7 +162,7 @@ public class GeneralConfig extends YamlConfiguration {
     }
 
     public boolean isSupportedEntity(EntityType entityType) {
-    	return supportedEntities.contains(entityType);
+    	return supportedEntities.contains(entityType.name());
     }
     public int getMaxRange() {
         return maxRange;
@@ -200,7 +203,10 @@ public class GeneralConfig extends YamlConfiguration {
     public boolean isDefaultPeacefulEntityTrigger() {
         return defaultPeacefulEntityTrigger;
     }
-
+    
+    public boolean isDefaultNeutralEntityTrigger() {
+    	return defaultNeutralEntityTrigger;
+    }
     public boolean isDefaultDroppedItemsTrigger() {
         return defaultDroppedItemsTrigger;
     }

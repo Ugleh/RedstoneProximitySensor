@@ -1,8 +1,8 @@
 package com.ugleh.redstoneproximitysensor.addons;
 
-import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
-import com.ugleh.redstoneproximitysensor.utils.RPS;
-import com.ugleh.redstoneproximitysensor.utils.Trigger;
+import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
+import com.ugleh.redstoneproximitysensor.util.RPS;
+import com.ugleh.redstoneproximitysensor.util.Trigger;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.DataStore;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;

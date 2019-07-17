@@ -1,9 +1,9 @@
-package com.ugleh.redstoneproximitysensor.utils;
+package com.ugleh.redstoneproximitysensor.util;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
-import com.ugleh.redstoneproximitysensor.configs.GeneralConfig;
-import com.ugleh.redstoneproximitysensor.configs.Mobs;
+import com.ugleh.redstoneproximitysensor.config.GeneralConfig;
+import com.ugleh.redstoneproximitysensor.config.Mobs;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -59,6 +59,8 @@ public class RPS {
                 activeFlags.add("PLAYER");
             if (generalConfig.isDefaultPeacefulEntityTrigger())
                 activeFlags.add("PEACEFUL_ENTITY");
+            if (generalConfig.isDefaultNeutralEntityTrigger())
+            	activeFlags.add("NEUTRAL_ENTITY");
             if (generalConfig.isDefaultDroppedItemsTrigger())
                 activeFlags.add("DROPPED_ITEM");
             if (generalConfig.isDefaultHostileEntityTrigger())
@@ -155,6 +157,7 @@ public class RPS {
             if (entity.getWorld() != location.getWorld()) continue;
             if(        (this.activeFlags.contains("HOSTILE_ENTITY") && isSupportedEntity(entity) && Mobs.isHostile(entity.getType()))
                     || (this.activeFlags.contains("PEACEFUL_ENTITY") && isSupportedEntity(entity) && Mobs.isPeaceful(entity.getType()))
+                    || (this.activeFlags.contains("NEUTRAL_ENTITY") && isSupportedEntity(entity) && Mobs.isNeutral(entity.getType()))
                     || (this.activeFlags.contains("PLAYER") && entity instanceof Player)
                     || (this.activeFlags.contains("OWNER") && entity.getUniqueId().equals(this.ownerID))
                     || (this.activeFlags.contains("DROPPED_ITEM") && entity.getType().name().equals("DROPPED_ITEM"))

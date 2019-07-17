@@ -1,8 +1,8 @@
 package com.ugleh.redstoneproximitysensor.sqlite;
 
-import com.ugleh.redstoneproximitysensor.utils.RPS;
-import com.ugleh.redstoneproximitysensor.utils.RPSData;
-import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
+import com.ugleh.redstoneproximitysensor.util.RPS;
+import com.ugleh.redstoneproximitysensor.util.RPSData;
+import com.ugleh.redstoneproximitysensor.util.RPSLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -1,4 +1,4 @@
-package com.ugleh.redstoneproximitysensor.configs;
+package com.ugleh.redstoneproximitysensor.config;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;

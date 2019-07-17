@@ -1,4 +1,4 @@
-package com.ugleh.redstoneproximitysensor.utils;
+package com.ugleh.redstoneproximitysensor.util;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import org.bukkit.Bukkit;

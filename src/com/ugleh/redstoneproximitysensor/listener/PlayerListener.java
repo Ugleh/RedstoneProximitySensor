@@ -1,9 +1,9 @@
-package com.ugleh.redstoneproximitysensor.listeners;
+package com.ugleh.redstoneproximitysensor.listener;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.utils.RPS;
-import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
-import com.ugleh.redstoneproximitysensor.utils.Trigger;
+import com.ugleh.redstoneproximitysensor.util.RPS;
+import com.ugleh.redstoneproximitysensor.util.RPSLocation;
+import com.ugleh.redstoneproximitysensor.util.Trigger;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -98,21 +98,26 @@ public class PlayerListener implements Listener {
         lore = WordWrapLore(langString("lang_button_pet2_lore"));
         addTrigger(new Trigger("button_peacefulentitiestrigger", new ItemStack(Material.COOKED_BEEF, 1), 7, "lang_button_peacefulentitytrigger", "PEACEFUL_ENTITY", "lang_button_true", "lang_button_false", lore));
 
-        //Trigger button, Dropped Items Trigger
-        lore = WordWrapLore(langString("lang_button_dit_lore"));
-        addTrigger(new Trigger("button_droppeditemtrigger", new ItemStack(Material.PUMPKIN_SEEDS, 1), 8, "lang_button_droppeditemtrigger", "DROPPED_ITEM", "lang_button_true", "lang_button_false", lore));
+        //Trigger button, Neutral Entity Trigger
+        lore = WordWrapLore(langString("lang_button_net_lore"));
+        addTrigger(new Trigger("button_neutralentitiestrigger", new ItemStack(Material.ENDER_PEARL, 1), 8, "lang_button_neutralentitiestrigger", "NEUTRAL_ENTITY", "lang_button_true", "lang_button_false", lore));
 
         //Trigger button, Invisible Entity Trigger
         lore = WordWrapLore(langString("lang_button_iet_lore"));
         addTrigger(new Trigger("button_invisibleentitiestrigger", new ItemStack(Material.FERMENTED_SPIDER_EYE, 1), 17, "lang_button_invisibleentitytrigger", "INVISIBLE_ENTITY", "lang_button_true", "lang_button_false", lore));
 
-        //Trigger button, Invisible Entity Trigger
+        //Trigger button, Projectile Entity Trigger
         lore = WordWrapLore(langString("lang_button_pt_lore"));
         addTrigger(new Trigger("button_projectiletrigger", new ItemStack(Material.ARROW, 1), 16, "lang_button_projectiletrigger", "PROJECTILE_ENTITY", "lang_button_true", "lang_button_false", lore));
 
-        //Trigger button, Invisible Entity Trigger
+        //Trigger button, Vehicle Entity Trigger
         lore = WordWrapLore(langString("lang_button_vt_lore"));
         addTrigger(new Trigger("button_vehicletrigger", new ItemStack(Material.MINECART, 1), 15, "lang_button_vehicletrigger", "VEHICLE_ENTITY", "lang_button_true", "lang_button_false", lore));
+    
+        //Trigger button, Dropped Items Trigger
+        lore = WordWrapLore(langString("lang_button_dit_lore"));
+        addTrigger(new Trigger("button_droppeditemtrigger", new ItemStack(Material.PUMPKIN_SEEDS, 1), 14, "lang_button_droppeditemtrigger", "DROPPED_ITEM", "lang_button_true", "lang_button_false", lore));
+    
     }
 
 

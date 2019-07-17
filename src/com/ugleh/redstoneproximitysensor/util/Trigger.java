@@ -1,9 +1,9 @@
-package com.ugleh.redstoneproximitysensor.utils;
+package com.ugleh.redstoneproximitysensor.util;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.AddonTemplate;
 import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
-import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
+import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;

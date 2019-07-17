@@ -1,9 +1,9 @@
 package com.ugleh.redstoneproximitysensor.addons;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.listeners.PlayerListener;
-import com.ugleh.redstoneproximitysensor.utils.RPS;
-import com.ugleh.redstoneproximitysensor.utils.Trigger;
+import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
+import com.ugleh.redstoneproximitysensor.util.RPS;
+import com.ugleh.redstoneproximitysensor.util.Trigger;
 import net.redstoneore.legacyfactions.entity.FPlayer;
 import net.redstoneore.legacyfactions.entity.FPlayerColl;
 import net.redstoneore.legacyfactions.entity.Faction;

@@ -1,9 +1,9 @@
-package com.ugleh.redstoneproximitysensor.listeners;
+package com.ugleh.redstoneproximitysensor.listener;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.configs.SensorConfig;
-import com.ugleh.redstoneproximitysensor.utils.RPS;
-import com.ugleh.redstoneproximitysensor.utils.RPSLocation;
+import com.ugleh.redstoneproximitysensor.config.SensorConfig;
+import com.ugleh.redstoneproximitysensor.util.RPS;
+import com.ugleh.redstoneproximitysensor.util.RPSLocation;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;

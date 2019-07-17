@@ -1,4 +1,4 @@
-package com.ugleh.redstoneproximitysensor.commands;
+package com.ugleh.redstoneproximitysensor.command;
 
 import java.util.Map.Entry;
 
@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.utils.RPS;
+import com.ugleh.redstoneproximitysensor.util.RPS;
 
 public class CommandRPSList implements CommandExecutor {
 
@@ -59,7 +59,7 @@ public class CommandRPSList implements CommandExecutor {
 	}
 
 	private boolean notAllowed(CommandSender sender) {
-		sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_restriction_permission"));
+		sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_restriction_permission_command"));
 		return false;
 	}
 
