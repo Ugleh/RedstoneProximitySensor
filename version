@@ -1,2 +1,2 @@
-#2.4.4
-^Added Neutral Entities Trigger, Tab Completion and new args for rps command.
+#2.4.5
+^Stacktrace hotfix for existing permissions, get offline player sensors, and color prefixes in language file.

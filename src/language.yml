@@ -3,7 +3,7 @@ color:
   color_negative_message: '&4'
   color_neutral_message: '&c'
 language:
-  lang_chat_prefix: '&5[&dRPS&5]&r'
+  lang_chat_prefix: '&5[&dRPS&5]&r '
   lang_main_itemname: Redstone Proximity Sensor
   lang_main_inventoryname: Redstone Proximity Sensor Menu
   lang_update_notice: Redstone Proximity Sensor is outdated.

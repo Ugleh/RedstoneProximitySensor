@@ -34,7 +34,7 @@ import java.util.logging.Level;
 
 public class RedstoneProximitySensor extends JavaPlugin {
     public static RedstoneProximitySensor instance;
-    public final String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED;
+    public String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED;
     public ItemStack rps;
     public boolean needsUpdate = false;
     public Glow glow;
@@ -56,10 +56,9 @@ public class RedstoneProximitySensor extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
-
         // Init config.
         languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
+        chatPrefix = langStringColor("lang_chat_prefix");
         gConfig = new GeneralConfig(this);
 
         if (this.getgConfig().sqlite) {
