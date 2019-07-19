@@ -90,8 +90,9 @@ public class GeneralConfig extends YamlConfiguration {
             		if (pd == null)
             			throw new IllegalArgumentException("'default' key in RedstoneProximitySensor Config contained unknown value");
             	}
-            	
-            	plugin.getServer().getPluginManager().addPermission(new Permission("rps.limiter."  + key, pd));
+
+            	if(plugin.getServer().getPluginManager().getPermission("rps.limiter."  + key) == null)
+            	    plugin.getServer().getPluginManager().addPermission(new Permission("rps.limiter."  + key, pd));
             	
             	//Check if subkey "amount" exists, if it does grab the amount, if not set it to -1 (infinite)
             	int limiterAmount = -1;

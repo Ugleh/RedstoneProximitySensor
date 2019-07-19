@@ -16,6 +16,7 @@ public class LanguageConfig extends YamlConfiguration {
     private String defaults;
     private JavaPlugin plugin;
     private HashMap<String, String> languageNodes = new HashMap<String, String>();
+    private HashMap<String, String> colorNodes = new HashMap<String, String>();
 
     /**
      * Creates new PluginFile, without defaults
@@ -72,6 +73,7 @@ public class LanguageConfig extends YamlConfiguration {
                 save();
             }
             loadLanguageNodes();
+            loadColorNodes();
 
         } catch (IOException exception) {
             exception.printStackTrace();
@@ -93,6 +95,13 @@ public class LanguageConfig extends YamlConfiguration {
         }
     }
 
+    private void loadColorNodes() {
+        if (!this.isConfigurationSection("color")) return;
+        for (String colorID : this.getConfigurationSection("color").getKeys(false)) {
+            String colorString = this.getString("color." + colorID);
+            colorNodes.put(colorID, colorString);
+        }
+    }
     /**
      * Save configuration
      */
@@ -111,5 +120,9 @@ public class LanguageConfig extends YamlConfiguration {
 
     public HashMap<String, String> getLanguageNodes() {
         return languageNodes;
+    }
+
+    public HashMap<String, String> getColorNodes() {
+        return colorNodes;
     }
 }

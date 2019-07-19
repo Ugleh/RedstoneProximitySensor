@@ -74,7 +74,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
         this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
         //Register addons
-        triggerAddons = new TriggerAddons();
+        setTriggerAddons(new TriggerAddons());
 
         // Add existing sensors back
         sensorConfig = new SensorConfig(this, "sensors.yml", "sensors.yml");
@@ -100,7 +100,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
         initMetrics();
         this.getLogger().log(Level.INFO, "Plugin has started!");
         this.getLogger().log(Level.INFO, "RPS's Loaded: " + getSensorConfig().getSensorList().size());
-
     }
 
     private void initMetrics() {
@@ -115,8 +114,8 @@ public class RedstoneProximitySensor extends JavaPlugin {
     private void initUpdateAlert() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.isOp() && this.needsUpdate) {
-                p.sendMessage(getInstance().chatPrefix + ChatColor.DARK_RED + langString("lang_update_notice"));
-                p.sendMessage(getInstance().chatPrefix + ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
+                p.sendMessage(prefixWithColor(ColorNode.NEGATIVE_MESSAGE) + langStringColor("lang_update_notice"));
+                p.sendMessage(prefixWithColor(ColorNode.POSITIVE_MESSAGE) + "https://www.spigotmc.org/resources/17965/");
 
             }
         }
@@ -125,7 +124,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
     private void createRecipes() {
         rps = new ItemStack(Material.REDSTONE_TORCH, 1);
         ItemMeta rpsMeta = rps.getItemMeta();
-        rpsMeta.setDisplayName(ChatColor.RED + this.langString("lang_main_itemname"));
+        rpsMeta.setDisplayName(ChatColor.RED + this.langStringColor("lang_main_itemname"));
         Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
         rpsMeta.addEnchant(glow, 1, true);
         rps.setItemMeta(rpsMeta);
@@ -177,14 +176,36 @@ public class RedstoneProximitySensor extends JavaPlugin {
         return languageConfig.getLanguageNodes();
     }
 
-    public String langString(String key) {
+    public String getColor(ColorNode colorNode) {
+        return ChatColor.translateAlternateColorCodes('&', languageConfig.getColorNodes().get("color_" + colorNode.name().toLowerCase()));
+    }
+    public enum ColorNode{
+        POSITIVE_MESSAGE,
+        NEGATIVE_MESSAGE,
+        NEUTRAL_MESSAGE;
+    }
+    public String langStringRaw(String key) {
         return getInstance().getLang().get(key);
+    }
+    public String langStringColor(String key) {
+        return ChatColor.translateAlternateColorCodes('&', getInstance().getLang().get(key));
     }
 
     public LanguageConfig getLanguageConfig() {
         return languageConfig;
     }
 
+    public TriggerAddons getTriggerAddons() {
+        return triggerAddons;
+    }
+
+    public void setTriggerAddons(TriggerAddons triggerAddons) {
+        this.triggerAddons = triggerAddons;
+    }
+
+    private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
+        return (chatPrefix + getColor(colorNode));
+    }
     public Database getDatabase() {
         return this.db;
     }

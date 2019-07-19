@@ -14,23 +14,28 @@ public class CommandIgnoreRPS implements CommandExecutor {
         if (!(sender instanceof Player)) return notPlayerNotification(sender);
         if (!sender.hasPermission("rps.invisible")) return false;
         Player p = (Player) sender;
-        if (RedstoneProximitySensor.getInstance().playerListener.rpsIgnoreList.contains(p.getUniqueId())) {
+        if (getInstance().playerListener.rpsIgnoreList.contains(p.getUniqueId())) {
             //Toggle off
-            RedstoneProximitySensor.getInstance().playerListener.rpsIgnoreList.remove(p.getUniqueId());
-            sender.sendMessage(RedstoneProximitySensor.getInstance().chatPrefix + RedstoneProximitySensor.getInstance().langString("lang_command_invisibledisabled"));
+            getInstance().playerListener.rpsIgnoreList.remove(p.getUniqueId());
+            sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + getInstance().langStringColor("lang_command_invisibledisabled"));
 
         } else {
             //Toggle on
-            RedstoneProximitySensor.getInstance().playerListener.rpsIgnoreList.add(p.getUniqueId());
-            sender.sendMessage(RedstoneProximitySensor.getInstance().chatPrefix + ChatColor.GREEN + RedstoneProximitySensor.getInstance().langString("lang_command_invisibleenabled"));
+            getInstance().playerListener.rpsIgnoreList.add(p.getUniqueId());
+            sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + getInstance().langStringColor("lang_command_invisibleenabled"));
 
         }
         return true;
     }
 
     private boolean notPlayerNotification(CommandSender sender) {
-        sender.sendMessage(RedstoneProximitySensor.getInstance().chatPrefix + ChatColor.RED + RedstoneProximitySensor.getInstance().langString("lang_command_consolesender"));
+        sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().langStringColor("lang_command_consolesender"));
         return false;
     }
-
+    private RedstoneProximitySensor getInstance() {
+        return RedstoneProximitySensor.getInstance();
+    }
+    private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
+        return (getInstance().chatPrefix + getInstance().getColor(colorNode));
+    }
 }

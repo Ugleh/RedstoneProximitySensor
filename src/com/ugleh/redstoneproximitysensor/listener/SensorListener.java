@@ -72,24 +72,27 @@ public class SensorListener implements Listener {
                     if (getInstance().playerListener.userCopiedRPS.containsKey(player.getUniqueId())) {
                         sensor.pasteSettings(getInstance().playerListener.userCopiedRPS.get(player.getUniqueId()));
                         getInstance().playerListener.playToggleSound(player);
-                        player.sendMessage(getInstance().chatPrefix + getInstance().playerListener.langString("lang_button_p_reply"));
+                        player.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + getInstance().playerListener.langString("lang_button_p_reply"));
                     } else {
                     	getInstance().playerListener.playRejectSound(player);
-                        player.sendMessage(getInstance().chatPrefix + getInstance().playerListener.langString("lang_restriction_paste"));
+                        player.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().playerListener.langString("lang_restriction_paste"));
                     }
                 }
         	}else {
         		//Do not add Sensor, let them know why.
                 e.setCancelled(true);
-                player.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_restriction_place_limit"));
+                player.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_restriction_place_limit"));
         	}
         } else {
             //Do not add Sensor, let them know why.
             e.setCancelled(true);
-            player.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_restriction_place"));
+            player.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_restriction_place"));
         }
     }
 
+    private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
+        return (getInstance().chatPrefix + getInstance().getColor(colorNode));
+    }
     public RedstoneProximitySensor getInstance() {
         return RedstoneProximitySensor.getInstance();
     }

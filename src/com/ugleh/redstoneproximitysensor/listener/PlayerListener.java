@@ -143,15 +143,15 @@ public class PlayerListener implements Listener {
         if (!e.getWhoClicked().hasPermission("rps.create")) {
             e.setResult(Result.DENY);
             e.setCancelled(true);
-            e.getWhoClicked().sendMessage(getInstance().chatPrefix + langString("lang_restriction_craft"));
+            e.getWhoClicked().sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_restriction_craft"));
         }
     }
 
     @EventHandler
     public void PlayerJoin(PlayerJoinEvent e) {
         if (e.getPlayer().isOp() && getInstance().needsUpdate) {
-            e.getPlayer().sendMessage(getInstance().chatPrefix + ChatColor.RED + langString("lang_update_notice"));
-            e.getPlayer().sendMessage(getInstance().chatPrefix + ChatColor.GREEN + "https://www.spigotmc.org/resources/17965/");
+            e.getPlayer().sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_update_notice"));
+            e.getPlayer().sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "https://www.spigotmc.org/resources/17965/");
 
         }
     }
@@ -202,7 +202,7 @@ public class PlayerListener implements Listener {
             Player playerWhoClicked = (Player) e.getWhoClicked();
             if (perm != null && (!playerWhoClicked.hasPermission("rps." + perm))) {
                 playRejectSound(playerWhoClicked);
-                playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_permission"));
+                playerWhoClicked.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_restriction_permission"));
                 return;
             }
             if (displayName.startsWith(ChatColor.BLUE + langString("lang_button_invertpower"))) {
@@ -216,7 +216,7 @@ public class PlayerListener implements Listener {
                     getInstance().getSensorConfig().setownerOnlyEdit(selectedRPS, !selectedRPS.isownerOnlyEdit());
                 } else {
                     playRejectSound(playerWhoClicked);
-                    playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_owneronly_button"));
+                    playerWhoClicked.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_restriction_owneronly_button"));
                 }
             } else if (displayName.startsWith(ChatColor.BLUE + langString("lang_button_range"))) {
                 //Range
@@ -232,15 +232,15 @@ public class PlayerListener implements Listener {
             } else if (displayName.startsWith(ChatColor.BLUE + langString("lang_button_copy"))) {
                 this.userCopiedRPS.put(playerWhoClicked.getUniqueId(), selectedRPS);
                 playToggleSound(playerWhoClicked);
-                playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_button_c_reply"));
+                playerWhoClicked.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + langString("lang_button_c_reply"));
             } else if (displayName.startsWith(ChatColor.BLUE + langString("lang_button_paste"))) {
                 if (this.userCopiedRPS.containsKey(playerWhoClicked.getUniqueId())) {
                     selectedRPS.pasteSettings(this.userCopiedRPS.get(playerWhoClicked.getUniqueId()));
                     playToggleSound(playerWhoClicked);
-                    playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_button_p_reply"));
+                    playerWhoClicked.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + langString("lang_button_p_reply"));
                 } else {
                     playRejectSound(playerWhoClicked);
-                    playerWhoClicked.sendMessage(getInstance().chatPrefix + langString("lang_restriction_paste"));
+                    playerWhoClicked.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_restriction_paste"));
                 }
             }
 
@@ -294,7 +294,7 @@ public class PlayerListener implements Listener {
         if (((selectedRPS.getOwner().equals(p.getUniqueId())) && selectedRPS.isownerOnlyEdit()) || (!selectedRPS.isownerOnlyEdit())) {
             showGUIMenu(p, selectedRPS);
         } else {
-            p.sendMessage(getInstance().chatPrefix + langString("lang_restriction_owneronly"));
+            p.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + langString("lang_restriction_owneronly"));
         }
     }
 
@@ -399,5 +399,9 @@ public class PlayerListener implements Listener {
     public ItemStack setPasteButton(ItemStack pasteButton) {
         this.pasteButton = pasteButton;
         return pasteButton;
+    }
+
+    private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
+        return (getInstance().chatPrefix + getInstance().getColor(colorNode));
     }
 }

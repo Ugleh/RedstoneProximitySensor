@@ -4,10 +4,13 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 
 import java.util.Map.Entry;
+import java.util.UUID;
 
+import com.ugleh.redstoneproximitysensor.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,7 +50,7 @@ public class CommandRPS implements CommandExecutor {
     
 	
 	private boolean notAllowed(CommandSender sender) {
-		sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_restriction_permission_command"));
+		sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_restriction_permission_command"));
 		return false;
 	}
 
@@ -56,17 +59,18 @@ public class CommandRPS implements CommandExecutor {
     }
 
     private boolean notPlayerNotification(CommandSender sender) {
-        sender.sendMessage(getInstance().chatPrefix + ChatColor.RED + getInstance().langString("lang_command_consolesender"));
+        sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().langStringColor("lang_command_consolesender"));
         return false;
     }	
     
     private boolean notEnoughArgs(CommandSender sender) {
-        sender.sendMessage(getInstance().chatPrefix + "Redstone Proximity Sensor - Version: " + ChatColor.GREEN + this.getInstance().getVersion());
-        sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_invalidargs"));
-        if(sender.hasPermission("rps.admin")) sender.sendMessage(getInstance().chatPrefix + "/rps reload ~ Reload all config files.");
-        if(sender.hasPermission("rps.invisible")) sender.sendMessage(getInstance().chatPrefix + "/rps ignore ~ Toggle Ignore RPS Sensors.");
-        if(sender.hasPermission("rps.admin")) sender.sendMessage(getInstance().chatPrefix + "/rps give <player> [amount] ~ Give sensor to player.");
-        if(sender.hasPermission("rps.list")) sender.sendMessage(getInstance().chatPrefix + "/rps list [player] ~ Lists all of your RPS sensors, or a specific players.");
+        String prefixColor = prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE);
+        sender.sendMessage(prefixColor + "Redstone Proximity Sensor - Version: " + ChatColor.GREEN + this.getInstance().getVersion());
+        sender.sendMessage(prefixColor + getInstance().getLang().get("lang_command_invalidargs"));
+        if(sender.hasPermission("rps.admin")) sender.sendMessage(prefixColor + "/rps reload ~ Reload all config files.");
+        if(sender.hasPermission("rps.invisible")) sender.sendMessage(prefixColor + "/rps ignore ~ Toggle Ignore RPS Sensors.");
+        if(sender.hasPermission("rps.admin")) sender.sendMessage(prefixColor + "/rps give <player> [amount] ~ Give sensor to player.");
+        if(sender.hasPermission("rps.list")) sender.sendMessage(prefixColor + "/rps list [player] ~ Lists all of your RPS sensors, or a specific players.");
 		return false;
 
     }
@@ -75,7 +79,7 @@ public class CommandRPS implements CommandExecutor {
         getInstance().getgConfig().reloadConfig();
         getInstance().getLanguageConfig().reload();
         getInstance().getSensorConfig().reload();
-        sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_reload"));
+        sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + getInstance().getLang().get("lang_command_reload"));
 	}
 	
     private boolean giveCommand(CommandSender sender, String[] args) {
@@ -89,17 +93,17 @@ public class CommandRPS implements CommandExecutor {
                         ItemStack rpsStack = getInstance().rps.clone();
                         rpsStack.setAmount(amount);
                         givePlayer.getInventory().addItem(rpsStack);
-                        sender.sendMessage(getInstance().chatPrefix + "Given RPS * " + amount + " to " + givePlayer.getName());
+                        sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "Given RPS * " + amount + " to " + givePlayer.getName());
 
                     } else {
-                        sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_wrongamount"));
+                        sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_command_wrongamount"));
                     }
                 } else {
                     //Give 1
                     ItemStack rpsStack = getInstance().rps.clone();
                     rpsStack.setAmount(1);
                     givePlayer.getInventory().addItem(rpsStack);
-                    sender.sendMessage(getInstance().chatPrefix + "Given RPS * 1 to " + givePlayer.getName());
+                    sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "Given RPS * 1 to " + givePlayer.getName());
 
                 }
                 
@@ -111,17 +115,23 @@ public class CommandRPS implements CommandExecutor {
 		if (getInstance().playerListener.rpsIgnoreList.contains(p.getUniqueId())) {
 			//Toggle off
 			getInstance().playerListener.rpsIgnoreList.remove(p.getUniqueId());
-			sender.sendMessage(getInstance().chatPrefix + getInstance().langString("lang_command_invisibledisabled"));
+			sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + getInstance().langStringColor("lang_command_invisibledisabled"));
 		}else {
 			//Toggle on
 			getInstance().playerListener.rpsIgnoreList.add(p.getUniqueId());
-			sender.sendMessage(getInstance().chatPrefix + ChatColor.GREEN + getInstance().langString("lang_command_invisibleenabled"));
+			sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + getInstance().langStringColor("lang_command_invisibleenabled"));
         }
     }
 	
     private boolean grabOthersSensors(CommandSender sender, String[] args) {
     	if(!sender.hasPermission("rps.list.player")) return notAllowed(sender);
-    	Player grabbedPlayer = Bukkit.getPlayer(args[1]);
+        OfflinePlayer grabbedPlayer = Bukkit.getPlayer(args[1]);
+        if(grabbedPlayer == null) {
+            UUID uuid = UUIDFetcher.getUUID(args[1]);
+            if(Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
+                grabbedPlayer = Bukkit.getOfflinePlayer(uuid);
+            }
+        }
     	if (grabbedPlayer == null) return playerUnknown(sender);
     	return returnSensorList(sender, grabbedPlayer);
 	}
@@ -132,9 +142,9 @@ public class CommandRPS implements CommandExecutor {
 		return returnSensorList(sender, player);
 	}
 
-	private boolean returnSensorList(CommandSender sendTo, Player grabFrom) {
+	private boolean returnSensorList(CommandSender sendTo, OfflinePlayer grabFrom) {
 		//boolean sendToIsPlayer = (sendTo instanceof Player);
-		sendTo.sendMessage(getInstance().chatPrefix + grabFrom.getName() + "'s Redstone Proximity Sensors:");
+		sendTo.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + grabFrom.getName() + "'s Redstone Proximity Sensors:");
 		
 		int asc = 1;
 		for(Entry<String, RPS> sensors : getInstance().getSensorConfig().getSensorList().entrySet())
@@ -142,7 +152,7 @@ public class CommandRPS implements CommandExecutor {
 			RPS rps = sensors.getValue();
 			if(rps.getOwner().equals(grabFrom.getUniqueId())) {
 				Location loc = rps.getLocation();
-				sendTo.sendMessage(getInstance().chatPrefix + asc + ". W: " + loc.getWorld().getName() + " | X: " + (int)loc.getX() + ", Y: " + (int)loc.getY() + ", Z: " + (int)loc.getZ());
+				sendTo.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + asc + ". W: " + loc.getWorld().getName() + " | X: " + (int)loc.getX() + ", Y: " + (int)loc.getY() + ", Z: " + (int)loc.getZ());
 				asc++;
 			}
 		}
@@ -150,7 +160,11 @@ public class CommandRPS implements CommandExecutor {
 	}
 	
 	private boolean playerUnknown(CommandSender sender) {
-		sender.sendMessage(getInstance().chatPrefix + getInstance().getLang().get("lang_command_playerunknown"));
+		sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_command_playerunknown"));
 		return false;
 	}
+
+    private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
+        return (getInstance().chatPrefix + getInstance().getColor(colorNode));
+    }
 }
