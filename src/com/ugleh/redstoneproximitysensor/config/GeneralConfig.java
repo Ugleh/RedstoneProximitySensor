@@ -2,6 +2,7 @@ package com.ugleh.redstoneproximitysensor.config;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
+import com.ugleh.redstoneproximitysensor.util.Mobs;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.permissions.Permission;

@@ -3,7 +3,6 @@ package com.ugleh.redstoneproximitysensor.util;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
 import com.ugleh.redstoneproximitysensor.config.GeneralConfig;
-import com.ugleh.redstoneproximitysensor.config.Mobs;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
