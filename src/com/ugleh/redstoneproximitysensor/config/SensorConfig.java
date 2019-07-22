@@ -303,26 +303,27 @@ public class SensorConfig extends YamlConfiguration {
 
     }
 
-    public void toggleAcceptedEntities(RPS selectedRPS, Trigger t) {
+    public void toggleAcceptedEntities(RPS selectedRPS, Trigger trigger) {
         // Here we toggle the trigger
-        String flag = t.getFlag();
-        ArrayList<String> acceptedEntitiesConfig = selectedRPS.getAcceptedTriggerFlags();
+        String flag = trigger.getFlag();
+        ArrayList<String> acceptedTriggerFlags = selectedRPS.getAcceptedTriggerFlags();
 
-        if (acceptedEntitiesConfig.contains(flag)) {
-            acceptedEntitiesConfig.remove(flag);
-            if (t.addonTemplate != null)
-                t.addonTemplate.buttonPressed(false, selectedRPS);
-        } else {
-            acceptedEntitiesConfig.add(flag);
-            if (t.addonTemplate != null)
-                t.addonTemplate.buttonPressed(true, selectedRPS);
-        }
-        selectedRPS.setAcceptedEntities(acceptedEntitiesConfig);
+        boolean buttonToggledTo = (!acceptedTriggerFlags.contains(flag));
+        boolean result = true;
+        if (trigger.addonTemplate != null)
+            result = trigger.addonTemplate.buttonPressed(buttonToggledTo, selectedRPS);
+        if(!result) return;
+        if(buttonToggledTo)
+            acceptedTriggerFlags.add(flag);
+        else
+            acceptedTriggerFlags.remove(flag);
+
+        selectedRPS.setAcceptedEntities(acceptedTriggerFlags);
 
         if (sqlite) {
             RedstoneProximitySensor.instance.getDatabase().setSensor(selectedRPS);
         } else {
-            this.set("sensors." + selectedRPS.getUniqueID() + ".acceptedEntities", acceptedEntitiesConfig);
+            this.set("sensors." + selectedRPS.getUniqueID() + ".acceptedEntities", acceptedTriggerFlags);
             this.save();
         }
 
