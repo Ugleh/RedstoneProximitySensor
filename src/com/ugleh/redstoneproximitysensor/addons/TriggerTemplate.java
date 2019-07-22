@@ -9,7 +9,7 @@ public abstract class TriggerTemplate {
 
     public abstract TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity e);
 
-    public abstract void buttonPressed(Boolean on, RPS affectedRPS);
+    public abstract boolean buttonPressed(Boolean is_on, RPS affectedRPS);
 
     public abstract void rpsCreated(RPS affectedRPS);
 

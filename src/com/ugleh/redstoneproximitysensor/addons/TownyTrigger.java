@@ -65,8 +65,8 @@ public class TownyTrigger extends TriggerTemplate {
     }
 
     @Override
-    public void buttonPressed(Boolean on, RPS affectedRPS) {
-
+    public boolean buttonPressed(Boolean is_on, RPS affectedRPS) {
+        return true;
     }
 
     @Override

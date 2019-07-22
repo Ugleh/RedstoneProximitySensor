@@ -60,6 +60,8 @@ public class RedstoneProximitySensor extends JavaPlugin {
         languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
         chatPrefix = langStringColor("lang_chat_prefix");
         gConfig = new GeneralConfig(this);
+        if(gConfig.isDisabling)
+            return;
 
         if (this.getgConfig().isSqliteEnabled()) {
             this.db = new SQLite(this);
@@ -73,7 +75,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
         this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
         gConfig.addTriggerFlagsToConfig();
-        //TODO: Setup Permissions of triggers
 
         //Register addons
         setTriggerAddons(new TriggerCreator());

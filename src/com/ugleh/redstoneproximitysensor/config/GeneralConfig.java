@@ -5,11 +5,11 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.util.Mobs;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.fusesource.jansi.Ansi;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,18 +33,24 @@ public class GeneralConfig extends YamlConfiguration {
     private List<String> supportedEntities = new ArrayList<>();
     private HashMap<String, Boolean> default_triggers = new HashMap<>();
     public HashMap<String, Integer> permissionLimiters = new HashMap<>();
+    public boolean isDisabling = false;
 
     public GeneralConfig(RedstoneProximitySensor plugin) {
         this.plugin = plugin;
+        checkIfOlderVersion();
         reloadConfig();
 
 
     }
-    private void grabSettings() {
+    private void checkIfOlderVersion() {
         if(plugin.getConfig().isSet("rps.use-particles")) {  //Old Config file
-            Bukkit.getLogger().warning(ChatColor.RED + "Old Config file detected, please backup and delete old config file and let new one generate.");
+            Bukkit.getLogger().warning( Ansi.ansi().fg(Ansi.Color.RED).bold().toString()  + "OLD CONFIG FILE DETECTED. Please backup and delete old config file and let new one generate." + Ansi.ansi().fg(Ansi.Color.WHITE).boldOff().toString());
             plugin.getPluginLoader().disablePlugin(plugin);
+            isDisabling = true;
+            return;
         }
+    }
+    private void grabSettings() {
         update_checker = plugin.getConfig().getBoolean("config.update_checker", true);
         use_sqlite = plugin.getConfig().getBoolean("config.use_sqlite", false);
         use_particles = plugin.getConfig().getBoolean("sensor_config.use_particles", true);

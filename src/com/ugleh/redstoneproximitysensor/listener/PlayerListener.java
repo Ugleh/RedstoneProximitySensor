@@ -97,6 +97,7 @@ public class PlayerListener implements Listener {
         triggerRunners.add(new PlayerEntity(this));
         triggerRunners.add(new ProjectileEntity(this));
         triggerRunners.add(new VehicleEntity(this));
+        triggerRunners.add(new IndividualMob(this));
         triggerRunners.add(new Others(this));
     }
 
