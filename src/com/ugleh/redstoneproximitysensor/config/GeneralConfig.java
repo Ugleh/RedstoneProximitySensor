@@ -2,7 +2,10 @@ package com.ugleh.redstoneproximitysensor.config;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
+import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.util.Mobs;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.permissions.Permission;
@@ -38,6 +41,10 @@ public class GeneralConfig extends YamlConfiguration {
 
     }
     private void grabSettings() {
+        if(plugin.getConfig().isSet("rps.use-particles")) {  //Old Config file
+            Bukkit.getLogger().warning(ChatColor.RED + "Old Config file detected, please backup and delete old config file and let new one generate.");
+            plugin.getPluginLoader().disablePlugin(plugin);
+        }
         update_checker = plugin.getConfig().getBoolean("config.update_checker", true);
         use_sqlite = plugin.getConfig().getBoolean("config.use_sqlite", false);
         use_particles = plugin.getConfig().getBoolean("sensor_config.use_particles", true);
@@ -46,19 +53,19 @@ public class GeneralConfig extends YamlConfiguration {
         default_inverted = plugin.getConfig().getBoolean("sensor_config.default_inverted", false);
         default_owner_only_edit = plugin.getConfig().getBoolean("sensor_config.default_owner_only_edit", true);
 
-        for (String key : plugin.getConfig().getConfigurationSection("sensor_config.default_triggers").getKeys(true)) {
-            if(plugin.getConfig().isBoolean("sensor_config.default_triggers."  + key)) {
-                default_triggers.put(key, plugin.getConfig().getBoolean("sensor_config.default_triggers."  + key ));
-            }
-        }
-
         for(Mobs mob : Mobs.values()) {
         	supportedEntities.add(mob.getEntityTypeName());
         }
         grabLimitPermissions();
 
     }
-    
+
+
+    public void setupPerm(String perm) {
+        if(plugin.getServer().getPluginManager().getPermission("rps." + perm) == null)
+            plugin.getServer().getPluginManager().addPermission(new Permission("rps." + perm, PermissionDefault.TRUE));
+    }
+
     private void grabLimitPermissions()
     {
     	//If it is missing, add a default permission of infinite count to the list.
@@ -119,37 +126,51 @@ public class GeneralConfig extends YamlConfiguration {
             if (!file.exists()) {
                 plugin.getLogger().info("Config.yml not found, creating!");
                 plugin.saveDefaultConfig();
+                createDefaults();
             }
-            createDefaults();
             grabSettings();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void createDefaults() {
-        //TODO: Get list of available triggers and create defaults for the flags.
-/*
-        plugin.getConfig().addDefault("rps.max_range", 20);
-        plugin.getConfig().addDefault("rps.use-particles", true);
-        plugin.getConfig().addDefault("rps.update-checker", true);
-        plugin.getConfig().addDefault("rps.use_sqlite", false);
-        plugin.getConfig().addDefault("rps.defaultRange", 5);
-        plugin.getConfig().addDefault("rps.defaultownerOnlyEdit", true);
-        plugin.getConfig().addDefault("rps.default_inverted", false);
-        plugin.getConfig().addDefault("rps.defaultownerOnlyTrigger", false);
-        plugin.getConfig().addDefault("rps.defaultPlayerEntityTrigger", true);
-        plugin.getConfig().addDefault("rps.defaultHostileEntityTrigger", false);
-        plugin.getConfig().addDefault("rps.defaultPeacefulEntityTrigger", false);
-        plugin.getConfig().addDefault("defaultNeutralEntityTrigger", false);
-        plugin.getConfig().addDefault("rps.defaultDroppedItemsTrigger", false);
-        plugin.getConfig().addDefault("rps.defaultInvisibleEntityTrigger", false);
-        plugin.getConfig().addDefault("rps.defaultVehcileEntityTrigger", false);
-        plugin.getConfig().addDefault("rps.defaultProjectileEntityTrigger", false);
-*/
 
-        //plugin.getConfig().options().copyDefaults(false);
-        //plugin.saveConfig();
+    public void addTriggerFlagsToConfig() {
+        for(TriggerTemplate triggerTemplate : plugin.playerListener.getTriggerRunners()) {
+            String flagName;
+            try {
+                flagName = (String) triggerTemplate.getClass().getField("flagName").get(triggerTemplate);
+                if(flagName != null) {
+                    boolean value = false;
+                    if(flagName == "OWNER" || flagName == "PLAYER_ENTITY")
+                        value = true;
+                    if(!plugin.getConfig().isSet("sensor_config.default_triggers." + flagName))
+                        plugin.getConfig().addDefault("sensor_config.default_triggers." + flagName, value);
+                }
+            } catch (IllegalAccessException | NoSuchFieldException ignored) {
+                //Do nothing.
+            }
+        }
+        plugin.getConfig().options().copyDefaults(true);
+        plugin.saveConfig();
+
+        if(plugin.getConfig().isSet("sensor_config.default_triggers")) {
+            for (String key : plugin.getConfig().getConfigurationSection("sensor_config.default_triggers").getKeys(true)) {
+                if(plugin.getConfig().isBoolean("sensor_config.default_triggers."  + key)) {
+                    default_triggers.put(key, plugin.getConfig().getBoolean("sensor_config.default_triggers."  + key ));
+                }
+            }
+        }
+
+    }
+    private void createDefaults() {
+        //Brand new Config file
+        plugin.getConfig().addDefault("limiter.player.amount", 40);
+        plugin.getConfig().addDefault("limiter.player.default", true);
+        plugin.getConfig().addDefault("limiter.admin.amount", -1);
+        plugin.getConfig().addDefault("limiter.admin.default", PermissionDefault.OP.toString());
+        plugin.getConfig().options().copyDefaults(true);
+        plugin.saveConfig();
     }
 
     public boolean isSupportedEntity(EntityType entityType) {
@@ -199,4 +220,5 @@ public class GeneralConfig extends YamlConfiguration {
     public boolean isDefaultOwnerOnlyEdit() {
         return default_owner_only_edit;
     }
+
 }

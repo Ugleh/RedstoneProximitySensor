@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class NeutralEntity extends TriggerTemplate {
-    private String flagName = "NEUTRAL_ENTITY";
+    public String flagName = "NEUTRAL_ENTITY";
     private Material buttonMaterial = Material.ENDER_PEARL;
     private String triggerPermission = "button_neutralentitiestrigger";
     private String buttonTitle = "lang_button_neutralentitiestrigger";

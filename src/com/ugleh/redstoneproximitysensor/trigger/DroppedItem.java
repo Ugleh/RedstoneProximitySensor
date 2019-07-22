@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class DroppedItem  extends TriggerTemplate {
-    private String flagName = "DROPPED_ITEM";
+    public String flagName = "DROPPED_ITEM";
     private Material buttonMaterial = Material.PUMPKIN_SEEDS;
     private String triggerPermission = "button_droppeditemtrigger";
     private String buttonTitle = "lang_button_droppeditemtrigger";

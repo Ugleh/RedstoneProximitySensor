@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class HostileEntity extends TriggerTemplate {
-    private String flagName = "HOSTILE_ENTITY";
+    public String flagName = "HOSTILE_ENTITY";
     private Material buttonMaterial = Material.ZOMBIE_HEAD;
     private String triggerPermission = "button_hostileentitiestrigger";
     private String buttonTitle = "lang_button_hostileentitytrigger";

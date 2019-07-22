@@ -18,9 +18,14 @@ import java.util.List;
 public class GPTrigger extends TriggerTemplate {
     private static DataStore dataStore;
     public String flagName = "GP";
+    private Material buttonMaterial = Material.GOLDEN_SHOVEL;
+    public String triggerPermission = "button_gptrigger";
+    private String buttonTitle = "lang_button_gptrigger";
+    private String loreNode = "lang_button_gp_lore";
 
     public GPTrigger() {
-        CreateButton();
+        List<String> lore = WordWrapLore(pl().langString(loreNode));
+        pl().addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial), buttonTitle, flagName, "lang_button_true", "lang_button_false", lore, this));
     }
 
     private static DataStore getDataStore() {
@@ -28,16 +33,6 @@ public class GPTrigger extends TriggerTemplate {
             dataStore = GriefPrevention.getPlugin(GriefPrevention.class).dataStore;
         }
         return dataStore;
-    }
-
-    private void CreateButton() {
-        List<String> lore = WordWrapLore(pl().langString("lang_button_gp_lore"));
-        pl().addTrigger(new Trigger("button_gptrigger", new ItemStack(Material.GOLDEN_SHOVEL), "lang_button_gptrigger", flagName, "lang_button_true", "lang_button_false", lore, this));
-
-    }
-
-    private PlayerListener pl() {
-        return PlayerListener.instance;
     }
 
     public List<String> WordWrapLore(String string) {
@@ -70,6 +65,10 @@ public class GPTrigger extends TriggerTemplate {
     @Override
     public void rpsCreated(RPS affectedRPS) {
 
+    }
+
+    private PlayerListener pl() {
+        return PlayerListener.instance;
     }
 
     @Override

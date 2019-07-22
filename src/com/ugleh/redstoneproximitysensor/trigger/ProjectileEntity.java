@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class ProjectileEntity extends TriggerTemplate {
-    private String flagName = "PROJECTILE_ENTITY";
+    public String flagName = "PROJECTILE_ENTITY";
     private Material buttonMaterial = Material.ARROW;
     private String triggerPermission = "button_projectiletrigger";
     private String buttonTitle = "lang_button_projectiletrigger";

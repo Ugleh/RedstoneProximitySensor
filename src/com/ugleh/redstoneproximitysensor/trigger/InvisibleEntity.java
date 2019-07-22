@@ -18,7 +18,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.List;
 
 public class InvisibleEntity extends TriggerTemplate {
-    private String flagName = "INVISIBLE_ENTITY";
+    public String flagName = "INVISIBLE_ENTITY";
     private Material buttonMaterial = Material.FERMENTED_SPIDER_EYE;
     private String triggerPermission = "button_invisibleentitiestrigger";
     private String buttonTitle = "lang_button_invisibleentitytrigger";

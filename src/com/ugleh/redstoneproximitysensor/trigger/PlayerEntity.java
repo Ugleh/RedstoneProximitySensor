@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class PlayerEntity extends TriggerTemplate {
-    private String flagName = "PLAYER_ENTITY";
+    public String flagName = "PLAYER_ENTITY";
     private Material buttonMaterial = Material.DIAMOND_SWORD;
     private String triggerPermission = "button_playerentitytrigger";
     private String buttonTitle = "lang_button_playerentitytrigger";

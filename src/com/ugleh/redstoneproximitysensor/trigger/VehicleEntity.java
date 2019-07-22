@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class VehicleEntity extends TriggerTemplate {
-    private String flagName = "VEHICLE_ENTITY";
+    public String flagName = "VEHICLE_ENTITY";
     private Material buttonMaterial = Material.MINECART;
     private String triggerPermission = "button_vehicletrigger";
     private String buttonTitle = "lang_button_vehicletrigger";

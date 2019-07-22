@@ -184,9 +184,26 @@ public class SensorConfig extends YamlConfiguration {
                 this.save();
             } else {
                 // Sensor is in the YML config, so set the config data.
+                //FIX PLAYER -> PLAYER_ENTITY and VEHCILE_ENTITY -> VEHICLE_ENTITY
+                if(this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities").contains("PLAYER")) {
+                    List<String> stringList = this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities");
+                    stringList.remove("PLAYER");
+                    stringList.add("PLAYER_ENTITY");
+                    this.set("sensors." + tempRPS.getUniqueID() + ".acceptedEntities", stringList);
+                    this.save();
+                }
+
+                if(this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities").contains("VEHCILE_ENTITY")) {
+                    List<String> stringList = this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities");
+                    stringList.remove("VEHCILE_ENTITY");
+                    stringList.add("VEHICLE_ENTITY");
+                    this.set("sensors." + tempRPS.getUniqueID() + ".acceptedEntities", stringList);
+                    this.save();
+                }
+
                 tempRPS.setData(this.getBoolean("sensors." + tempRPS.getUniqueID() + ".inverted"),
                         this.getInt("sensors." + tempRPS.getUniqueID() + ".range"),
-                        new ArrayList<String>(
+                        new ArrayList<>(
                                 this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities")),
                         this.getBoolean("sensors." + tempRPS.getUniqueID() + ".ownerOnlyEdit"));
             }

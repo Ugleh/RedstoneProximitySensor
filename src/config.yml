@@ -10,17 +10,4 @@ sensor_config:
   default_triggers:
     OWNER: true
     PLAYER_ENTITY: true
-    PEACEFUL_ENTITY: false
-    NEUTRAL_ENTITY: false
-    HOSTILE_ENTITY: false
-    DROPPED_ITEM: false
-    PROJECTILE_ENTITY: false
-    VEHICLE_ENTITY: false
-    INVISIBLE_ENTITY: false
 limiter:
-  player:
-    amount: 40
-    default: true
-  admin:
-    amount: -1
-    default: op

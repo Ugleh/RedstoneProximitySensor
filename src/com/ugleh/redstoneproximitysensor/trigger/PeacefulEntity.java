@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class PeacefulEntity extends TriggerTemplate {
-    private String flagName = "PEACEFUL_ENTITY";
+    public String flagName = "PEACEFUL_ENTITY";
     private Material buttonMaterial = Material.COOKED_BEEF;
     private String triggerPermission = "button_peacefulentitytrigger";
     private String buttonTitle = "lang_button_peacefulentitytrigger";

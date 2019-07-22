@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class Owner extends TriggerTemplate {
-    private String flagName = "OWNER";
+    public String flagName = "OWNER";
     private Material buttonMaterial = Material.PLAYER_HEAD;
     private String triggerPermission = "button_ownertrigger";
     private String buttonTitle = "lang_button_ownertrigger";

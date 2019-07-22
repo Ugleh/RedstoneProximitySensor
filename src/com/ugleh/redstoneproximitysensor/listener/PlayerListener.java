@@ -322,6 +322,7 @@ public class PlayerListener implements Listener {
     }
 
     public void addTrigger(Trigger trigger) {
+        getInstance().getgConfig().setupPerm(trigger.getPerm());
         this.triggers.add(trigger);
     }
 

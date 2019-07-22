@@ -4,6 +4,7 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
+import me.ryanhamshire.GriefPrevention.DataStore;
 import net.redstoneore.legacyfactions.entity.FPlayer;
 import net.redstoneore.legacyfactions.entity.FPlayerColl;
 import net.redstoneore.legacyfactions.entity.Faction;
@@ -18,25 +19,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class LegacyFactionsTrigger extends TriggerTemplate {
+
     public String flagName = "LEGACYFACTIONS";
+    private Material buttonMaterial = Material.OAK_FENCE;
+    public String triggerPermission = "button_lfactiontrigger";
+    private String buttonTitle = "lang_button_lftrigger";
+    private String loreNode = "lang_button_lf_lore";
 
-    //private HashMap<String, String> sensorFactions = new HashMap<String, String>();
     public LegacyFactionsTrigger() {
-        CreateButton();
-    }
+        List<String> lore = pl().WordWrapLore(pl().langString(loreNode));
+        pl().addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial), buttonTitle, flagName, "lang_button_true", "lang_button_false", lore, this));
 
-    private void CreateButton() {
-        List<String> lore = pl().WordWrapLore(pl().langString("lang_button_lf_lore"));
-        pl().addTrigger(new Trigger("button_lfactiontrigger", new ItemStack(Material.OAK_FENCE), "lang_button_lftrigger", flagName, "lang_button_true", "lang_button_false", lore, this));
-
-    }
-
-    private RedstoneProximitySensor getInstance() {
-        return RedstoneProximitySensor.getInstance();
-    }
-
-    private PlayerListener pl() {
-        return getInstance().playerListener;
     }
 
     @Override
@@ -63,6 +56,14 @@ public class LegacyFactionsTrigger extends TriggerTemplate {
     @Override
     public void rpsRemoved(RPS affectedRPS) {
 
+    }
+
+    private RedstoneProximitySensor getInstance() {
+        return RedstoneProximitySensor.getInstance();
+    }
+
+    private PlayerListener pl() {
+        return getInstance().playerListener;
     }
 
 }

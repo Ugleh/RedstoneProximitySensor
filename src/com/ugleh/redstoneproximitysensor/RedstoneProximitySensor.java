@@ -72,6 +72,9 @@ public class RedstoneProximitySensor extends JavaPlugin {
         // Init Listeners
         this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
         this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
+        gConfig.addTriggerFlagsToConfig();
+        //TODO: Setup Permissions of triggers
+
         //Register addons
         setTriggerAddons(new TriggerCreator());
 

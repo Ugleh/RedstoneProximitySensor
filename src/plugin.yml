@@ -48,42 +48,6 @@ permissions:
   rps.button_owneronlyedit:
     description: Permission to use said button.
     default: true
-  rps.button_ownertrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_playerentitytrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_hostileentitiestrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_peacefulentitiestrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_neutralentitiestrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_droppeditemtrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_invisibleentitiestrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_projectiletrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_vehicletrigger:
-    description: Permission to use said button.
-    default: true
-  rps.button_townytrigger:
-    description: Permission to use Towny Addon.
-    default: true
-  rps.button_gptrigger:
-    description: Permission to use GP Addon.
-    default: true
-  rps.button_lfactiontrigger:
-    description: Permission to use LegacyFactions Addon
-    default: true
 commands:
   rps:
     description: The admin command for RPS control.
