@@ -5,14 +5,13 @@ import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class Trigger extends TriggerTemplate{
+public class Trigger{
     public TriggerTemplate addonTemplate;
     private String flagName;
     private ItemStack item;
@@ -39,7 +38,7 @@ public class Trigger extends TriggerTemplate{
                 , null
         );
 
-        SetupButtonData();
+        setupButtonMetaData();
         pl.guiMenu.setItem(this.slot, this.item);
 
     }
@@ -61,16 +60,18 @@ public class Trigger extends TriggerTemplate{
                 , addon
         );
 
-        SetupButtonData();
+        setupButtonMetaData();
         pl.guiMenu.setItem(slot, button_material);
 
     }
 
-    private void SetupButtonData() {
+    private void setupButtonMetaData() {
         ItemMeta itemMeta = this.item.getItemMeta();
-        itemMeta.setDisplayName(ChatColor.BLUE + this.displayNamePrefix);
-        itemMeta.setLore(this.lore);
-        this.item.setItemMeta(itemMeta);
+        if (itemMeta != null) {
+            itemMeta.setDisplayName(ChatColor.BLUE + this.displayNamePrefix);
+            itemMeta.setLore(this.lore);
+            this.item.setItemMeta(itemMeta);
+        }
 
     }
 
@@ -91,15 +92,17 @@ public class Trigger extends TriggerTemplate{
 
     public void updateButtonStatus(RPS selectedRPS, Inventory tempInv) {
         ItemMeta itemMeta = item.getItemMeta();
-        if (selectedRPS.getAcceptedTriggerFlags().contains(flagName)) {
-            itemMeta.addEnchant(glow, 1, true);
-            itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.GREEN + suffixOne);
-        } else {
-            itemMeta.removeEnchant(glow);
-            itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.RED + suffixTwo);
+        if (itemMeta != null) {
+            if (selectedRPS.getAcceptedTriggerFlags().contains(flagName)) {
+                itemMeta.addEnchant(glow, 1, true);
+                itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.GREEN + suffixOne);
+            } else {
+                itemMeta.removeEnchant(glow);
+                itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.RED + suffixTwo);
+            }
+            item.setItemMeta(itemMeta);
+            tempInv.setItem(slot, item);
         }
-        item.setItemMeta(itemMeta);
-        tempInv.setItem(slot, item);
     }
 
     private String langString(String key) {
@@ -120,26 +123,5 @@ public class Trigger extends TriggerTemplate{
 
     public String getPerm() {
         return perm;
-    }
-
-
-    @Override
-    public TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity e) {
-        return TriggerCreator.TriggerResult.NOT_TRIGGERED;
-    }
-
-    @Override
-    public void buttonPressed(Boolean on, RPS affectedRPS) {
-
-    }
-
-    @Override
-    public void rpsCreated(RPS affectedRPS) {
-
-    }
-
-    @Override
-    public void rpsRemoved(RPS affectedRPS) {
-
     }
 }
