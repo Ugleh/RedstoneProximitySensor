@@ -47,7 +47,7 @@ public class SQLite extends Database {
                 return connection;
             }
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
+            connection = DriverManager.getConnection("jdbc:use_sqlite:" + dataFolder);
             return connection;
         } catch (SQLException ex) {
             plugin.getLogger().log(Level.SEVERE, "SQLite exception on initialize", ex);

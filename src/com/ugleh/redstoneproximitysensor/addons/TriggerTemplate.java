@@ -3,8 +3,8 @@ package com.ugleh.redstoneproximitysensor.addons;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import org.bukkit.entity.Entity;
 
-public abstract class AddonTemplate {
-    public abstract boolean checkTrigger(RPS rps, Entity e);
+public abstract class TriggerTemplate {
+    public abstract TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity e);
 
     public abstract void buttonPressed(Boolean on, RPS affectedRPS);
 

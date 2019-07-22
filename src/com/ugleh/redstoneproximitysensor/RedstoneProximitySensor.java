@@ -1,6 +1,6 @@
 package com.ugleh.redstoneproximitysensor;
 
-import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
+import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.command.CommandIgnoreRPS;
 import com.ugleh.redstoneproximitysensor.command.CommandRPS;
 import com.ugleh.redstoneproximitysensor.command.CommandRPSList;
@@ -46,7 +46,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
     private GeneralConfig gConfig;
     private SensorConfig sensorConfig;
     private LanguageConfig languageConfig;
-    private TriggerAddons triggerAddons;
+    private TriggerCreator triggerAddons;
     private Database db;
 
     public static RedstoneProximitySensor getInstance() {
@@ -61,7 +61,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
         chatPrefix = langStringColor("lang_chat_prefix");
         gConfig = new GeneralConfig(this);
 
-        if (this.getgConfig().sqlite) {
+        if (this.getgConfig().isSqliteEnabled()) {
             this.db = new SQLite(this);
             this.db.load();
 
@@ -73,12 +73,12 @@ public class RedstoneProximitySensor extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
         this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
         //Register addons
-        setTriggerAddons(new TriggerAddons());
+        setTriggerAddons(new TriggerCreator());
 
         // Add existing sensors back
         sensorConfig = new SensorConfig(this, "sensors.yml", "sensors.yml");
 
-        if (gConfig.updateChecker)
+        if (gConfig.isUpdateCheckerEnabled())
             needsUpdate = new UpdateChecker(this.getVersion()).needsUpdate;
         // Setup Glow
         registerGlow();
@@ -181,7 +181,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
     public enum ColorNode{
         POSITIVE_MESSAGE,
         NEGATIVE_MESSAGE,
-        NEUTRAL_MESSAGE;
+        NEUTRAL_MESSAGE
     }
     public String langStringRaw(String key) {
         return getInstance().getLang().get(key);
@@ -194,11 +194,11 @@ public class RedstoneProximitySensor extends JavaPlugin {
         return languageConfig;
     }
 
-    public TriggerAddons getTriggerAddons() {
+    public TriggerCreator getTriggerAddons() {
         return triggerAddons;
     }
 
-    public void setTriggerAddons(TriggerAddons triggerAddons) {
+    public void setTriggerAddons(TriggerCreator triggerAddons) {
         this.triggerAddons = triggerAddons;
     }
 

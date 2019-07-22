@@ -292,6 +292,6 @@ public abstract class Database {
     }
 
     public void setSensor(RPS rps) {
-        this.setSensor(rps.getUniqueID().toString(), rps.getLocation(), rps.isInverted(), rps.getRange(), rps.getAcceptedEntities(), rps.getOwner(), rps.isownerOnlyEdit());
+        this.setSensor(rps.getUniqueID().toString(), rps.getLocation(), rps.isInverted(), rps.getRange(), rps.getAcceptedTriggerFlags(), rps.getOwner(), rps.isOwnerOnlyEdit());
     }
 }

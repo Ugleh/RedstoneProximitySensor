@@ -1,18 +1,19 @@
 package com.ugleh.redstoneproximitysensor.util;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import com.ugleh.redstoneproximitysensor.addons.AddonTemplate;
-import com.ugleh.redstoneproximitysensor.addons.TriggerAddons;
+import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
+import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class Trigger {
-    public AddonTemplate addonTemplate;
+public class Trigger extends TriggerTemplate{
+    public TriggerTemplate addonTemplate;
     private String flagName;
     private ItemStack item;
     private List<String> lore;
@@ -23,7 +24,7 @@ public class Trigger {
     private String suffixOne;
     private String suffixTwo;
 
-    public Trigger(String trigger_permission, ItemStack button_material, int slot_number, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped) {
+    public Trigger(String trigger_permission, ItemStack button_material, int slot_number, String button_title, String sensor_flag, String toggleOn, String toggleOff, List<String> loreTextWrapped) {
         PlayerListener pl = PlayerListener.instance;
         setFields(
                 button_material
@@ -32,8 +33,8 @@ public class Trigger {
                 , sensor_flag
                 , slot_number
                 , RedstoneProximitySensor.getInstance().glow
-                , langString(toggle_off).substring(0, 1).toUpperCase() + langString(toggle_off).substring(1)
-                , langString(toggle_on).substring(0, 1).toUpperCase() + langString(toggle_on).substring(1)
+                , langString(toggleOn).substring(0, 1).toUpperCase() + langString(toggleOn).substring(1)
+                , langString(toggleOff).substring(0, 1).toUpperCase() + langString(toggleOff).substring(1)
                 , trigger_permission
                 , null
         );
@@ -43,19 +44,19 @@ public class Trigger {
 
     }
 
-    public Trigger(String trigger_permission, ItemStack button_material, String button_title, String sensor_flag, String toggle_off, String toggle_on, List<String> loreTextWrapped, AddonTemplate addon) {
+    public Trigger(String trigger_permission, ItemStack button_material, String button_title, String sensor_flag, String toggleOn, String toggleOff, List<String> loreTextWrapped, TriggerTemplate addon) {
         PlayerListener pl = RedstoneProximitySensor.getInstance().playerListener;
-        TriggerAddons ta = TriggerAddons.getInstance();
+        TriggerCreator triggerCreator = TriggerCreator.getInstance();
 
         setFields(
                 button_material
                 , langString(button_title) + ": "
                 , loreTextWrapped
                 , sensor_flag
-                , ta.getNextAvaliableSlot()
+                , triggerCreator.getAvailableSlot()
                 , RedstoneProximitySensor.getInstance().glow
-                , langString(toggle_off).substring(0, 1).toUpperCase() + langString(toggle_off).substring(1)
-                , langString(toggle_on).substring(0, 1).toUpperCase() + langString(toggle_on).substring(1)
+                , langString(toggleOn).substring(0, 1).toUpperCase() + langString(toggleOn).substring(1)
+                , langString(toggleOff).substring(0, 1).toUpperCase() + langString(toggleOff).substring(1)
                 , trigger_permission
                 , addon
         );
@@ -74,15 +75,15 @@ public class Trigger {
     }
 
     private void setFields(ItemStack button_material, String button_title, List<String> loreTextWrapped, String sensor_flag,
-                           int slot, Glow glow, String suf_off, String suf_on, String trigger_permission, AddonTemplate addon) {
+                           int slot, Glow glow, String sufOn, String sufOff, String trigger_permission, TriggerTemplate addon) {
         this.item = button_material;
         this.displayNamePrefix = button_title;
         this.lore = loreTextWrapped;
         this.flagName = sensor_flag;
         this.slot = slot;
         this.glow = glow;
-        this.suffixOne = suf_off;
-        this.suffixTwo = suf_on;
+        this.suffixOne = sufOn;
+        this.suffixTwo = sufOff;
         this.perm = trigger_permission;
         this.addonTemplate = addon;
 
@@ -90,7 +91,7 @@ public class Trigger {
 
     public void updateButtonStatus(RPS selectedRPS, Inventory tempInv) {
         ItemMeta itemMeta = item.getItemMeta();
-        if (selectedRPS.getAcceptedEntities().contains(flagName)) {
+        if (selectedRPS.getAcceptedTriggerFlags().contains(flagName)) {
             itemMeta.addEnchant(glow, 1, true);
             itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.GREEN + suffixOne);
         } else {
@@ -102,12 +103,7 @@ public class Trigger {
     }
 
     private String langString(String key) {
-        if (RedstoneProximitySensor.getInstance().getLang().containsKey(key)) {
-            return RedstoneProximitySensor.getInstance().getLang().get(key);
-
-        } else {
-            return key;
-        }
+        return RedstoneProximitySensor.getInstance().getLang().getOrDefault(key, key);
     }
 
     public String getDisplayNamePrefix() {
@@ -124,5 +120,26 @@ public class Trigger {
 
     public String getPerm() {
         return perm;
+    }
+
+
+    @Override
+    public TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity e) {
+        return TriggerCreator.TriggerResult.NOT_TRIGGERED;
+    }
+
+    @Override
+    public void buttonPressed(Boolean on, RPS affectedRPS) {
+
+    }
+
+    @Override
+    public void rpsCreated(RPS affectedRPS) {
+
+    }
+
+    @Override
+    public void rpsRemoved(RPS affectedRPS) {
+
     }
 }

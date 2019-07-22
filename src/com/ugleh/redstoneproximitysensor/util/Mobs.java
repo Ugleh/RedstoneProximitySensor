@@ -134,7 +134,7 @@ public String getName() {
 	return WordUtils.capitalizeFully(this.entityTypeName.replace("_", " "));
 }
 
-enum Nature {
+public enum Nature {
 	PASSIVE_PEACEFUL("Passive (Peaceful)"),
 	PASSIVE_DEFENSIVE("Passive (Defensive)"),
 	NEUTRAL_ANIMAL("Neutral (Animal)"),

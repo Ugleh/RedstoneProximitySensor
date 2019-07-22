@@ -15,11 +15,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 
-public class GPAddon extends AddonTemplate {
+public class GPTrigger extends TriggerTemplate {
     private static DataStore dataStore;
     public String flagName = "GP";
 
-    public GPAddon() {
+    public GPTrigger() {
         CreateButton();
     }
 
@@ -52,12 +52,15 @@ public class GPAddon extends AddonTemplate {
     }
 
     @Override
-    public boolean checkTrigger(RPS rps, Entity e) {
+    public TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity e) {
         Location l = rps.getLocation();
-        if (!rps.getAcceptedEntities().contains(flagName)) return false;
-        if (!(e instanceof Player)) return false;
+        if (!rps.getAcceptedTriggerFlags().contains(flagName)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
+        if (!(e instanceof Player)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         Claim claim = getDataStore().getClaimAt(l, true, null);
-        return claim != null && claim.allowBuild((Player) e, null) == null;
+        if(claim != null && claim.allowBuild((Player) e, null) == null)
+            return TriggerCreator.TriggerResult.TRIGGERED;
+        else
+            return TriggerCreator.TriggerResult.NOT_TRIGGERED;
     }
 
     @Override

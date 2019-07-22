@@ -17,10 +17,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class TownyAddon extends AddonTemplate {
+public class TownyTrigger extends TriggerTemplate {
     public String flagName = "TOWNY";
 
-    public TownyAddon() {
+    public TownyTrigger() {
         CreateButton();
     }
 
@@ -39,29 +39,29 @@ public class TownyAddon extends AddonTemplate {
     }
 
     @Override
-    public boolean checkTrigger(RPS rps, Entity e) {
+    public TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity e) {
         Location l = rps.getLocation();
-        if (!rps.getAcceptedEntities().contains(flagName)) return false;
-        if (!(e instanceof Player)) return false;
-        if (TownyUniverse.isWilderness(l.getBlock())) return false;
+        if (!rps.getAcceptedTriggerFlags().contains(flagName)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
+        if (!(e instanceof Player)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
+        if (TownyUniverse.isWilderness(l.getBlock())) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         try {
             Resident r = TownyUniverse.getDataSource().getResident(e.getName());
             Town rTown = r.getTown();
             boolean isWild = TownyUniverse.isWilderness(l.getBlock());
             if (isWild && rTown == null) {
-                return true;
+                return TriggerCreator.TriggerResult.TRIGGERED;
             } else if (!isWild && rTown == null) {
-                return false;
+                return TriggerCreator.TriggerResult.NOT_TRIGGERED;
             } else if (isWild && rTown != null) {
-                return false;
+                return TriggerCreator.TriggerResult.NOT_TRIGGERED;
             }
             TownBlock townBlock = TownyUniverse.getTownBlock(l);
-            if (townBlock.getTown().getUID() == rTown.getUID()) return true;
-            else return false;
+            if (townBlock.getTown().getUID() == rTown.getUID()) return TriggerCreator.TriggerResult.TRIGGERED;
+            else return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         } catch (NotRegisteredException e1) {
             e1.printStackTrace();
         }
-        return true;
+        return TriggerCreator.TriggerResult.TRIGGERED;
     }
 
     @Override

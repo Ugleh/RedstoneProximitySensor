@@ -1,24 +1,26 @@
-rps:
-  update-checker: true
-  sqlite: false
-  use-particles: true
-  maxRange: 20
-  defaultRange: 5
-  defaultownerOnlyEdit: true
-  defaultInverted: false
-  defaultOwnerTrigger: true
-  defaultPlayerEntityTrigger: true
-  defaultHostileEntityTrigger: false
-  defaultPeacefulEntityTrigger: false
-  defaultNeutralEntityTrigger: false
-  defaultDroppedItemsTrigger: false
-  defaultInvisibleEntityTrigger: false
-  defaultVehcileEntityTrigger: false
-  defaultProjectileEntityTrigger: false
-  limiter:
-    player:
-      amount: 40
-      default: true
-    admin:
-      amount: -1
-      default: op
+config:
+  update_checker: true
+  use_sqlite: false
+sensor_config:
+  use_particles: true
+  max_range: 20
+  default_range: 5
+  default_inverted: false
+  default_owner_only_edit: true
+  default_triggers:
+    OWNER: true
+    PLAYER_ENTITY: true
+    PEACEFUL_ENTITY: false
+    NEUTRAL_ENTITY: false
+    HOSTILE_ENTITY: false
+    DROPPED_ITEM: false
+    PROJECTILE_ENTITY: false
+    VEHICLE_ENTITY: false
+    INVISIBLE_ENTITY: false
+limiter:
+  player:
+    amount: 40
+    default: true
+  admin:
+    amount: -1
+    default: op

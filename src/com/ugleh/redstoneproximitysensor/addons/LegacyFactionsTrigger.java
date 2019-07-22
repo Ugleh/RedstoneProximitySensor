@@ -17,11 +17,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.UUID;
 
-public class LegacyFactionsAddon extends AddonTemplate {
+public class LegacyFactionsTrigger extends TriggerTemplate {
     public String flagName = "LEGACYFACTIONS";
 
     //private HashMap<String, String> sensorFactions = new HashMap<String, String>();
-    public LegacyFactionsAddon() {
+    public LegacyFactionsTrigger() {
         CreateButton();
     }
 
@@ -40,15 +40,15 @@ public class LegacyFactionsAddon extends AddonTemplate {
     }
 
     @Override
-    public boolean checkTrigger(RPS rps, Entity e) {
+    public TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity e) {
         UUID ownerID = rps.getOwner();
-        if (!rps.getAcceptedEntities().contains(flagName)) return false;
-        if (!(e instanceof Player)) return false;
+        if (!rps.getAcceptedTriggerFlags().contains(flagName)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
+        if (!(e instanceof Player)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         Faction faction = FactionColl.get(Bukkit.getOfflinePlayer(ownerID));
         FPlayer fplayer = FPlayerColl.get((Player) e);
         if (faction.getFPlayers().contains(fplayer))
-            return true;
-        return false;
+            return TriggerCreator.TriggerResult.TRIGGERED;
+        return TriggerCreator.TriggerResult.NOT_TRIGGERED;
 
     }
 

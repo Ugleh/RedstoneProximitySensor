@@ -1,6 +1,8 @@
 package com.ugleh.redstoneproximitysensor.listener;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
+import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
+import com.ugleh.redstoneproximitysensor.trigger.*;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.RPSLocation;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
@@ -25,7 +27,7 @@ import java.util.*;
 public class PlayerListener implements Listener {
     public static PlayerListener instance;
     public Inventory guiMenu;
-    public List<UUID> rpsIgnoreList = new ArrayList<UUID>();
+    public List<UUID> rpsIgnoreList = new ArrayList<>();
     public int menuSize = 27;
     private String invName;
     private ItemStack invertedButton;
@@ -33,11 +35,14 @@ public class PlayerListener implements Listener {
     private ItemStack rangeButton;
     private ItemStack copyButton;
     private ItemStack pasteButton;
-    private List<Trigger> triggers = new ArrayList<Trigger>();
-    private HashMap<String, String> permList = new HashMap<String, String>();
-    private HashMap<UUID, RPS> userSelectedRPS = new HashMap<UUID, RPS>();
-    HashMap<UUID, RPS> userCopiedRPS = new HashMap<UUID, RPS>();
-    private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<UUID, Inventory>();
+    private List<Trigger> triggers = new ArrayList<>();
+
+
+    private List<TriggerTemplate> triggerRunners = new ArrayList<>();
+    private HashMap<String, String> permList = new HashMap<>();
+    private HashMap<UUID, RPS> userSelectedRPS = new HashMap<>();
+    HashMap<UUID, RPS> userCopiedRPS = new HashMap<>();
+    private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<>();
 
     public PlayerListener() {
         instance = this;
@@ -82,42 +87,17 @@ public class PlayerListener implements Listener {
         lore = WordWrapLore(langString("lang_button_p_lore"));
         createItem(setPasteButton(new ItemStack(Material.INK_SAC, 1)), "button_paste", "lang_button_paste", lore, 10);
 
-        //Trigger button, Owner Trigger
-        lore = WordWrapLore(langString("lang_button_ot_lore"));
-        addTrigger(new Trigger("button_ownertrigger", new ItemStack(Material.LEGACY_SKULL_ITEM, 1, (short) 3), 4, "lang_button_ownertrigger", "OWNER", "lang_button_true", "lang_button_false", lore));
-
-        //Trigger button, Player Entity Trigger
-        lore = WordWrapLore(langString("lang_button_pet1_lore"));
-        addTrigger(new Trigger("button_playerentitytrigger", new ItemStack(Material.DIAMOND_SWORD, 1), 5, "lang_button_playerentitytrigger", "PLAYER", "lang_button_true", "lang_button_false", lore));
-
-        //Trigger button, Hostile Entity Trigger
-        lore = WordWrapLore(langString("lang_button_het_lore"));
-        addTrigger(new Trigger("button_hostileentitiestrigger", new ItemStack(Material.SKELETON_SKULL, 1, (short) 2), 6, "lang_button_hostileentitytrigger", "HOSTILE_ENTITY", "lang_button_true", "lang_button_false", lore));
-
-        //Trigger button, Peaceful Entity Trigger
-        lore = WordWrapLore(langString("lang_button_pet2_lore"));
-        addTrigger(new Trigger("button_peacefulentitiestrigger", new ItemStack(Material.COOKED_BEEF, 1), 7, "lang_button_peacefulentitytrigger", "PEACEFUL_ENTITY", "lang_button_true", "lang_button_false", lore));
-
-        //Trigger button, Neutral Entity Trigger
-        lore = WordWrapLore(langString("lang_button_net_lore"));
-        addTrigger(new Trigger("button_neutralentitiestrigger", new ItemStack(Material.ENDER_PEARL, 1), 8, "lang_button_neutralentitiestrigger", "NEUTRAL_ENTITY", "lang_button_true", "lang_button_false", lore));
-
-        //Trigger button, Invisible Entity Trigger
-        lore = WordWrapLore(langString("lang_button_iet_lore"));
-        addTrigger(new Trigger("button_invisibleentitiestrigger", new ItemStack(Material.FERMENTED_SPIDER_EYE, 1), 17, "lang_button_invisibleentitytrigger", "INVISIBLE_ENTITY", "lang_button_true", "lang_button_false", lore));
-
-        //Trigger button, Projectile Entity Trigger
-        lore = WordWrapLore(langString("lang_button_pt_lore"));
-        addTrigger(new Trigger("button_projectiletrigger", new ItemStack(Material.ARROW, 1), 16, "lang_button_projectiletrigger", "PROJECTILE_ENTITY", "lang_button_true", "lang_button_false", lore));
-
-        //Trigger button, Vehicle Entity Trigger
-        lore = WordWrapLore(langString("lang_button_vt_lore"));
-        addTrigger(new Trigger("button_vehicletrigger", new ItemStack(Material.MINECART, 1), 15, "lang_button_vehicletrigger", "VEHICLE_ENTITY", "lang_button_true", "lang_button_false", lore));
-    
-        //Trigger button, Dropped Items Trigger
-        lore = WordWrapLore(langString("lang_button_dit_lore"));
-        addTrigger(new Trigger("button_droppeditemtrigger", new ItemStack(Material.PUMPKIN_SEEDS, 1), 14, "lang_button_droppeditemtrigger", "DROPPED_ITEM", "lang_button_true", "lang_button_false", lore));
-    
+        //Initiation of Triggers
+        triggerRunners.add(new DroppedItem(this));
+        triggerRunners.add(new HostileEntity(this));
+        triggerRunners.add(new InvisibleEntity(this));
+        triggerRunners.add(new NeutralEntity(this));
+        triggerRunners.add(new Owner(this));
+        triggerRunners.add(new PeacefulEntity(this));
+        triggerRunners.add(new PlayerEntity(this));
+        triggerRunners.add(new ProjectileEntity(this));
+        triggerRunners.add(new VehicleEntity(this));
+        triggerRunners.add(new Others(this));
     }
 
 
@@ -213,7 +193,7 @@ public class PlayerListener implements Listener {
                 //Owner Only Trigger
                 if (selectedRPS.getOwner().equals(playerWhoClicked.getUniqueId())) {
                     playToggleSound(playerWhoClicked);
-                    getInstance().getSensorConfig().setownerOnlyEdit(selectedRPS, !selectedRPS.isownerOnlyEdit());
+                    getInstance().getSensorConfig().setownerOnlyEdit(selectedRPS, !selectedRPS.isOwnerOnlyEdit());
                 } else {
                     playRejectSound(playerWhoClicked);
                     playerWhoClicked.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_restriction_owneronly_button"));
@@ -291,7 +271,7 @@ public class PlayerListener implements Listener {
 
         e.setCancelled(true);
         RPS selectedRPS = getInstance().getSensorConfig().getSensorList().get(RPSLocation.getSLoc(l));
-        if (((selectedRPS.getOwner().equals(p.getUniqueId())) && selectedRPS.isownerOnlyEdit()) || (!selectedRPS.isownerOnlyEdit())) {
+        if (((selectedRPS.getOwner().equals(p.getUniqueId())) && selectedRPS.isOwnerOnlyEdit()) || (!selectedRPS.isOwnerOnlyEdit())) {
             showGUIMenu(p, selectedRPS);
         } else {
             p.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + langString("lang_restriction_owneronly"));
@@ -314,7 +294,7 @@ public class PlayerListener implements Listener {
     }
 
     private void SetupOwnerOnlyEditButton(Inventory tempInv, RPS selectedRPS) {
-        toggleButton(tempInv, ownerOnlyEditButton, selectedRPS.isownerOnlyEdit(), langString("lang_button_owneronlyedit") + ": ", 2);
+        toggleButton(tempInv, ownerOnlyEditButton, selectedRPS.isOwnerOnlyEdit(), langString("lang_button_owneronlyedit") + ": ", 2);
     }
 
     private void toggleButton(Inventory tempInv, ItemStack button, boolean buttonStatus, String buttonText, int slot) {
@@ -390,6 +370,10 @@ public class PlayerListener implements Listener {
         return copyButton;
     }
 
+
+    public List<TriggerTemplate> getTriggerRunners() {
+        return triggerRunners;
+    }
 
     public ItemStack getPasteButton() {
         return pasteButton;

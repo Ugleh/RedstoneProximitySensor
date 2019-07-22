@@ -35,7 +35,7 @@ public class SensorConfig extends YamlConfiguration {
         this.plugin = plugin;
         this.defaults = defaultsName;
         this.file = new File(plugin.getDataFolder(), fileName);
-        this.sqlite = RedstoneProximitySensor.instance.getgConfig().sqlite;
+        this.sqlite = RedstoneProximitySensor.instance.getgConfig().isSqliteEnabled();
         reload();
     }
     
@@ -178,9 +178,9 @@ public class SensorConfig extends YamlConfiguration {
                 rpsconfig.set("location.z", tempRPS.getLocation().getZ());
                 rpsconfig.set("inverted", tempRPS.isInverted());
                 rpsconfig.set("range", tempRPS.getRange());
-                rpsconfig.set("acceptedEntities", tempRPS.getAcceptedEntities());
+                rpsconfig.set("acceptedEntities", tempRPS.getAcceptedTriggerFlags());
                 rpsconfig.set("owner", tempRPS.getOwner().toString());
-                rpsconfig.set("ownerOnlyEdit", tempRPS.isownerOnlyEdit());
+                rpsconfig.set("ownerOnlyEdit", tempRPS.isOwnerOnlyEdit());
                 this.save();
             } else {
                 // Sensor is in the YML config, so set the config data.
@@ -198,8 +198,8 @@ public class SensorConfig extends YamlConfiguration {
                 RedstoneProximitySensor.instance.getDatabase().setDataOfSensor(tempRPS);
             } else {
                 RedstoneProximitySensor.getInstance().getDatabase().setSensor(tempRPS.getUniqueID(),
-                        tempRPS.getLocation(), tempRPS.isInverted(), tempRPS.getRange(), tempRPS.getAcceptedEntities(),
-                        tempRPS.getOwner(), tempRPS.isownerOnlyEdit());
+                        tempRPS.getLocation(), tempRPS.isInverted(), tempRPS.getRange(), tempRPS.getAcceptedTriggerFlags(),
+                        tempRPS.getOwner(), tempRPS.isOwnerOnlyEdit());
             }
         }
 
@@ -289,7 +289,7 @@ public class SensorConfig extends YamlConfiguration {
     public void toggleAcceptedEntities(RPS selectedRPS, Trigger t) {
         // Here we toggle the trigger
         String flag = t.getFlag();
-        ArrayList<String> acceptedEntitiesConfig = selectedRPS.getAcceptedEntities();
+        ArrayList<String> acceptedEntitiesConfig = selectedRPS.getAcceptedTriggerFlags();
 
         if (acceptedEntitiesConfig.contains(flag)) {
             acceptedEntitiesConfig.remove(flag);
@@ -336,7 +336,7 @@ public class SensorConfig extends YamlConfiguration {
         if (sqlite) {
             RedstoneProximitySensor.instance.getDatabase().setSensor(rps);
         } else {
-            this.savePaste(rps.getUniqueID(), rps.getAcceptedEntities(), rps.isInverted(), rps.isownerOnlyEdit(),
+            this.savePaste(rps.getUniqueID(), rps.getAcceptedTriggerFlags(), rps.isInverted(), rps.isOwnerOnlyEdit(),
                     rps.getRange());
         }
     }
