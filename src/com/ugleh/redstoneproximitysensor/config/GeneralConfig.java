@@ -39,9 +39,8 @@ public class GeneralConfig extends YamlConfiguration {
         this.plugin = plugin;
         checkIfOlderVersion();
         reloadConfig();
-
-
     }
+
     private void checkIfOlderVersion() {
         if(plugin.getConfig().isSet("rps.use-particles")) {  //Old Config file
             Bukkit.getLogger().warning( Ansi.ansi().fg(Ansi.Color.RED).bold().toString()  + "OLD CONFIG FILE DETECTED. Please backup and delete old config file and let new one generate." + Ansi.ansi().fg(Ansi.Color.WHITE).boldOff().toString());
@@ -50,6 +49,7 @@ public class GeneralConfig extends YamlConfiguration {
             return;
         }
     }
+
     private void grabSettings() {
         update_checker = plugin.getConfig().getBoolean("config.update_checker", true);
         use_sqlite = plugin.getConfig().getBoolean("config.use_sqlite", false);
@@ -65,7 +65,6 @@ public class GeneralConfig extends YamlConfiguration {
         grabLimitPermissions();
 
     }
-
 
     public void setupPerm(String perm) {
         if(plugin.getServer().getPluginManager().getPermission("rps." + perm) == null)
@@ -140,7 +139,6 @@ public class GeneralConfig extends YamlConfiguration {
         }
     }
 
-
     public void addTriggerFlagsToConfig() {
         for(TriggerTemplate triggerTemplate : plugin.playerListener.getTriggerRunners()) {
             String flagName;
@@ -169,6 +167,7 @@ public class GeneralConfig extends YamlConfiguration {
         }
 
     }
+
     private void createDefaults() {
         //Brand new Config file
         plugin.getConfig().addDefault("limiter.player.amount", 40);
