@@ -5,7 +5,9 @@ import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import org.bukkit.ChatColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -19,7 +21,6 @@ public class Trigger{
     private String displayNamePrefix;
     private int slot;
     private String perm;
-    private Glow glow;
     private String suffixOne;
     private String suffixTwo;
 
@@ -31,7 +32,6 @@ public class Trigger{
                 , loreTextWrapped
                 , sensor_flag
                 , slot_number
-                , RedstoneProximitySensor.getInstance().glow
                 , langString(toggleOn).substring(0, 1).toUpperCase() + langString(toggleOn).substring(1)
                 , langString(toggleOff).substring(0, 1).toUpperCase() + langString(toggleOff).substring(1)
                 , trigger_permission
@@ -53,7 +53,6 @@ public class Trigger{
                 , loreTextWrapped
                 , sensor_flag
                 , triggerCreator.getAvailableSlot()
-                , RedstoneProximitySensor.getInstance().glow
                 , langString(toggleOn).substring(0, 1).toUpperCase() + langString(toggleOn).substring(1)
                 , langString(toggleOff).substring(0, 1).toUpperCase() + langString(toggleOff).substring(1)
                 , trigger_permission
@@ -76,13 +75,12 @@ public class Trigger{
     }
 
     private void setFields(ItemStack button_material, String button_title, List<String> loreTextWrapped, String sensor_flag,
-                           int slot, Glow glow, String sufOn, String sufOff, String trigger_permission, TriggerTemplate addon) {
+                           int slot, String sufOn, String sufOff, String trigger_permission, TriggerTemplate addon) {
         this.item = button_material;
         this.displayNamePrefix = button_title;
         this.lore = loreTextWrapped;
         this.flagName = sensor_flag;
         this.slot = slot;
-        this.glow = glow;
         this.suffixOne = sufOn;
         this.suffixTwo = sufOff;
         this.perm = trigger_permission;
@@ -94,10 +92,12 @@ public class Trigger{
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta != null) {
             if (selectedRPS.getAcceptedTriggerFlags().contains(flagName)) {
-                itemMeta.addEnchant(glow, 1, true);
+                item.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.GREEN + suffixOne);
             } else {
-                itemMeta.removeEnchant(glow);
+                item.removeEnchantment(Enchantment.ARROW_DAMAGE);
+                itemMeta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.RED + suffixTwo);
             }
             item.setItemMeta(itemMeta);

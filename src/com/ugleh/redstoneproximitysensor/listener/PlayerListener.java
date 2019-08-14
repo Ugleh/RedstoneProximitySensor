@@ -7,6 +7,7 @@ import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.RPSLocation;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -19,6 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -301,12 +303,14 @@ public class PlayerListener implements Listener {
     private void toggleButton(Inventory tempInv, ItemStack button, boolean buttonStatus, String buttonText, int slot) {
         ItemMeta itemMeta = button.getItemMeta();
         if (buttonStatus) {
-            itemMeta.addEnchant(getInstance().glow, 1, true);
+            button.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             String suffix = langString("lang_button_true");
             suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
             itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + suffix);
         } else {
-            itemMeta.removeEnchant(getInstance().glow);
+            button.removeEnchantment(Enchantment.ARROW_DAMAGE);
+            itemMeta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
             String suffix = langString("lang_button_false");
             suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
             itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + suffix);

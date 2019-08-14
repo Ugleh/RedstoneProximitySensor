@@ -18,23 +18,10 @@ public class LanguageConfig extends YamlConfiguration {
     private HashMap<String, String> languageNodes = new HashMap<String, String>();
     private HashMap<String, String> colorNodes = new HashMap<String, String>();
 
-    /**
-     * Creates new PluginFile, without defaults
-     *
-     * @param plugin   - Your plugin
-     * @param fileName - Name of the file
-     */
     public LanguageConfig(JavaPlugin plugin, String fileName) {
         this(plugin, fileName, fileName);
     }
 
-    /**
-     * Creates new PluginFile, with defaults
-     *
-     * @param plugin       - Your plugin
-     * @param fileName     - Name of the file
-     * @param defaultsName - Name of the defaults
-     */
     public LanguageConfig(JavaPlugin plugin, String fileName, String defaultsName) {
         this.plugin = plugin;
         this.defaults = defaultsName;
@@ -42,9 +29,6 @@ public class LanguageConfig extends YamlConfiguration {
         reload();
     }
 
-    /**
-     * Reload configuration
-     */
     public void reload() {
 
         if (!file.exists()) {

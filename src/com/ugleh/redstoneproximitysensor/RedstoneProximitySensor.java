@@ -12,7 +12,6 @@ import com.ugleh.redstoneproximitysensor.listener.SensorListener;
 import com.ugleh.redstoneproximitysensor.sqlite.Database;
 import com.ugleh.redstoneproximitysensor.sqlite.SQLite;
 import com.ugleh.redstoneproximitysensor.tabcomplete.TabCompleterRPS;
-import com.ugleh.redstoneproximitysensor.util.Glow;
 import com.ugleh.redstoneproximitysensor.util.Metrics;
 import com.ugleh.redstoneproximitysensor.util.UpdateChecker;
 import org.bukkit.Bukkit;
@@ -22,6 +21,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -37,7 +37,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
     public String chatPrefix = ChatColor.DARK_PURPLE + "[" + ChatColor.LIGHT_PURPLE + "RPS" + ChatColor.DARK_PURPLE + "] " + ChatColor.RED;
     public ItemStack rps;
     public boolean needsUpdate = false;
-    public Glow glow;
 
     //Listeners
     public PlayerListener playerListener;
@@ -68,8 +67,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
             this.db.load();
 
         }
-        //Create Glow
-        glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
 
         // Init Listeners
         this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
@@ -84,8 +81,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
         if (gConfig.isUpdateCheckerEnabled())
             needsUpdate = new UpdateChecker(this.getVersion()).needsUpdate;
-        // Setup Glow
-        registerGlow();
 
         // Setting command Executors.
         PluginCommand rps = getCommand("rps");
@@ -126,10 +121,10 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
     private void createRecipes() {
         rps = new ItemStack(Material.REDSTONE_TORCH, 1);
+        rps.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
         ItemMeta rpsMeta = rps.getItemMeta();
         rpsMeta.setDisplayName(ChatColor.RED + this.langStringColor("lang_main_itemname"));
-        Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
-        rpsMeta.addEnchant(glow, 1, true);
+        rpsMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         rps.setItemMeta(rpsMeta);
         ShapedRecipe rpsRecipe;
         NamespacedKey key = new NamespacedKey(this, this.getDescription().getName());
@@ -151,24 +146,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
     public SensorConfig getSensorConfig() {
         return sensorConfig;
-    }
-
-    private void registerGlow() {
-        try {
-            Field f = Enchantment.class.getDeclaredField("acceptingNew");
-            f.setAccessible(true);
-            f.set(null, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            Glow glow = new Glow(new NamespacedKey(this, this.getDescription().getName()));
-            Enchantment.registerEnchantment(glow);
-        } catch (IllegalArgumentException ignored) {
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public String getVersion() {
