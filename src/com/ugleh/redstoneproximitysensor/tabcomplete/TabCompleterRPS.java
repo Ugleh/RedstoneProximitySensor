@@ -12,8 +12,8 @@ import java.util.List;
 public class TabCompleterRPS implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
-        List<String> list = new ArrayList();
-        List<String> l  = new ArrayList();
+        List<String> list = new ArrayList<>();
+        List<String> l  = new ArrayList<>();
         if(args.length <= 1) {
             list.add("give");
             list.add("list");
@@ -36,7 +36,7 @@ public class TabCompleterRPS implements TabCompleter {
                         }
                     }
                     list = l;
-                }else if(args.length == 3) {
+                }else {
                     l.add("1");
                     l.add("2");
                     l.add("3");
@@ -49,14 +49,12 @@ public class TabCompleterRPS implements TabCompleter {
                     list.add(player.getName());
                 }
 
-                if(args.length == 2) {
-                    for(String key : list) {
-                        if(key.startsWith(args[1])) {
-                            l.add(key);
-                        }
+                for(String key : list) {
+                    if(key.startsWith(args[1])) {
+                        l.add(key);
                     }
-                    list = l;
                 }
+                list = l;
             }
         }
         return list;
