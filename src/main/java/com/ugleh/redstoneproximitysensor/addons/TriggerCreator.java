@@ -11,7 +11,6 @@ import java.util.List;
 
 public class TriggerCreator {
     private static TriggerCreator instance;
-    //public List<String> triggeredAddonFlags = new ArrayList<String>();
     public List<TriggerTemplate> triggeredAddons = new ArrayList<>();
     public int latestSlot;
 

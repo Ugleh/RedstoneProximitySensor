@@ -12,24 +12,26 @@ import com.ugleh.redstoneproximitysensor.listener.SensorListener;
 import com.ugleh.redstoneproximitysensor.sqlite.Database;
 import com.ugleh.redstoneproximitysensor.sqlite.SQLite;
 import com.ugleh.redstoneproximitysensor.tabcomplete.TabCompleterRPS;
-import com.ugleh.redstoneproximitysensor.util.Metrics;
 import com.ugleh.redstoneproximitysensor.util.UpdateChecker;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class RedstoneProximitySensor extends JavaPlugin {
@@ -40,12 +42,10 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
     //Listeners
     public PlayerListener playerListener;
-    public SensorListener sensorListener;
 
     private GeneralConfig gConfig;
     private SensorConfig sensorConfig;
     private LanguageConfig languageConfig;
-    private TriggerCreator triggerAddons;
     private Database db;
 
     public static RedstoneProximitySensor getInstance() {
@@ -69,12 +69,12 @@ public class RedstoneProximitySensor extends JavaPlugin {
         }
 
         // Init Listeners
-        this.getServer().getPluginManager().registerEvents(sensorListener = new SensorListener(), this);
+        this.getServer().getPluginManager().registerEvents(new SensorListener(), this);
         this.getServer().getPluginManager().registerEvents(playerListener = new PlayerListener(), this);
         gConfig.addTriggerFlagsToConfig();
 
         //Register addons
-        setTriggerAddons(new TriggerCreator());
+        new TriggerCreator();
 
         // Add existing sensors back
         sensorConfig = new SensorConfig(this, "sensors.yml", "sensors.yml");
@@ -87,26 +87,20 @@ public class RedstoneProximitySensor extends JavaPlugin {
         PluginCommand ignorerps = getCommand("ignorerps");
         PluginCommand rpslist = getCommand("rpslist");
 
+        assert rps != null;
         rps.setExecutor(new CommandRPS());
         rps.setTabCompleter(new TabCompleterRPS());
+        assert ignorerps != null;
         ignorerps.setExecutor(new CommandIgnoreRPS());
+        assert rpslist != null;
         rpslist.setExecutor(new CommandRPSList());
 
         // Others
         createRecipes();
         initUpdateAlert();
-        initMetrics();
+        new Metrics(this);
         this.getLogger().log(Level.INFO, "Plugin has started!");
         this.getLogger().log(Level.INFO, "RPS's Loaded: " + getSensorConfig().getSensorList().size());
-    }
-
-    private void initMetrics() {
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        } catch (IOException e) {
-            // Failed to submit the stats :-(
-        }
     }
 
     private void initUpdateAlert() {
@@ -123,6 +117,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
         rps = new ItemStack(Material.REDSTONE_TORCH, 1);
         rps.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
         ItemMeta rpsMeta = rps.getItemMeta();
+        assert rpsMeta != null;
         rpsMeta.setDisplayName(ChatColor.RED + this.langStringColor("lang_main_itemname"));
         rpsMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         rps.setItemMeta(rpsMeta);
@@ -137,7 +132,11 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        for (Map.Entry<UUID, Inventory> playerInInventory : playerListener.userSelectedInventory.entrySet()) {
+            for (HumanEntity viewer : playerInInventory.getValue().getViewers()) {
+                viewer.closeInventory();
+            }
+        }
     }
 
     public GeneralConfig getgConfig() {
@@ -164,23 +163,13 @@ public class RedstoneProximitySensor extends JavaPlugin {
         NEGATIVE_MESSAGE,
         NEUTRAL_MESSAGE
     }
-    public String langStringRaw(String key) {
-        return getInstance().getLang().get(key);
-    }
+
     public String langStringColor(String key) {
         return ChatColor.translateAlternateColorCodes('&', getInstance().getLang().get(key));
     }
 
     public LanguageConfig getLanguageConfig() {
         return languageConfig;
-    }
-
-    public TriggerCreator getTriggerAddons() {
-        return triggerAddons;
-    }
-
-    public void setTriggerAddons(TriggerCreator triggerAddons) {
-        this.triggerAddons = triggerAddons;
     }
 
     private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {

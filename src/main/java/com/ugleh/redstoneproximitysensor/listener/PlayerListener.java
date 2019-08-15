@@ -38,13 +38,11 @@ public class PlayerListener implements Listener {
     private ItemStack copyButton;
     private ItemStack pasteButton;
     private List<Trigger> triggers = new ArrayList<>();
-
-
     private List<TriggerTemplate> triggerRunners = new ArrayList<>();
     private HashMap<String, String> permList = new HashMap<>();
     private HashMap<UUID, RPS> userSelectedRPS = new HashMap<>();
     HashMap<UUID, RPS> userCopiedRPS = new HashMap<>();
-    private HashMap<UUID, Inventory> userSelectedInventory = new HashMap<>();
+    public HashMap<UUID, Inventory> userSelectedInventory = new HashMap<>();
 
     public PlayerListener() {
         instance = this;

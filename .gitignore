@@ -10,7 +10,7 @@ local.properties
 .idea/
 .loadpath
 .recommenders
-
+target/
 # External tool builders
 .externalToolBuilders/
 
@@ -51,3 +51,4 @@ local.properties
 
 .project
 .classpath
+dependency-reduced-pom.xml
