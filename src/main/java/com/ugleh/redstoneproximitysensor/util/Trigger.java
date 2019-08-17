@@ -69,6 +69,12 @@ public class Trigger{
         if (itemMeta != null) {
             itemMeta.setDisplayName(ChatColor.BLUE + this.displayNamePrefix);
             itemMeta.setLore(this.lore);
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+            itemMeta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+            itemMeta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+            itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
             this.item.setItemMeta(itemMeta);
         }
 
@@ -93,11 +99,9 @@ public class Trigger{
         if (itemMeta != null) {
             if (selectedRPS.getAcceptedTriggerFlags().contains(flagName)) {
                 item.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.GREEN + suffixOne);
             } else {
                 item.removeEnchantment(Enchantment.ARROW_DAMAGE);
-                itemMeta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.RED + suffixTwo);
             }
             item.setItemMeta(itemMeta);
