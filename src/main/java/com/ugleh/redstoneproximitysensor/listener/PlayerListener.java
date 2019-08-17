@@ -35,8 +35,6 @@ public class PlayerListener implements Listener {
     private ItemStack invertedButton;
     private ItemStack ownerOnlyEditButton;
     private ItemStack rangeButton;
-    private ItemStack copyButton;
-    private ItemStack pasteButton;
     private List<Trigger> triggers = new ArrayList<>();
     private List<TriggerTemplate> triggerRunners = new ArrayList<>();
     private HashMap<String, String> permList = new HashMap<>();
@@ -65,7 +63,6 @@ public class PlayerListener implements Listener {
         guiMenu.setItem(slot, button);
     }
 
-    @SuppressWarnings("deprecation")
     private void createMenu() {
         guiMenu = Bukkit.createInventory(null, menuSize, invName);
 
@@ -83,11 +80,11 @@ public class PlayerListener implements Listener {
 
         //Setting button, Copy Settings Button
         lore = WordWrapLore(langString("lang_button_c_lore"));
-        createItem(setCopyButton(new ItemStack(Material.PAPER, 1)), "button_copy", "lang_button_copy", lore, 9);
+        createItem(new ItemStack(Material.PAPER, 1), "button_copy", "lang_button_copy", lore, 9);
 
         //Setting button, Copy Settings Button
         lore = WordWrapLore(langString("lang_button_p_lore"));
-        createItem(setPasteButton(new ItemStack(Material.INK_SAC, 1)), "button_paste", "lang_button_paste", lore, 10);
+        createItem(new ItemStack(Material.INK_SAC, 1), "button_paste", "lang_button_paste", lore, 10);
 
         //Initiation of Triggers
         triggerRunners.add(new DroppedItem(this));
@@ -157,7 +154,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void InventoryClickEvent(InventoryClickEvent e) {
-        if (e.getInventory() == null) return;
         if (e.getClickedInventory() == null) return;
         if (!e.getWhoClicked().hasPermission("rps.menu")) return;
         if (!(e.getView().getTitle().equals(invName) || e.getView().getTitle().equals(invName))) return;
@@ -282,7 +278,9 @@ public class PlayerListener implements Listener {
 
         e.setCancelled(true);
         RPS selectedRPS = getInstance().getSensorConfig().getSensorList().get(RPSLocation.getSLoc(l));
-        if (((selectedRPS.getOwner().equals(p.getUniqueId())) && selectedRPS.isOwnerOnlyEdit()) || (!selectedRPS.isOwnerOnlyEdit())) {
+
+        // Second part of condition goes through because isOwnerOnlyEdit is TRUE, so we don't need to check if it is true again in second condition.
+        if ((!selectedRPS.isOwnerOnlyEdit()) || (selectedRPS.getOwner().equals(p.getUniqueId()))) {
             showGUIMenu(p, selectedRPS);
         } else {
             p.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEUTRAL_MESSAGE) + langString("lang_restriction_owneronly"));
@@ -313,12 +311,12 @@ public class PlayerListener implements Listener {
             button.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
             String suffix = langString("lang_button_true");
             suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
-            itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + suffix);
+            Objects.requireNonNull(itemMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + suffix);
         } else {
             button.removeEnchantment(Enchantment.ARROW_DAMAGE);
             String suffix = langString("lang_button_false");
             suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
-            itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + suffix);
+            Objects.requireNonNull(itemMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + suffix);
         }
         button.setItemMeta(itemMeta);
         tempInv.setItem(slot, button);
@@ -339,7 +337,7 @@ public class PlayerListener implements Listener {
     private void SetupRangeButton(Inventory tempInv, RPS selectedRPS) {
         rangeButton.setAmount(selectedRPS.getRange());
         ItemMeta rangeBMeta = rangeButton.getItemMeta();
-        rangeBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_range") + ": " + ChatColor.GOLD + selectedRPS.getRange());
+        Objects.requireNonNull(rangeBMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + langString("lang_button_range") + ": " + ChatColor.GOLD + selectedRPS.getRange());
         rangeButton.setItemMeta(rangeBMeta);
         tempInv.setItem(1, rangeButton);
     }
@@ -348,10 +346,10 @@ public class PlayerListener implements Listener {
         ItemMeta tempIBMeta = invertedButton.getItemMeta();
         if (selectedRPS.isInverted()) {
             invertedButton.setType(Material.GRAY_WOOL);
-            tempIBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.GRAY + langString("lang_button_inverted"));
+            Objects.requireNonNull(tempIBMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.GRAY + langString("lang_button_inverted"));
         } else {
             invertedButton.setType(Material.RED_WOOL);
-            tempIBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.RED + langString("lang_button_notinverted"));
+            Objects.requireNonNull(tempIBMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.RED + langString("lang_button_notinverted"));
         }
 
         invertedButton.setItemMeta(tempIBMeta);
@@ -370,18 +368,8 @@ public class PlayerListener implements Listener {
         return triggers;
     }
 
-    private ItemStack setCopyButton(ItemStack copyButton) {
-        this.copyButton = copyButton;
-        return copyButton;
-    }
-
     public List<TriggerTemplate> getTriggerRunners() {
         return triggerRunners;
-    }
-
-    private ItemStack setPasteButton(ItemStack pasteButton) {
-        this.pasteButton = pasteButton;
-        return pasteButton;
     }
 
     private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
