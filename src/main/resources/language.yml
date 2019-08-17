@@ -32,7 +32,7 @@ language:
   lang_button_invertpower: Invert Power
   lang_button_invertpower_lore: Toggle the sensors power to be inverted when triggered.
   lang_button_range: Range
-  lang_button_r_lore: Left Click to increase range, Right Click to decrease range.
+  lang_button_r_lore: '&2Left Click&5 to increase range.\n&2Right Click&5 to decrease range.'
   lang_button_copy: Copy
   lang_button_c_lore: Click to copy this RPS settings.
   lang_button_c_reply: Copied RPS settings.
@@ -65,3 +65,5 @@ language:
   lang_button_gp_lore: Click to have your Grief Prevention Trustee's trigger the RPS.
   lang_button_lftrigger: LegacyFactions Member Trigger
   lang_button_lf_lore: Click to have your LegacyFaction Members trigger the RPS.
+  lang_button_individualmobtrigger: Individual Mob Trigger
+  lang_button_im_lore: Click to select individual mobs to trigger the RPS.
