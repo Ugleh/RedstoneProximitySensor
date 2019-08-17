@@ -50,15 +50,17 @@ public class PlayerListener implements Listener {
         createMenu();
     }
 
-    public PlayerListener PL() {
-        return instance;
-    }
-
     private void createItem(ItemStack button, String perm, String langString, List<String> lore, int slot) {
         ItemMeta itemMeta = button.getItemMeta();
         itemMeta.setDisplayName(ChatColor.BLUE + langString(langString));
         permList.put(itemMeta.getDisplayName(), perm);
         itemMeta.setLore(lore);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+        itemMeta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+        itemMeta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         button.setItemMeta(itemMeta);
         guiMenu.setItem(slot, button);
     }
@@ -102,14 +104,21 @@ public class PlayerListener implements Listener {
     }
 
 
-    public List<String> WordWrapLore(String string) {
-        StringBuilder sb = new StringBuilder(string);
-
-        int i = 0;
-        while (i + 35 < sb.length() && (i = sb.lastIndexOf(" ", i + 35)) != -1) {
-            sb.replace(i, i + 1, "\n");
+    public List<String> WordWrapLore(String rawString) {
+        rawString = ChatColor.translateAlternateColorCodes('&', rawString);
+        if(rawString.equals("")) return Collections.singletonList("");
+        StringBuilder newString = new StringBuilder();
+        String[] lines;
+        lines = rawString.split("\\\\n");
+        for(String string : lines) {
+            StringBuilder sb = new StringBuilder(string);
+            int i = 0;
+            while (i + 35 < sb.length() && (i = sb.lastIndexOf(" ", i + 35)) != -1) {
+                sb.replace(i, i + 1, "\\n");
+            }
+            newString.append(sb).append("\\n");
         }
-        return Arrays.asList(sb.toString().split("\n"));
+        return Arrays.asList(newString.toString().split("\\\\n"));
 
     }
 
@@ -117,7 +126,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void CraftItemEvent(CraftItemEvent e) {
         ItemStack result = e.getRecipe().getResult();
-        if (!(result != null && result.hasItemMeta() && result.getItemMeta().hasDisplayName())) return;
+        if (!(result.hasItemMeta() && result.getItemMeta().hasDisplayName())) return;
         //Check if item is a RP Sensor.
         if ((!result.getItemMeta().getDisplayName().equals(getInstance().rps.getItemMeta().getDisplayName()))) return;
 
@@ -130,9 +139,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void PlayerJoin(PlayerJoinEvent e) {
-        if (e.getPlayer().isOp() && getInstance().needsUpdate) {
-            e.getPlayer().sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_update_notice"));
-            e.getPlayer().sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "https://www.spigotmc.org/resources/17965/");
+        Player player = e.getPlayer();
+        if (player.isOp() && getInstance().needsUpdate) {
+            player.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_update_notice"));
+            player.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "https://www.spigotmc.org/resources/17965/");
 
         }
     }
@@ -232,7 +242,7 @@ public class PlayerListener implements Listener {
                     break;
                 }
             }
-            showGUIMenu((Player) playerWhoClicked, selectedRPS);
+            showGUIMenu(playerWhoClicked, selectedRPS);
 
         }
     }
@@ -280,7 +290,6 @@ public class PlayerListener implements Listener {
     }
 
     private void showGUIMenu(Player p, RPS selectedRPS) {
-
         userSelectedRPS.put(p.getUniqueId(), selectedRPS);
         if (!userSelectedInventory.containsKey(p.getUniqueId())) {
             Inventory tempMenu = Bukkit.createInventory(null, menuSize, invName);
@@ -302,13 +311,11 @@ public class PlayerListener implements Listener {
         ItemMeta itemMeta = button.getItemMeta();
         if (buttonStatus) {
             button.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             String suffix = langString("lang_button_true");
             suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
             itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + suffix);
         } else {
             button.removeEnchantment(Enchantment.ARROW_DAMAGE);
-            itemMeta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
             String suffix = langString("lang_button_false");
             suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
             itemMeta.setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + suffix);
@@ -335,7 +342,6 @@ public class PlayerListener implements Listener {
         rangeBMeta.setDisplayName(ChatColor.BLUE + langString("lang_button_range") + ": " + ChatColor.GOLD + selectedRPS.getRange());
         rangeButton.setItemMeta(rangeBMeta);
         tempInv.setItem(1, rangeButton);
-
     }
 
     private void SetupInvertedButton(Inventory tempInv, RPS selectedRPS) {
@@ -360,31 +366,20 @@ public class PlayerListener implements Listener {
         return getInstance().getLang().get(key);
     }
 
-
-    public ItemStack getCopyButton() {
-        return copyButton;
-    }
-
     public List<Trigger> getTriggers() {
         return triggers;
     }
 
-    public ItemStack setCopyButton(ItemStack copyButton) {
+    private ItemStack setCopyButton(ItemStack copyButton) {
         this.copyButton = copyButton;
         return copyButton;
     }
-
 
     public List<TriggerTemplate> getTriggerRunners() {
         return triggerRunners;
     }
 
-    public ItemStack getPasteButton() {
-        return pasteButton;
-    }
-
-
-    public ItemStack setPasteButton(ItemStack pasteButton) {
+    private ItemStack setPasteButton(ItemStack pasteButton) {
         this.pasteButton = pasteButton;
         return pasteButton;
     }
