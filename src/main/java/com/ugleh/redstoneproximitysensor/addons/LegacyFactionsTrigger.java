@@ -4,7 +4,6 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
-import me.ryanhamshire.GriefPrevention.DataStore;
 import net.redstoneore.legacyfactions.entity.FPlayer;
 import net.redstoneore.legacyfactions.entity.FPlayerColl;
 import net.redstoneore.legacyfactions.entity.Faction;
@@ -46,7 +45,7 @@ public class LegacyFactionsTrigger extends TriggerTemplate {
     }
 
     @Override
-    public boolean buttonPressed(Boolean is_on, RPS affectedRPS) {
+    public boolean buttonPressed(Boolean is_on, RPS affectedRPS, Player playerWhoClicked) {
         return true;
     }
 

@@ -1,6 +1,5 @@
 package com.ugleh.redstoneproximitysensor.trigger;
 
-import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
@@ -20,22 +19,24 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class IndividualMob extends TriggerTemplate implements Listener{
-    public Inventory mainMobMenu;
-    public HashMap<Mobs.Nature, Inventory> subMenus = new HashMap<>();
-    public HashMap<String, Inventory> rpsMobInventory = new HashMap<>();
+    private Inventory mainMobMenu;
+    private HashMap<Mobs.Nature, Inventory> subMenus = new HashMap<>();
+    public HashMap<UUID, Inventory> userSelectedInventory = new HashMap<>();
 
     public String flagName = "INDIVIDUAL_MOB";
-    private Material buttonMaterial = Material.CRAFTING_TABLE;
-    private String triggerPermission = "button_individualmobtrigger";
-    private String buttonTitle = "lang_button_individualmobtrigger";
-    private String loreNode = "lang_button_im_lore";
-    private int slotNumber = 13;
 
     public IndividualMob(PlayerListener playerListener) {
+        String loreNode = "lang_button_im_lore";
         List<String> lore = playerListener.WordWrapLore(playerListener.langString(loreNode));
-        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, "lang_button_true", "lang_button_false", lore));
+        int slotNumber = 13;
+        String buttonTitle = "lang_button_individualmobtrigger";
+        String triggerPermission = "button_individualmobtrigger";
+        Material buttonMaterial = Material.CRAFTING_TABLE;
+        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, null, null, lore, this));
+        createMainMenu();
     }
 
 
@@ -44,7 +45,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     }
 
     private void createMainMenu() {
-        mainMobMenu = Bukkit.createInventory(null, 8, ChatColor.BLUE + "Mobs by Behavior");
+        mainMobMenu = Bukkit.createInventory(null, 9, ChatColor.BLUE + "Mobs by Behavior");
         for (Mobs.Nature nature : Mobs.Nature.values()) {
             mainMobMenu.addItem(createButtonItem(nature.getTitle(), Material.EMERALD));
             subMenus.put(nature, createSubMenu(nature));
@@ -53,7 +54,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     }
 
     private Inventory createSubMenu(Mobs.Nature nature) {
-        Inventory inventory = Bukkit.createInventory(null, 64, ChatColor.BLUE + nature.getTitle() + " Mobs");
+        Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.BLUE + nature.getTitle() + " Mobs");
         for(Mobs mobs : Mobs.values()) {
             if(mobs.getNature() == nature) {
                 ItemStack skull = SkullCreator.itemFromBase64(mobs.getSkullBase64());
@@ -81,8 +82,10 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     }
 
     @Override
-    public boolean buttonPressed(Boolean is_on, RPS affectedRPS) {
-        return true;
+    public boolean buttonPressed(Boolean is_on, RPS affectedRPS, Player player) {
+        Bukkit.broadcastMessage("Test");
+        openMobInventory(player);
+        return false;
     }
 
     @Override

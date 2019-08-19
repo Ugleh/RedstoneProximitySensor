@@ -8,6 +8,7 @@ import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class Owner extends TriggerTemplate {
 
     public Owner(PlayerListener playerListener) {
         List<String> lore = playerListener.WordWrapLore(playerListener.langString(loreNode));
-        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, "lang_button_true", "lang_button_false", lore));
+        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, "lang_button_true", "lang_button_false", lore, this));
 
     }
 
@@ -34,7 +35,7 @@ public class Owner extends TriggerTemplate {
     }
 
     @Override
-    public boolean buttonPressed(Boolean is_on, RPS affectedRPS) {
+    public boolean buttonPressed(Boolean is_on, RPS affectedRPS, Player playerWhoClicked) {
         return true;
     }
 

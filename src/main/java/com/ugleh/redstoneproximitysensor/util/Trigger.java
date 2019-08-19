@@ -4,6 +4,7 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
@@ -24,18 +25,18 @@ public class Trigger{
     private String suffixOne;
     private String suffixTwo;
 
-    public Trigger(String trigger_permission, ItemStack button_material, int slot_number, String button_title, String sensor_flag, String toggleOn, String toggleOff, List<String> loreTextWrapped) {
+    public Trigger(String trigger_permission, ItemStack button_material, int slot_number, String button_title, String sensor_flag, String toggleOn, String toggleOff, List<String> loreTextWrapped, TriggerTemplate addon) {
         PlayerListener pl = PlayerListener.instance;
         setFields(
                 button_material
-                , langString(button_title) + ": "
+                , langString(button_title)
                 , loreTextWrapped
                 , sensor_flag
                 , slot_number
-                , langString(toggleOn).substring(0, 1).toUpperCase() + langString(toggleOn).substring(1)
-                , langString(toggleOff).substring(0, 1).toUpperCase() + langString(toggleOff).substring(1)
+                , toggleOn
+                , toggleOff
                 , trigger_permission
-                , null
+                , addon
         );
 
         setupButtonMetaData();
@@ -53,8 +54,8 @@ public class Trigger{
                 , loreTextWrapped
                 , sensor_flag
                 , triggerCreator.getAvailableSlot()
-                , langString(toggleOn).substring(0, 1).toUpperCase() + langString(toggleOn).substring(1)
-                , langString(toggleOff).substring(0, 1).toUpperCase() + langString(toggleOff).substring(1)
+                , toggleOn
+                , toggleOff
                 , trigger_permission
                 , addon
         );
@@ -87,8 +88,10 @@ public class Trigger{
         this.lore = loreTextWrapped;
         this.flagName = sensor_flag;
         this.slot = slot;
-        this.suffixOne = sufOn;
-        this.suffixTwo = sufOff;
+        if(sufOn != null)
+            this.suffixOne = langString(sufOn).substring(0, 1).toUpperCase() + langString(sufOn).substring(1);
+        if(sufOff != null)
+            this.suffixTwo = langString(sufOff).substring(0, 1).toUpperCase() + langString(sufOff).substring(1);
         this.perm = trigger_permission;
         this.addonTemplate = addon;
 
@@ -98,11 +101,13 @@ public class Trigger{
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta != null) {
             if (selectedRPS.getAcceptedTriggerFlags().contains(flagName)) {
-                item.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-                itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.GREEN + suffixOne);
+                itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+                String suffix = (suffixOne == null) ? ("") : (": " + ChatColor.GREEN + suffixOne);
+                itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + suffix);
             } else {
-                item.removeEnchantment(Enchantment.ARROW_DAMAGE);
-                itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + ChatColor.RED + suffixTwo);
+                itemMeta.removeEnchant(Enchantment.ARROW_DAMAGE);
+                String suffix = (suffixTwo == null) ? ("") : (": " + ChatColor.RED + suffixTwo);
+                itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + suffix);
             }
             item.setItemMeta(itemMeta);
             tempInv.setItem(slot, item);
@@ -110,6 +115,7 @@ public class Trigger{
     }
 
     private String langString(String key) {
+        if(key == null) return null;
         return RedstoneProximitySensor.getInstance().getLang().getOrDefault(key, key);
     }
 

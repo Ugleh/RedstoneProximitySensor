@@ -23,7 +23,7 @@ public class PlayerEntity extends TriggerTemplate {
 
     public PlayerEntity(PlayerListener playerListener) {
         List<String> lore = playerListener.WordWrapLore(playerListener.langString(loreNode));
-        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, "lang_button_true", "lang_button_false", lore));
+        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, "lang_button_true", "lang_button_false", lore, this));
 
     }
 
@@ -38,7 +38,7 @@ public class PlayerEntity extends TriggerTemplate {
     }
 
     @Override
-    public boolean buttonPressed(Boolean is_on, RPS affectedRPS) {
+    public boolean buttonPressed(Boolean is_on, RPS affectedRPS, Player playerWhoClicked) {
         return true;
     }
 

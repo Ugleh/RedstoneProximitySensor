@@ -59,7 +59,7 @@ public class GPTrigger extends TriggerTemplate {
     }
 
     @Override
-    public boolean buttonPressed(Boolean is_on, RPS affectedRPS) {
+    public boolean buttonPressed(Boolean is_on, RPS affectedRPS, Player playerWhoClicked) {
         return true;
     }
 
