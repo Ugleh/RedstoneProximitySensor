@@ -67,3 +67,16 @@ language:
   lang_button_lf_lore: Click to have your LegacyFaction Members trigger the RPS.
   lang_button_individualmobtrigger: Individual Mob Trigger
   lang_button_im_lore: Click to select individual mobs to trigger the RPS.
+  lang_mobs_behavior_title: Mobs by Behavior
+  lang_mobs_title_passive_peaceful: Passive (Peaceful)
+  lang_mobs_title_passive_defensive: Passive (Defensive)
+  lang_mobs_title_neutral_mobs: Neutral (Mobs)
+  lang_mobs_title_neutral_animals: Neutral (Animals)
+  lang_mobs_title_hostile: Hostile
+  lang_mobs_title_suffix: Mobs
+  lang_mobs_desc_passive_peaceful: Peaceful mobs do not attack the player even when provoked.
+  lang_mobs_desc_passive_defensive: Defensive mobs are capable of causing direct damage to other mobs but are not aggressive.
+  lang_mobs_desc_neutral_mobs: Neutral mobs only attack the player if provoked.
+  lang_mobs_desc_neutral_animals: Neutral animals only attack the player if provoked.
+  lang_mobs_desc_hostile: Hostile mobs will always attack the player on sight.
+  lang_general_menu_back: Go Back

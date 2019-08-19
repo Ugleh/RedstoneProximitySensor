@@ -1,7 +1,11 @@
 package com.ugleh.redstoneproximitysensor.util;
 
+import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.EntityType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public enum Mobs {
 	BAT("BAT", Nature.PASSIVE_PEACEFUL, Classification.COMMON, false, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWU5OWRlZWY5MTlkYjY2YWMyYmQyOGQ2MzAyNzU2Y2NkNTdjN2Y4YjEyYjlkY2E4ZjQxYzNlMGEwNGFjMWNjIn19fQ=="),
@@ -102,15 +106,18 @@ public boolean isTameable() {
 }
 
 public static Mobs getMob(EntityType entityType) {
-	//I no longer check if it exists here, I do in the RPS class.
-/*	for(Mobs mob : Mobs.values()) {
-		if (mob.getEntityType().equals(entityTypeName))
-			return mob;
-	}
-	return null;*/
 	return Mobs.valueOf(entityType.name());
 }
 
+public static Mobs[] getMobs(Nature nature) {
+	List<Mobs> mobs = new ArrayList<>();
+	for (Mobs mob : Mobs.values()) {
+		if(mob.getNature() == nature)
+			mobs.add(mob);
+	}
+	Mobs[] returnMobs = new Mobs[mobs.size()];
+	return mobs.toArray(returnMobs);
+}
 public static boolean isHostile(EntityType entityType) {
 	Mobs mob = getMob(entityType);
 	if(mob == null) return false;
@@ -135,19 +142,24 @@ public String getName() {
 }
 
 public enum Nature {
-	PASSIVE_PEACEFUL("Passive (Peaceful)"),
-	PASSIVE_DEFENSIVE("Passive (Defensive)"),
-	NEUTRAL_ANIMAL("Neutral (Animal)"),
-	NEUTRAL_MONSTER("Neutral (Monster)"),
-	HOSTILE("Hostile"),
+	PASSIVE_PEACEFUL("lang_mobs_title_passive_peaceful", "lang_mobs_desc_passive_peaceful"),
+	PASSIVE_DEFENSIVE("lang_mobs_title_passive_defensive", "lang_mobs_desc_passive_defensive"),
+	NEUTRAL_ANIMAL("lang_mobs_title_neutral_animals", "lang_mobs_desc_neutral_animals"),
+	NEUTRAL_MONSTER("lang_mobs_title_hostile", "lang_mobs_desc_hostile"),
+	HOSTILE("lang_mobs_title_hostile", "lang_mobs_desc_hostile"),
 	;
 	private String title;
-	Nature(String title) {
-		this.title = title;
+	private String desc;
+	Nature(String title, String desc) {
+		this.title = RedstoneProximitySensor.getInstance().langStringColor(title);
+		this.desc = RedstoneProximitySensor.getInstance().langStringColor(desc);
 	}
 
 	public String getTitle() {
 		return title;
+	}
+	public String getDesc() {
+		return desc;
 	}
 }
 

@@ -29,9 +29,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class RedstoneProximitySensor extends JavaPlugin {
@@ -172,6 +170,23 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
     public LanguageConfig getLanguageConfig() {
         return languageConfig;
+    }
+
+    public List<String> WordWrapLore(String rawString) {
+        rawString = ChatColor.translateAlternateColorCodes('&', rawString);
+        if(rawString.equals("")) return Collections.singletonList("");
+        StringBuilder newString = new StringBuilder();
+        String[] lines;
+        lines = rawString.split("\\\\n");
+        for(String string : lines) {
+            StringBuilder sb = new StringBuilder(string);
+            int i = 0;
+            while (i + 35 < sb.length() && (i = sb.lastIndexOf(" ", i + 35)) != -1) {
+                sb.replace(i, i + 1, "\\n");
+            }
+            newString.append(sb).append("\\n");
+        }
+        return Arrays.asList(newString.toString().split("\\\\n"));
     }
 
     private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
