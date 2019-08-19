@@ -303,7 +303,7 @@ public class SensorConfig extends YamlConfiguration {
 
     }
 
-    public void toggleAcceptedEntities(RPS selectedRPS, Trigger trigger) {
+    public void toggleAcceptedEntities(RPS selectedRPS, Trigger trigger, Player playerWhoClicked) {
         // Here we toggle the trigger
         String flag = trigger.getFlag();
         ArrayList<String> acceptedTriggerFlags = selectedRPS.getAcceptedTriggerFlags();
@@ -311,7 +311,7 @@ public class SensorConfig extends YamlConfiguration {
         boolean buttonToggledTo = (!acceptedTriggerFlags.contains(flag));
         boolean result = true;
         if (trigger.addonTemplate != null)
-            result = trigger.addonTemplate.buttonPressed(buttonToggledTo, selectedRPS);
+            result = trigger.addonTemplate.buttonPressed(buttonToggledTo, selectedRPS, playerWhoClicked);
         if(!result) return;
         if(buttonToggledTo)
             acceptedTriggerFlags.add(flag);
@@ -329,7 +329,7 @@ public class SensorConfig extends YamlConfiguration {
 
     }
 
-    public void setownerOnlyEdit(RPS selectedRPS, boolean b) {
+    public void setOwnerOnlyEdit(RPS selectedRPS, boolean b) {
         selectedRPS.setOwnerOnlyEdit(b);
 
         if (sqlite) {

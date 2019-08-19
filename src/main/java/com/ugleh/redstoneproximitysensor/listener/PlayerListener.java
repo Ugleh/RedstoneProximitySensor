@@ -200,7 +200,7 @@ public class PlayerListener implements Listener {
                 //Owner Only Trigger
                 if (selectedRPS.getOwner().equals(playerWhoClicked.getUniqueId())) {
                     playToggleSound(playerWhoClicked);
-                    getInstance().getSensorConfig().setownerOnlyEdit(selectedRPS, !selectedRPS.isOwnerOnlyEdit());
+                    getInstance().getSensorConfig().setOwnerOnlyEdit(selectedRPS, !selectedRPS.isOwnerOnlyEdit());
                 } else {
                     playRejectSound(playerWhoClicked);
                     playerWhoClicked.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + langString("lang_restriction_owneronly_button"));
@@ -234,7 +234,7 @@ public class PlayerListener implements Listener {
             for (Trigger t : this.triggers) {
                 if (displayName.startsWith(ChatColor.BLUE + t.getDisplayNamePrefix())) {
                     playToggleSound(playerWhoClicked);
-                    getInstance().getSensorConfig().toggleAcceptedEntities(selectedRPS, t);
+                    getInstance().getSensorConfig().toggleAcceptedEntities(selectedRPS, t, playerWhoClicked);
                     break;
                 }
             }
