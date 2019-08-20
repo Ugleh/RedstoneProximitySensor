@@ -13,29 +13,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
+
+import static com.ugleh.redstoneproximitysensor.RedstoneProximitySensor.*;
 
 public class SensorConfig extends YamlConfiguration {
 
-    Boolean sqlite = false;
+    private boolean sqlite;
     private File file;
-    private String defaults;
+    private String fileName;
     private JavaPlugin plugin;
-    private HashMap<String, RPS> sensorList = new HashMap<String, RPS>();
-    
-    public SensorConfig(JavaPlugin plugin, String fileName) {
-        this(plugin, fileName, fileName);
-    }
-    
+    private HashMap<String, RPS> sensorList = new HashMap<>();
+
     public SensorConfig(JavaPlugin plugin, String fileName, String defaultsName) {
         this.plugin = plugin;
-        this.defaults = defaultsName;
+        this.fileName = defaultsName;
         this.file = new File(plugin.getDataFolder(), fileName);
-        this.sqlite = RedstoneProximitySensor.instance.getgConfig().isSqliteEnabled();
+        this.sqlite = instance.getgConfig().isSqliteEnabled();
         reload();
     }
     
@@ -45,11 +40,14 @@ public class SensorConfig extends YamlConfiguration {
             if (!file.exists()) {
 
                 try {
-                    file.getParentFile().mkdirs();
-                    file.createNewFile();
+                    boolean mkdirs = file.getParentFile().mkdirs();
+                    boolean fileCreated = file.createNewFile();
+                    if((!fileCreated) || (!mkdirs)) {
+                        plugin.getLogger().severe("Error while creating file " + file.getName());
+                    }
 
                 } catch (IOException exception) {
-                    exception.printStackTrace();
+                    plugin.getLogger().severe(exception.getLocalizedMessage());
                     plugin.getLogger().severe("Error while creating file " + file.getName());
                 }
 
@@ -58,8 +56,8 @@ public class SensorConfig extends YamlConfiguration {
             try {
                 load(file);
 
-                if (defaults != null) {
-                    InputStreamReader reader = new InputStreamReader(plugin.getResource(defaults));
+                if (fileName != null) {
+                    InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(plugin.getResource(fileName), "Could not get RedstoneProximitySensor resources."));
                     FileConfiguration defaultsConfig = YamlConfiguration.loadConfiguration(reader);
 
                     setDefaults(defaultsConfig);
@@ -69,12 +67,8 @@ public class SensorConfig extends YamlConfiguration {
                     save();
                 }
 
-            } catch (IOException exception) {
-                exception.printStackTrace();
-                plugin.getLogger().severe("Error while loading file " + file.getName());
-
-            } catch (InvalidConfigurationException exception) {
-                exception.printStackTrace();
+            } catch (IOException | InvalidConfigurationException exception) {
+                plugin.getLogger().severe(exception.getLocalizedMessage());
                 plugin.getLogger().severe("Error while loading file " + file.getName());
 
             }
@@ -86,28 +80,27 @@ public class SensorConfig extends YamlConfiguration {
     }
 
     private void createRunnable() {
-        @SuppressWarnings("unused")
-        RPSRunnable runnable = new RPSRunnable((RedstoneProximitySensor) plugin);
+        new RPSRunnable(plugin);
 
     }
 
-    public void grabSensors() {
+    private void grabSensors() {
         sensorList.clear();
         if (!sqlite) {
             // YML
-            if (!this.isConfigurationSection("sensors"))
-                return;
-            for (String uniqueID : this.getConfigurationSection("sensors").getKeys(false)) {
-                ConfigurationSection sensorSec = this.getConfigurationSection("sensors." + uniqueID);
+            if (!this.isConfigurationSection("sensors")) return;
+            for (String uniqueID : Objects.requireNonNull(this.getConfigurationSection("sensors"), "sensors could not be found.").getKeys(false)) {
+                ConfigurationSection sensorSec = this.getConfigurationSection(String.format("sensors.%s", uniqueID));
+                assert sensorSec != null;
                 if (sensorSec.contains("location.world")) {
                     String worldName = sensorSec.getString("location.world");
-                    Double x = Double.parseDouble(sensorSec.getString("location.x"));
-                    Double y = Double.parseDouble(sensorSec.getString("location.y"));
-                    Double z = Double.parseDouble(sensorSec.getString("location.z"));
+                    Double x = Double.parseDouble(Objects.requireNonNull(sensorSec.getString("location.x"), "location.x missing in sensors.yml for ID " + uniqueID));
+                    Double y = Double.parseDouble(Objects.requireNonNull(sensorSec.getString("location.y"), "location.y missing in sensors.yml for ID " + uniqueID));
+                    Double z = Double.parseDouble(Objects.requireNonNull(sensorSec.getString("location.z"), "location.z missing in sensors.yml for ID " + uniqueID));
                     RPSLocation location = new RPSLocation(worldName, x, y, z);
-                    this.addSensor(location, UUID.fromString(sensorSec.getString("owner")), UUID.fromString(uniqueID));
+                    this.addSensor(location, UUID.fromString(Objects.requireNonNull(sensorSec.getString("owner"), "owner missing in sensors.yml for ID " + uniqueID)), UUID.fromString(uniqueID));
                 } else {
-                    this.set("sensors." + uniqueID, null);
+                    this.set(String.format("sensors.%s", uniqueID), null);
                     this.save();
 
                 }
@@ -115,24 +108,23 @@ public class SensorConfig extends YamlConfiguration {
             }
         } else {
             // SQLite
-            ArrayList<RPSData> sensorData = RedstoneProximitySensor.instance.getDatabase().addSensors();
+            ArrayList<RPSData> sensorData = instance.getDatabase().addSensors();
             if (sensorData != null) {
                 for (RPSData data : sensorData) {
                     this.addSensor(data.location, data.ownerID, data.rpsID);
-
                 }
             }
         }
     }
     
-    public void save() {
+    private void save() {
 
         try {
             options().indent(2);
             save(file);
 
         } catch (IOException exception) {
-            exception.printStackTrace();
+            plugin.getLogger().severe(exception.getLocalizedMessage());
             plugin.getLogger().severe("Error while saving file " + file.getName());
         }
 
@@ -148,8 +140,6 @@ public class SensorConfig extends YamlConfiguration {
             if (this.isConfigurationSection("sensors." + id.toString()))
                 inConfig = true;
             RPS tempRPS = new RPS((RedstoneProximitySensor) plugin, location, placedBy, id, inConfig);
-            // tempRPS.setCancelTask(Bukkit.getScheduler().runTaskTimer(plugin,
-            // tempRPS, 0L, 2L));
             sensorList.put(location.getSLoc(), tempRPS);
             addToConfig(tempRPS);
             tellCustomTriggersRPSCreated(tempRPS);
@@ -157,7 +147,7 @@ public class SensorConfig extends YamlConfiguration {
         } else {
             // SQLite
 
-            Boolean inConfig = RedstoneProximitySensor.instance.getDatabase().doesSensorExist(id.toString());
+            boolean inConfig = instance.getDatabase().doesSensorExist(id.toString());
             RPS tempRPS = new RPS((RedstoneProximitySensor) plugin, location, placedBy, id, inConfig);
             sensorList.put(location.getSLoc(), tempRPS);
             addToConfig(tempRPS);
@@ -172,7 +162,7 @@ public class SensorConfig extends YamlConfiguration {
             if (!this.isConfigurationSection("sensors." + tempRPS.getUniqueID())) {
                 // Sensor is not in the YML config, so add it.
                 ConfigurationSection rpsconfig = this.createSection("sensors." + tempRPS.getUniqueID());
-                rpsconfig.set("location.world", tempRPS.getLocation().getWorld().getName());
+                rpsconfig.set("location.world", Objects.requireNonNull(tempRPS.getLocation().getWorld(), "Sensor "+ tempRPS.getUniqueID()+"'s World must not be null.").getName());
                 rpsconfig.set("location.x", tempRPS.getLocation().getX());
                 rpsconfig.set("location.y", tempRPS.getLocation().getY());
                 rpsconfig.set("location.z", tempRPS.getLocation().getZ());
@@ -211,10 +201,10 @@ public class SensorConfig extends YamlConfiguration {
             // SQLite
 
             // Already in database, set data
-            if (RedstoneProximitySensor.instance.getDatabase().doesSensorExist(tempRPS.getUniqueID())) {
-                RedstoneProximitySensor.instance.getDatabase().setDataOfSensor(tempRPS);
+            if (instance.getDatabase().doesSensorExist(tempRPS.getUniqueID())) {
+                instance.getDatabase().setDataOfSensor(tempRPS);
             } else {
-                RedstoneProximitySensor.getInstance().getDatabase().setSensor(tempRPS.getUniqueID(),
+                getInstance().getDatabase().setSensor(tempRPS.getUniqueID(),
                         tempRPS.getLocation(), tempRPS.isInverted(), tempRPS.getRange(), tempRPS.getAcceptedTriggerFlags(),
                         tempRPS.getOwner(), tempRPS.isOwnerOnlyEdit());
             }
@@ -222,7 +212,7 @@ public class SensorConfig extends YamlConfiguration {
 
     }
 
-    public HashMap<String, RPS> getSensorList() {
+    public Map<String, RPS> getSensorList() {
         return sensorList;
     }
 
@@ -238,7 +228,7 @@ public class SensorConfig extends YamlConfiguration {
             this.save();
         } else {
             // SQLite
-            RedstoneProximitySensor.getInstance().getDatabase().removeSensor(uniqueID);
+            getInstance().getDatabase().removeSensor(uniqueID);
 
         }
 
@@ -246,7 +236,7 @@ public class SensorConfig extends YamlConfiguration {
     
     public boolean canPlaceLimiterCheck(Player player) {
     	int rpsCount = countPlayerSensors(player);
-    	GeneralConfig gc = RedstoneProximitySensor.instance.getgConfig();
+    	GeneralConfig gc = instance.getgConfig();
     	if(player.isOp())
     		return true;
     	
@@ -285,7 +275,7 @@ public class SensorConfig extends YamlConfiguration {
         selectedRPS.setInverted(b);
 
         if (sqlite) {
-            RedstoneProximitySensor.instance.getDatabase().setSensor(selectedRPS);
+            instance.getDatabase().setSensor(selectedRPS);
         } else {
             this.set("sensors." + selectedRPS.getUniqueID() + ".inverted", b);
             this.save();
@@ -295,7 +285,7 @@ public class SensorConfig extends YamlConfiguration {
     public void setRange(RPS selectedRPS, int newRange) {
         selectedRPS.setRange(newRange);
         if (sqlite) {
-            RedstoneProximitySensor.instance.getDatabase().setSensor(selectedRPS);
+            instance.getDatabase().setSensor(selectedRPS);
         } else {
             this.set("sensors." + selectedRPS.getUniqueID() + ".range", newRange);
             this.save();
@@ -321,7 +311,7 @@ public class SensorConfig extends YamlConfiguration {
         selectedRPS.setAcceptedEntities(acceptedTriggerFlags);
 
         if (sqlite) {
-            RedstoneProximitySensor.instance.getDatabase().setSensor(selectedRPS);
+            instance.getDatabase().setSensor(selectedRPS);
         } else {
             this.set("sensors." + selectedRPS.getUniqueID() + ".acceptedEntities", acceptedTriggerFlags);
             this.save();
@@ -333,7 +323,7 @@ public class SensorConfig extends YamlConfiguration {
         selectedRPS.setOwnerOnlyEdit(b);
 
         if (sqlite) {
-            RedstoneProximitySensor.instance.getDatabase().setSensor(selectedRPS);
+            instance.getDatabase().setSensor(selectedRPS);
         } else {
             this.set("sensors." + selectedRPS.getUniqueID() + ".ownerOnlyEdit", b);
             this.save();
@@ -341,8 +331,8 @@ public class SensorConfig extends YamlConfiguration {
 
     }
 
-    public void savePaste(String uniqueID, List<String> acceptedEntities, boolean inverted, boolean isownerOnlyEdit,
-                          int range) {
+    private void savePaste(String uniqueID, List<String> acceptedEntities, boolean inverted, boolean isownerOnlyEdit,
+                           int range) {
         this.set("sensors." + uniqueID + ".acceptedEntities", acceptedEntities);
         this.set("sensors." + uniqueID + ".inverted", inverted);
         this.set("sensors." + uniqueID + ".ownerOnlyEdit", isownerOnlyEdit);
@@ -352,7 +342,7 @@ public class SensorConfig extends YamlConfiguration {
 
     public void savePaste(RPS rps) {
         if (sqlite) {
-            RedstoneProximitySensor.instance.getDatabase().setSensor(rps);
+            instance.getDatabase().setSensor(rps);
         } else {
             this.savePaste(rps.getUniqueID(), rps.getAcceptedTriggerFlags(), rps.isInverted(), rps.isOwnerOnlyEdit(),
                     rps.getRange());

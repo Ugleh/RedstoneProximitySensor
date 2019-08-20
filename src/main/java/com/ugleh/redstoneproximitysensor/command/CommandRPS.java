@@ -21,35 +21,25 @@ public class CommandRPS implements CommandExecutor {
 	
     @Override
     public boolean onCommand(CommandSender sender, Command command, String rawCommand, String[] args) {
-        if (args.length == 0) notEnoughArgs(sender);
-        else if (args.length >= 1) enoughArgs(sender, args);
-        return false;
+        if (args.length == 0) return notEnoughArgs(sender);
+        else return enoughArgs(sender, args);
     }
 
     private boolean enoughArgs(CommandSender sender, String[] args) {
         if (args[0].equalsIgnoreCase("reload")) {
-        	if(!sender.hasPermission("rps.admin")) return notAllowed(sender);
-        	reloadCommand(sender, args);
-        	
+            return reloadCommand(sender);
         } else if (args[0].equalsIgnoreCase("give")) {
-        	if(!sender.hasPermission("rps.admin")) return notAllowed(sender);
-        	giveCommand(sender, args);
+        	return giveCommand(sender, args);
         } else if (args[0].equalsIgnoreCase("ignore")) {
-            if (!(sender instanceof Player)) return notPlayerNotification(sender);
-        	if(!sender.hasPermission("rps.invisible")) return notAllowed(sender);
-        	ignoreCommand(sender, args);
+            return ignoreCommand(sender);
         }else if(args[0].equalsIgnoreCase("list")) {
-        	if(!sender.hasPermission("rps.list")) return notAllowed(sender);
-            if (args.length == 1) return grabSelfSensors(sender);
-            else if (args.length == 2) return grabOthersSensors(sender, args);
-
+            return grabSensors(sender, args);
         }
 		return true;
-
     }
-    
-	
-	private boolean notAllowed(CommandSender sender) {
+
+
+    private boolean notAllowed(CommandSender sender) {
 		sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_restriction_permission_command"));
 		return false;
 	}
@@ -75,43 +65,46 @@ public class CommandRPS implements CommandExecutor {
 
     }
     
-	private void reloadCommand(CommandSender sender, String[] args) {
+	private boolean reloadCommand(CommandSender sender) {
+        if(!sender.hasPermission("rps.admin")) return notAllowed(sender);
         getInstance().getgConfig().reloadConfig();
         getInstance().getLanguageConfig().reload();
         getInstance().getSensorConfig().reload();
         sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + getInstance().getLang().get("lang_command_reload"));
-	}
+        return true;
+    }
 	
     private boolean giveCommand(CommandSender sender, String[] args) {
+        if(!sender.hasPermission("rps.admin")) return notAllowed(sender);
         if (args.length <= 1) return notEnoughArgs(sender);
-            Player givePlayer = Bukkit.getPlayer(args[1]);
-            if (givePlayer == null) return playerUnknown(sender);
-                if (args.length > 2) {
-                    //Give amount
-                    int amount = Integer.parseInt(args[2]);
-                    if (amount > 0) {
-                        ItemStack rpsStack = getInstance().rps.clone();
-                        rpsStack.setAmount(amount);
-                        givePlayer.getInventory().addItem(rpsStack);
-                        sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "Given RPS * " + amount + " to " + givePlayer.getName());
-
-                    } else {
-                        sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_command_wrongamount"));
-                    }
-                } else {
-                    //Give 1
-                    ItemStack rpsStack = getInstance().rps.clone();
-                    rpsStack.setAmount(1);
-                    givePlayer.getInventory().addItem(rpsStack);
-                    sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "Given RPS * 1 to " + givePlayer.getName());
-
-                }
-                
+        Player givePlayer = Bukkit.getPlayer(args[1]);
+        if (givePlayer == null) return playerUnknown(sender);
+        if (args.length > 2) {
+            //Give amount
+            int amount = Integer.parseInt(args[2]);
+            if (amount > 0) {
+                ItemStack rpsStack = getInstance().rpsItemStack.clone();
+                rpsStack.setAmount(amount);
+                givePlayer.getInventory().addItem(rpsStack);
+                sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "Given RPS * " + amount + " to " + givePlayer.getName());
+            } else {
+                sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_command_wrongamount"));
+            }
+        } else {
+            //Give 1
+            ItemStack rpsStack = getInstance().rpsItemStack.clone();
+            rpsStack.setAmount(1);
+            givePlayer.getInventory().addItem(rpsStack);
+            sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + "Given RPS * 1 to " + givePlayer.getName());
+        }
         return true;
 	}
     
-	private void ignoreCommand(CommandSender sender, String[] args) {
-		Player p = (Player) sender;
+	private boolean ignoreCommand(CommandSender sender) {
+        if (!(sender instanceof Player)) return notPlayerNotification(sender);
+        if(!sender.hasPermission("rps.invisible")) return notAllowed(sender);
+
+        Player p = (Player) sender;
 		if (getInstance().playerListener.rpsIgnoreList.contains(p.getUniqueId())) {
 			//Toggle off
 			getInstance().playerListener.rpsIgnoreList.remove(p.getUniqueId());
@@ -121,10 +114,21 @@ public class CommandRPS implements CommandExecutor {
 			getInstance().playerListener.rpsIgnoreList.add(p.getUniqueId());
 			sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.POSITIVE_MESSAGE) + getInstance().langStringColor("lang_command_invisibleenabled"));
         }
+		return true;
     }
-	
+
+    private boolean grabSensors(CommandSender sender, String[] args) {
+        if(!sender.hasPermission("rps.list")) return notAllowed(sender);
+        if (args.length == 1)
+            return grabSelfSensors(sender);
+        else if (args.length == 2)
+            return grabOthersSensors(sender, args);
+        return true;
+    }
+
     private boolean grabOthersSensors(CommandSender sender, String[] args) {
-    	if(!sender.hasPermission("rps.list.player")) return notAllowed(sender);
+    	if(!sender.hasPermission("rps.list.player"))
+    	    return notAllowed(sender);
         OfflinePlayer grabbedPlayer = Bukkit.getPlayer(args[1]);
         if(grabbedPlayer == null) {
             UUID uuid = UUIDFetcher.getUUID(args[1]);

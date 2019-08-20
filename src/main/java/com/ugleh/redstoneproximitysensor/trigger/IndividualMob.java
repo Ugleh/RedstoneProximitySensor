@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -104,7 +103,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
             ItemMeta skullMeta = skull.getItemMeta();
             assert skullMeta != null;
             skullMeta.setDisplayName(nature.getTitle());
-            skullMeta.setLore(RedstoneProximitySensor.getInstance().WordWrapLore(nature.getDesc()));
+            skullMeta.setLore(RedstoneProximitySensor.getInstance().wordWrapLore(nature.getDesc()));
             skull.setItemMeta(skullMeta);
             mainMobMenu.setItem(i, skull);
             i = i + 2;

@@ -32,7 +32,7 @@ public abstract class Database {
 
     public abstract void load();
 
-    public void initialize() {
+    void initialize() {
         connection = getSQLConnection();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + table + "");
@@ -44,7 +44,7 @@ public abstract class Database {
         }
     }
 
-    public Boolean doesSensorExist(String uuid) {
+    public boolean doesSensorExist(String uuid) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;

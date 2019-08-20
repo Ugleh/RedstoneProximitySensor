@@ -7,22 +7,22 @@ import com.ugleh.redstoneproximitysensor.util.RPSLocation;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class SensorListener implements Listener {
 
     @EventHandler
-    public void BlockRedstoneEvent(BlockRedstoneEvent e) {
+    public void onBlockRedstoneEvent(BlockRedstoneEvent e) {
         if (!((e.getBlock().getType().equals(Material.REDSTONE_TORCH)) || (e.getBlock().getType().equals(Material.REDSTONE_WALL_TORCH))))
             return;
         if (getInstance().getSensorConfig().getSensorList().containsKey(RPSLocation.getSLoc(e.getBlock().getLocation()))) {
@@ -31,10 +31,10 @@ public class SensorListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void SensorBroke(BlockBreakEvent e) {
+    public void onSensorBreak(BlockBreakEvent e) {
         Location location = e.getBlock().getLocation();
         SensorConfig sc = getInstance().getSensorConfig();
-        Boolean sensor = false;
+        boolean sensor = false;
         if (sc.getSensorList().containsKey(RPSLocation.getSLoc(location))) {
             sensor = true;
             sc.removeSensor(RPSLocation.getSLoc(location));
@@ -47,31 +47,30 @@ public class SensorListener implements Listener {
         if (sensor) {
             location.getBlock().setType(Material.AIR);
             if (!e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
-                location.getWorld().dropItemNaturally(location, getInstance().rps);
+                Objects.requireNonNull(location.getWorld(), "World cannot be null").dropItemNaturally(location, getInstance().rpsItemStack);
             }
 
         }
 
     }
-    @EventHandler
-    public void onBlockExplode(BlockExplodeEvent e) {
+
+    //TODO: Figure out how to make this work.
+/*    @EventHandler
+    public void onBlockExplode(EntityExplodeEvent e) {
         SensorConfig sc = getInstance().getSensorConfig();
         for(Block b : e.blockList()) {
             if(sc.getSensorList().containsKey(RPSLocation.getSLoc(b.getLocation()))) {
                 b.getDrops().clear();
-                b.getDrops().add(RedstoneProximitySensor.getInstance().rps);
             }
         }
-    }
+    }*/
+
     @EventHandler
-    public void SensorPlaced(BlockPlaceEvent e) {
+    public void onSensorPlaced(BlockPlaceEvent e) {
     	Player player = e.getPlayer();
-        // Check if item has a display name.
-        if (!(e.getItemInHand() != null && e.getItemInHand().hasItemMeta() && e.getItemInHand().getItemMeta().hasDisplayName()))
-            return;
-        //Check if item is a RP Sensor.
-        if ((!e.getItemInHand().getItemMeta().getDisplayName().equals(getInstance().rps.getItemMeta().getDisplayName())))
-            return;
+        ItemStack itemInHand = e.getItemInHand();
+        // Check if item is a RP Sensor.
+        if(!(itemInHand.hasItemMeta() && Objects.requireNonNull(itemInHand.getItemMeta(), "ItemMeta can not be null.").hasDisplayName() && itemInHand.isSimilar(getInstance().rpsItemStack))) return;
         //Permission?
         if (player.hasPermission("rps.place")) {
         	if(getInstance().getSensorConfig().canPlaceLimiterCheck(player))
@@ -104,6 +103,7 @@ public class SensorListener implements Listener {
     private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
         return (getInstance().chatPrefix + getInstance().getColor(colorNode));
     }
+
     public RedstoneProximitySensor getInstance() {
         return RedstoneProximitySensor.getInstance();
     }

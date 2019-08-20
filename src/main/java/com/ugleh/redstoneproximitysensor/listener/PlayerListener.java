@@ -102,7 +102,7 @@ public class PlayerListener implements Listener {
 
 
     public List<String> WordWrapLore(String rawString) {
-        return RedstoneProximitySensor.getInstance().WordWrapLore(rawString);
+        return RedstoneProximitySensor.getInstance().wordWrapLore(rawString);
     }
 
 
@@ -111,7 +111,7 @@ public class PlayerListener implements Listener {
         ItemStack result = e.getRecipe().getResult();
         if (!(result.hasItemMeta() && result.getItemMeta().hasDisplayName())) return;
         //Check if item is a RP Sensor.
-        if ((!result.getItemMeta().getDisplayName().equals(getInstance().rps.getItemMeta().getDisplayName()))) return;
+        if ((!result.getItemMeta().getDisplayName().equals(getInstance().rpsItemStack.getItemMeta().getDisplayName()))) return;
 
         if (!e.getWhoClicked().hasPermission("rps.create")) {
             e.setResult(Result.DENY);
