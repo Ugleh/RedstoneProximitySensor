@@ -7,11 +7,13 @@ import com.ugleh.redstoneproximitysensor.util.RPSLocation;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
@@ -51,7 +53,16 @@ public class SensorListener implements Listener {
         }
 
     }
-
+    @EventHandler
+    public void onBlockExplode(BlockExplodeEvent e) {
+        SensorConfig sc = getInstance().getSensorConfig();
+        for(Block b : e.blockList()) {
+            if(sc.getSensorList().containsKey(RPSLocation.getSLoc(b.getLocation()))) {
+                b.getDrops().clear();
+                b.getDrops().add(RedstoneProximitySensor.getInstance().rps);
+            }
+        }
+    }
     @EventHandler
     public void SensorPlaced(BlockPlaceEvent e) {
     	Player player = e.getPlayer();
