@@ -38,7 +38,7 @@ public class PlayerListener implements Listener {
     private List<Trigger> triggers = new ArrayList<>();
     private List<TriggerTemplate> triggerRunners = new ArrayList<>();
     private HashMap<String, String> permList = new HashMap<>();
-    private HashMap<UUID, RPS> userSelectedRPS = new HashMap<>();
+    public HashMap<UUID, RPS> userSelectedRPS = new HashMap<>();
     HashMap<UUID, RPS> userCopiedRPS = new HashMap<>();
     public HashMap<UUID, Inventory> userSelectedInventory = new HashMap<>();
 

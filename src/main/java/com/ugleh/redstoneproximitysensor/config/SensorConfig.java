@@ -3,6 +3,8 @@ package com.ugleh.redstoneproximitysensor.config;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.*;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -218,6 +220,7 @@ public class SensorConfig extends YamlConfiguration {
 
     public void removeSensor(String string) {
         RPS brokenRPS = this.getSensorList().get(string);
+        closeRPSInventories(brokenRPS);
         tellCustomTriggersRPSBroke(brokenRPS);
         String uniqueID = brokenRPS.getUniqueID();
 
@@ -233,7 +236,20 @@ public class SensorConfig extends YamlConfiguration {
         }
 
     }
-    
+
+    private void closeRPSInventories(RPS brokenRPS) {
+        if(getInstance().playerListener.userSelectedRPS.containsValue(brokenRPS)) {
+            for (Entry<UUID, RPS> rpsEntry : getInstance().playerListener.userSelectedRPS.entrySet()) {
+                if(rpsEntry.getValue().equals(brokenRPS)) {
+                    Player player = Bukkit.getPlayer(rpsEntry.getKey());
+                    if(player != null) {
+                        player.closeInventory();
+                    }
+                }
+            }
+        }
+    }
+
     public boolean canPlaceLimiterCheck(Player player) {
     	int rpsCount = countPlayerSensors(player);
     	GeneralConfig gc = instance.getgConfig();
