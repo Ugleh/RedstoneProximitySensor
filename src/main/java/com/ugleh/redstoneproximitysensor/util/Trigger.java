@@ -25,17 +25,17 @@ public class Trigger{
     private String suffixOne;
     private String suffixTwo;
 
-    public Trigger(String trigger_permission, ItemStack button_material, int slot_number, String button_title, String sensor_flag, String toggleOn, String toggleOff, List<String> loreTextWrapped, TriggerTemplate addon) {
+    public Trigger(String triggerPermission, ItemStack buttonMaterial, int slotNumber, String buttonTitle, String sensorFlag, String toggleOn, String toggleOff, List<String> loreTextWrapped, TriggerTemplate addon) {
         PlayerListener pl = PlayerListener.instance;
         setFields(
-                button_material
-                , langString(button_title)
+                buttonMaterial
+                , langString(buttonTitle)
                 , loreTextWrapped
-                , sensor_flag
-                , slot_number
+                , sensorFlag
+                , slotNumber
                 , toggleOn
                 , toggleOff
-                , trigger_permission
+                , triggerPermission
                 , addon
         );
 
@@ -44,24 +44,24 @@ public class Trigger{
 
     }
 
-    public Trigger(String trigger_permission, ItemStack button_material, String button_title, String sensor_flag, String toggleOn, String toggleOff, List<String> loreTextWrapped, TriggerTemplate addon) {
+    public Trigger(String triggerPermission, ItemStack buttonMaterial, String buttonTitle, String sensorFlag, String toggleOn, String toggleOff, List<String> loreTextWrapped, TriggerTemplate addon) {
         PlayerListener pl = RedstoneProximitySensor.getInstance().playerListener;
         TriggerCreator triggerCreator = TriggerCreator.getInstance();
 
         setFields(
-                button_material
-                , langString(button_title) + ": "
+                buttonMaterial
+                , langString(buttonTitle) + ": "
                 , loreTextWrapped
-                , sensor_flag
+                , sensorFlag
                 , triggerCreator.getAvailableSlot()
                 , toggleOn
                 , toggleOff
-                , trigger_permission
+                , triggerPermission
                 , addon
         );
 
         setupButtonMetaData();
-        pl.guiMenu.setItem(slot, button_material);
+        pl.guiMenu.setItem(slot, buttonMaterial);
 
     }
 
