@@ -1,2 +1,2 @@
-#2.4.5
-^Stacktrace hotfix for existing permissions, get offline player sensors, and color prefixes in language file.
+#2.4.9
+^Config format changed, please read spigot update. OnDisable closes RPS inventories, and code optimization.

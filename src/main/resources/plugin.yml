@@ -3,7 +3,7 @@ main: com.ugleh.redstoneproximitysensor.RedstoneProximitySensor
 description: A Sensor can be crafted that has proximity effects.
 author: Ugleh
 softdepend: [Towny, GriefPrevention, LegacyFactions]
-version: 2.5.0
+version: 2.4.9
 api-version: "1.13"
 permissions:
   rps.admin:
