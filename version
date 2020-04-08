@@ -1,2 +1,2 @@
-#2.4.9
-^Config format changed, please read spigot update. OnDisable closes RPS inventories, and code optimization.
+#2.4.9.2
+^Added the 1.15 mobs and missing magma cube
