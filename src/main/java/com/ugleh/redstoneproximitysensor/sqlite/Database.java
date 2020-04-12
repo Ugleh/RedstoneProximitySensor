@@ -200,8 +200,9 @@ public abstract class Database {
 
             rs = ps.executeQuery();
             while (rs.next()) {
-                ArrayList<String> items = new ArrayList<String>(Arrays.asList(rs.getString("acceptedEntities").split(",")));
-                tempRPS.setData(rs.getBoolean("inverted"), rs.getInt("range"), items, rs.getBoolean("ownerOnlyEdit"));
+                ArrayList<String> acceptedEntities = new ArrayList<String>(Arrays.asList(rs.getString("acceptedEntities").split(",")));
+                ArrayList<String> individualMobs = new ArrayList<String>(Arrays.asList(rs.getString("individualMobs").split(",")));
+                tempRPS.setData(rs.getBoolean("inverted"), rs.getInt("range"), acceptedEntities, individualMobs, rs.getBoolean("ownerOnlyEdit"));
                 return;
             }
         } catch (SQLException ex) {
@@ -217,44 +218,6 @@ public abstract class Database {
             }
         }
     }
-
-/*public HashMap<UUID, HashMap<UUID, RPSLocation>> addSensors() {
-    Connection conn = null;
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    try {
-        conn = getSQLConnection();
-        ps = conn.prepareStatement("SELECT * FROM " + table);
-        rs = ps.executeQuery();
-        HashMap<UUID, HashMap<UUID, RPSLocation>> listOfSensors = new HashMap<UUID, HashMap<UUID, RPSLocation>>();
-
-        while(rs.next()){
-			String worldName = rs.getString("world");
-			Double x = Double.parseDouble(rs.getString("x"));
-			Double y = Double.parseDouble(rs.getString("y"));
-            Double z = Double.parseDouble(rs.getString("z"));
-            RPSLocation location = new RPSLocation(worldName, x, y, z);
-            HashMap<UUID, RPSLocation> tempData = new HashMap<UUID, RPSLocation>();
-            tempData.put(UUID.fromString(rs.getString("owner")), location);
-            listOfSensors.put(UUID.fromString(rs.getString("uuid")), tempData);
-     	   
-        }
-        return listOfSensors;
-    } catch (SQLException ex) {
-        plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
-    } finally {
-        try {
-            if (ps != null)
-                ps.close();
-            if (conn != null)
-                conn.close();
-        } catch (SQLException ex) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
-        }
-    }
-    return null;
-}*/
-
 
     public ArrayList<RPSData> addSensors() {
         Connection conn = null;
@@ -292,6 +255,6 @@ public abstract class Database {
     }
 
     public void setSensor(RPS rps) {
-        this.setSensor(rps.getUniqueID().toString(), rps.getLocation(), rps.isInverted(), rps.getRange(), rps.getAcceptedTriggerFlags(), rps.getOwner(), rps.isOwnerOnlyEdit());
+        this.setSensor(rps.getUniqueID(), rps.getLocation(), rps.isInverted(), rps.getRange(), rps.getAcceptedTriggerFlags(), rps.getOwner(), rps.isOwnerOnlyEdit());
     }
 }

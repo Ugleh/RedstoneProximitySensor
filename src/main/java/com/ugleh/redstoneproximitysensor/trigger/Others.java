@@ -8,6 +8,7 @@ import com.ugleh.redstoneproximitysensor.util.RPS;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.ItemMeta;
 
 
 public class Others extends TriggerTemplate {
@@ -42,6 +43,11 @@ public class Others extends TriggerTemplate {
     @Override
     public void rpsRemoved(RPS affectedRPS) {
 
+    }
+
+    @Override
+    public ItemMeta updateButtonLore(RPS selectedRPS, ItemMeta itemMeta) {
+        return itemMeta;
     }
 
     private RedstoneProximitySensor getInstance() {

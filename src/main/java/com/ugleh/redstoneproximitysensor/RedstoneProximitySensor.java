@@ -17,7 +17,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
@@ -25,7 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -56,6 +55,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
         // Init config.
         languageConfig = new LanguageConfig(this, "language.yml", "language.yml");
         chatPrefix = langStringColor("lang_chat_prefix");
+        createSensorItemstack();
         gConfig = new GeneralConfig(this);
         if(gConfig.isDisabling)
             return;
@@ -94,7 +94,6 @@ public class RedstoneProximitySensor extends JavaPlugin {
         rpslist.setExecutor(new CommandRPSList());
 
         // Others
-        createRecipes();
         initUpdateAlert();
         new Metrics(this);
         this.getLogger().log(Level.INFO, "Plugin has started!");
@@ -111,7 +110,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
         }
     }
 
-    private void createRecipes() {
+    private void createSensorItemstack() {
         rpsItemStack = new ItemStack(Material.REDSTONE_TORCH, 1);
         rpsItemStack.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
         ItemMeta rpsMeta = rpsItemStack.getItemMeta();
@@ -119,13 +118,14 @@ public class RedstoneProximitySensor extends JavaPlugin {
         rpsMeta.setDisplayName(ChatColor.RED + this.langStringColor("lang_main_itemname"));
         rpsMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         rpsItemStack.setItemMeta(rpsMeta);
+/*
         ShapedRecipe rpsRecipe;
         NamespacedKey key = new NamespacedKey(this, this.getDescription().getName());
         rpsRecipe = new ShapedRecipe(key, rpsItemStack);
         rpsRecipe.shape("-R-", "-R-", "-R-");
         rpsRecipe.setIngredient('R', Material.REDSTONE_TORCH);
         this.getServer().addRecipe(rpsRecipe);
-
+*/
     }
 
     @Override

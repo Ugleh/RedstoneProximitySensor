@@ -1,24 +1,23 @@
 package com.ugleh.redstoneproximitysensor.config;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.util.Mobs;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.fusesource.jansi.Ansi;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GeneralConfig extends YamlConfiguration {
     private boolean use_particles = true;
@@ -26,6 +25,7 @@ public class GeneralConfig extends YamlConfiguration {
     private boolean use_sqlite = false;
     private RedstoneProximitySensor plugin;
     private File file;
+    private int tick_rate = 8;
     private int max_range = 20;
     private int default_range = 5;
     private boolean default_inverted = false;
@@ -35,6 +35,11 @@ public class GeneralConfig extends YamlConfiguration {
     public HashMap<String, Integer> permissionLimiters = new HashMap<>();
     public boolean isDisabling = false;
 
+    //Objects for Custom Craft
+    private boolean isShapelessCraftable = false;
+    private boolean isShapedCraftable = false;
+
+
     public GeneralConfig(RedstoneProximitySensor plugin) {
         this.plugin = plugin;
         checkIfOlderVersion();
@@ -43,7 +48,7 @@ public class GeneralConfig extends YamlConfiguration {
 
     private void checkIfOlderVersion() {
         if(plugin.getConfig().isSet("rps.use-particles")) {  //Old Config file
-            Bukkit.getLogger().warning( Ansi.ansi().fg(Ansi.Color.RED).bold().toString()  + "OLD CONFIG FILE DETECTED. Please backup and delete old config file and let new one generate." + Ansi.ansi().fg(Ansi.Color.WHITE).boldOff().toString());
+            Bukkit.getLogger().severe("[RedstoneProximitySensor] OLD CONFIG FILE DETECTED. Please backup and delete old config file and let new one generate.");
             plugin.getPluginLoader().disablePlugin(plugin);
             isDisabling = true;
             return;
@@ -58,11 +63,17 @@ public class GeneralConfig extends YamlConfiguration {
         default_range = plugin.getConfig().getInt("sensor_config.default_range", 5);
         default_inverted = plugin.getConfig().getBoolean("sensor_config.default_inverted", false);
         default_owner_only_edit = plugin.getConfig().getBoolean("sensor_config.default_owner_only_edit", true);
+        tick_rate = plugin.getConfig().getInt("sensor_config.tick_rate", 8);
+
+        isShapelessCraftable = plugin.getConfig().getBoolean("craft-settings.enable-shapeless-craftable", false);
+        isShapedCraftable = plugin.getConfig().getBoolean("craft-settings.enable-shaped-craftable", true);
+
 
         for(Mobs mob : Mobs.values()) {
         	supportedEntities.add(mob.getEntityTypeName());
         }
         grabLimitPermissions();
+        determineRecipes();
 
     }
 
@@ -168,8 +179,48 @@ public class GeneralConfig extends YamlConfiguration {
 
     }
 
+    private void determineRecipes() {
+        NamespacedKey namespacedKey = new NamespacedKey(getPlugin().getInstance(), getPlugin().getInstance().getDescription().getName());
+        if(isShapelessCraftable) {
+            ShapelessRecipe shapelessRecipe = new ShapelessRecipe(namespacedKey, getPlugin().getInstance().rpsItemStack);
+            for (String key : plugin.getConfig().getConfigurationSection("craft-settings.shapeless-recipe").getKeys(true)) {
+                shapelessRecipe.addIngredient(plugin.getConfig().getInt("craft-settings.shapeless-recipe." + key), Objects.requireNonNull(XMaterial.matchXMaterial(key).get().parseMaterial(), "Material in Shapeless Recipe can not be found."));
+            }
+            try {
+                Bukkit.getServer().addRecipe(shapelessRecipe);
+            }catch (IllegalStateException e) {
+                Bukkit.getLogger().warning(ChatColor.RED + "Recipe can not be re-added. You have to restart the server in case you changed the recipe.");
+            }
+        }
+
+        if(isShapedCraftable) {
+            ShapedRecipe shapedRecipe = new ShapedRecipe(namespacedKey, getPlugin().getInstance().rpsItemStack);
+            shapedRecipe.shape("abc", "def", "ghi");
+            List<String> list = (List<String>) plugin.getConfig().getList("craft-settings.shaped-recipe");
+            char letterIncrement = 'a';
+            for (String line : list) {
+                String[] materialStrings = line.split(",");
+                for (String materialString : materialStrings) {
+                    Material material = XMaterial.matchXMaterial(materialString).get().parseMaterial();
+                    if(material != null && (!material.equals(Material.matchMaterial("AIR")))) {
+                        shapedRecipe.setIngredient(letterIncrement, material);
+                    }
+                    letterIncrement++;
+                }
+            }
+            try {
+                Bukkit.getServer().addRecipe(shapedRecipe);
+            }catch (IllegalStateException e) {
+                Bukkit.getLogger().warning("[RedstoneProximitySensor] Recipe can not be re-added. You have to restart the server in case you changed the recipe.");
+            }
+        }
+    }
+
+
+
     private void createDefaults() {
         //Brand new Config file
+
         plugin.getConfig().addDefault("limiter.player.amount", 40);
         plugin.getConfig().addDefault("limiter.player.default", true);
         plugin.getConfig().addDefault("limiter.admin.amount", -1);
@@ -226,4 +277,7 @@ public class GeneralConfig extends YamlConfiguration {
         return default_owner_only_edit;
     }
 
+    public int getTick_rate() {
+        return tick_rate;
+    }
 }

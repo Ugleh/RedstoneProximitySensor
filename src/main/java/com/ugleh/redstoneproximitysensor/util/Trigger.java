@@ -98,6 +98,7 @@ public class Trigger{
     }
 
     public void updateButtonStatus(RPS selectedRPS, Inventory tempInv) {
+
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta != null) {
             if (selectedRPS.getAcceptedTriggerFlags().contains(flagName)) {
@@ -109,7 +110,7 @@ public class Trigger{
                 String suffix = (suffixTwo == null) ? ("") : (": " + ChatColor.RED + suffixTwo);
                 itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + suffix);
             }
-            item.setItemMeta(itemMeta);
+            item.setItemMeta(addonTemplate.updateButtonLore(selectedRPS, itemMeta));
             tempInv.setItem(slot, item);
         }
     }

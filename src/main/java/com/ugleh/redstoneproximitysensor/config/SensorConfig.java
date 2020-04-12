@@ -3,8 +3,8 @@ package com.ugleh.redstoneproximitysensor.config;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.*;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -171,6 +171,7 @@ public class SensorConfig extends YamlConfiguration {
                 rpsconfig.set("inverted", tempRPS.isInverted());
                 rpsconfig.set("range", tempRPS.getRange());
                 rpsconfig.set("acceptedEntities", tempRPS.getAcceptedTriggerFlags());
+                rpsconfig.set("individualMobs", tempRPS.getIndividualMobs());
                 rpsconfig.set("owner", tempRPS.getOwner().toString());
                 rpsconfig.set("ownerOnlyEdit", tempRPS.isOwnerOnlyEdit());
                 this.save();
@@ -195,8 +196,8 @@ public class SensorConfig extends YamlConfiguration {
 
                 tempRPS.setData(this.getBoolean("sensors." + tempRPS.getUniqueID() + ".inverted"),
                         this.getInt("sensors." + tempRPS.getUniqueID() + ".range"),
-                        new ArrayList<>(
-                                this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities")),
+                        new ArrayList<>(this.getStringList("sensors." + tempRPS.getUniqueID() + ".acceptedEntities")),
+                        new ArrayList<>(this.getStringList("sensors." + tempRPS.getUniqueID() + ".individualMobs")),
                         this.getBoolean("sensors." + tempRPS.getUniqueID() + ".ownerOnlyEdit"));
             }
         } else {
@@ -285,6 +286,7 @@ public class SensorConfig extends YamlConfiguration {
                 t.addonTemplate.rpsCreated(createdRPS);
             }
         }
+
     }
 
     public void setInverted(RPS selectedRPS, boolean b) {
@@ -309,6 +311,25 @@ public class SensorConfig extends YamlConfiguration {
 
     }
 
+    public void toggleIndividualMobs(RPS selectedRPS, Player playerWhoClicked, String entityName) {
+        ArrayList<String> individualMobs = selectedRPS.getIndividualMobs();
+        if(individualMobs.contains(entityName)) {
+            playerWhoClicked.sendMessage(prefixWithColor(ColorNode.NEGATIVE_MESSAGE) + WordUtils.capitalizeFully(entityName.replace("_", " ")) + " removed.");
+            individualMobs.remove(entityName);
+        }else {
+            playerWhoClicked.sendMessage(prefixWithColor(ColorNode.POSITIVE_MESSAGE) + WordUtils.capitalizeFully(entityName.replace("_", " ")) + " added.");
+            individualMobs.add(entityName);
+        }
+        selectedRPS.setIndividualMobs(individualMobs);
+
+        if (sqlite) {
+            instance.getDatabase().setSensor(selectedRPS);
+        } else {
+            this.set("sensors." + selectedRPS.getUniqueID() + ".individualMobs", individualMobs);
+            this.save();
+        }
+    }
+
     public void toggleAcceptedEntities(RPS selectedRPS, Trigger trigger, Player playerWhoClicked) {
         // Here we toggle the trigger
         String flag = trigger.getFlag();
@@ -324,7 +345,7 @@ public class SensorConfig extends YamlConfiguration {
         else
             acceptedTriggerFlags.remove(flag);
 
-        selectedRPS.setAcceptedEntities(acceptedTriggerFlags);
+        selectedRPS.setAcceptedTriggerFlags(acceptedTriggerFlags);
 
         if (sqlite) {
             instance.getDatabase().setSensor(selectedRPS);
@@ -364,5 +385,7 @@ public class SensorConfig extends YamlConfiguration {
                     rps.getRange());
         }
     }
-
+    private String prefixWithColor(RedstoneProximitySensor.ColorNode colorNode) {
+        return (getInstance().chatPrefix + getInstance().getColor(colorNode));
+    }
 }

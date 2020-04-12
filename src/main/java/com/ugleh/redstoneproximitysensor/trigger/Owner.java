@@ -1,5 +1,6 @@
 package com.ugleh.redstoneproximitysensor.trigger;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
@@ -10,12 +11,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
 public class Owner extends TriggerTemplate {
     public String flagName = "OWNER";
-    private Material buttonMaterial = Material.PLAYER_HEAD;
+    private Material buttonMaterial = XMaterial.PLAYER_HEAD.parseMaterial();
     private String triggerPermission = "button_ownertrigger";
     private String buttonTitle = "lang_button_ownertrigger";
     private String loreNode = "lang_button_ot_lore";
@@ -47,6 +49,11 @@ public class Owner extends TriggerTemplate {
     @Override
     public void rpsRemoved(RPS affectedRPS) {
 
+    }
+
+    @Override
+    public ItemMeta updateButtonLore(RPS selectedRPS, ItemMeta itemMeta) {
+        return itemMeta;
     }
 
     private RedstoneProximitySensor getInstance() {

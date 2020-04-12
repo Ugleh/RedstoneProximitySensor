@@ -54,7 +54,7 @@ public class SensorListener implements Listener {
 
     }
 
-    //TODO: Figure out how to make this work.
+    //TODO: Figure out how to make this work. Explosions drops regular torches.
 /*    @EventHandler
     public void onBlockExplode(EntityExplodeEvent e) {
         SensorConfig sc = getInstance().getSensorConfig();

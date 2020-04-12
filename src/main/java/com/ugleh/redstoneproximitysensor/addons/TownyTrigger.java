@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
@@ -72,6 +73,11 @@ public class TownyTrigger extends TriggerTemplate {
     @Override
     public void rpsCreated(RPS affectedRPS) {
 
+    }
+
+    @Override
+    public ItemMeta updateButtonLore(RPS selectedRPS, ItemMeta itemMeta) {
+        return itemMeta;
     }
 
     @Override

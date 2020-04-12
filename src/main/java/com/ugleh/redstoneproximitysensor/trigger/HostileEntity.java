@@ -1,5 +1,6 @@
 package com.ugleh.redstoneproximitysensor.trigger;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
@@ -11,12 +12,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
 public class HostileEntity extends TriggerTemplate {
     public String flagName = "HOSTILE_ENTITY";
-    private Material buttonMaterial = Material.ZOMBIE_HEAD;
+    private Material buttonMaterial = XMaterial.ZOMBIE_HEAD.parseMaterial();
     private String triggerPermission = "button_hostileentitiestrigger";
     private String buttonTitle = "lang_button_hostileentitytrigger";
     private String loreNode = "lang_button_het_lore";
@@ -52,6 +54,10 @@ public class HostileEntity extends TriggerTemplate {
 
     }
 
+    @Override
+    public ItemMeta updateButtonLore(RPS selectedRPS, ItemMeta itemMeta) {
+        return itemMeta;
+    }
 
     private RedstoneProximitySensor getInstance() {
         return RedstoneProximitySensor.getInstance();

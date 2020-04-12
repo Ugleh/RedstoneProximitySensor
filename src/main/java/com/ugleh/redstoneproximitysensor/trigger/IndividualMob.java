@@ -1,5 +1,6 @@
 package com.ugleh.redstoneproximitysensor.trigger;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
@@ -8,10 +9,14 @@ import com.ugleh.redstoneproximitysensor.util.Mobs;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.SkullCreator;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,27 +25,25 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class IndividualMob extends TriggerTemplate implements Listener{
     private Inventory mainMobMenu;
     private HashMap<Mobs.Nature, Inventory> subMenus = new HashMap<>();
     public HashMap<UUID, RPS> lastRPSSelected = new HashMap<>();
+    private List<String> startingLore;
 
     public String flagName = "INDIVIDUAL_MOB";
 
     public IndividualMob(PlayerListener playerListener) {
-        RedstoneProximitySensor.getInstance().getServer().getPluginManager().registerEvents(this, RedstoneProximitySensor.getInstance());
+        RedstoneProximitySensor.getInstance().getServer().getPluginManager().registerEvents(this, getInstance());
         String loreNode = "lang_button_im_lore";
-        List<String> lore = playerListener.WordWrapLore(playerListener.langString(loreNode));
+        startingLore = playerListener.WordWrapLore(playerListener.langString(loreNode));
         int slotNumber = 13;
         String buttonTitle = "lang_button_individualmobtrigger";
         String triggerPermission = "button_individualmobtrigger";
-        Material buttonMaterial = Material.CRAFTING_TABLE;
-        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, null, null, lore, this));
+        Material buttonMaterial = XMaterial.CRAFTING_TABLE.parseMaterial();
+        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, null, null, startingLore, this));
         createMainMenu();
     }
 
@@ -60,7 +63,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
 
     private void clickSubMenu(InventoryClickEvent e) {
 
-        if(Objects.requireNonNull(e.getCurrentItem(), "ItemMeta cannot be null.").hasItemMeta()) {
+        if(e.getCurrentItem().hasItemMeta()) {
             ItemMeta itemMeta = e.getCurrentItem().getItemMeta();
             assert itemMeta != null;
             String buttonPressed = itemMeta.getDisplayName();
@@ -68,18 +71,33 @@ public class IndividualMob extends TriggerTemplate implements Listener{
             if(buttonPressed.equals(ChatColor.YELLOW + langStringColor("lang_general_menu_back"))) {
                 player.openInventory(mainMobMenu);
             }else {
-                //TODO: Toggle Mob Selected.
+                String formattedButtonName = buttonPressed.replace(" ", "_").toUpperCase();
+                if(Mobs.getMobNames().contains(formattedButtonName)) {
+                    RPS sensor = lastRPSSelected.get(player.getUniqueId());
+                    getInstance().getSensorConfig().toggleIndividualMobs(sensor, player, formattedButtonName);
+                    playToggleSound(player);
+                    if(sensor.getIndividualMobs().size() > 0) {
+                        ArrayList<String> newAcceptedTriggerFlags = sensor.getAcceptedTriggerFlags();
+                        newAcceptedTriggerFlags.add(flagName);
+                        sensor.setAcceptedTriggerFlags(newAcceptedTriggerFlags);
+                    }else {
+                        ArrayList<String> newAcceptedTriggerFlags = sensor.getAcceptedTriggerFlags();
+                        newAcceptedTriggerFlags.remove(flagName);
+                        sensor.setAcceptedTriggerFlags(newAcceptedTriggerFlags);
+                    }
+                }
             }
         }
     }
     private void clickMainMenu(InventoryClickEvent e) {
-        if(Objects.requireNonNull(e.getCurrentItem(), "ItemMeta cannot be null.").hasItemMeta()) {
+        if(e.getCurrentItem().hasItemMeta()) {
             ItemMeta itemMeta = e.getCurrentItem().getItemMeta();
             assert itemMeta != null;
             String buttonPressed = itemMeta.getDisplayName();
             Player player = (Player) e.getWhoClicked();
             if(buttonPressed.equals(ChatColor.YELLOW + langStringColor("lang_general_menu_back"))) {
-                player.openInventory(RedstoneProximitySensor.getInstance().playerListener.userSelectedInventory.get(player.getUniqueId()));
+                player.openInventory(getInstance().playerListener.userSelectedInventory.get(player.getUniqueId()));
+                getInstance().playerListener.showGUIMenu(player, lastRPSSelected.get(player.getUniqueId()));
             }else {
                 for(Mobs.Nature nature : Mobs.Nature.values()) {
                     if(buttonPressed.equals(nature.getTitle())) {
@@ -103,13 +121,13 @@ public class IndividualMob extends TriggerTemplate implements Listener{
             ItemMeta skullMeta = skull.getItemMeta();
             assert skullMeta != null;
             skullMeta.setDisplayName(nature.getTitle());
-            skullMeta.setLore(RedstoneProximitySensor.getInstance().wordWrapLore(nature.getDesc()));
+            skullMeta.setLore(getInstance().wordWrapLore(nature.getDesc()));
             skull.setItemMeta(skullMeta);
             mainMobMenu.setItem(i, skull);
             i = i + 2;
             subMenus.put(nature, createSubMenu(nature));
         }
-        ItemStack backButton = new ItemStack(Material.SUNFLOWER);
+        ItemStack backButton = XMaterial.SUNFLOWER.parseItem();
         ItemMeta itemMeta = backButton.getItemMeta();
         assert itemMeta != null;
         itemMeta.setDisplayName(ChatColor.YELLOW + langStringColor("lang_general_menu_back"));
@@ -122,7 +140,8 @@ public class IndividualMob extends TriggerTemplate implements Listener{
         int invSize = (int) (9*(Math.ceil(Math.abs(Mobs.getMobs(nature).length/9)))) + 18;
         Inventory inventory = Bukkit.createInventory(null, invSize, ChatColor.BLUE + nature.getTitle() + " " + langStringColor("lang_mobs_title_suffix"));
         for(Mobs mobs : Mobs.values()) {
-            if(mobs.getNature() == nature) {
+
+            if(entityTypeContains(mobs.getEntityTypeName()) && mobs.getNature() == nature) {
                 ItemStack skull = SkullCreator.itemFromBase64(mobs.getSkullBase64());
                 ItemMeta skullMeta = skull.getItemMeta();
                 assert skullMeta != null;
@@ -131,7 +150,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
                 inventory.addItem(skull);
             }
         }
-        ItemStack backButton = new ItemStack(Material.SUNFLOWER);
+        ItemStack backButton = new ItemStack(XMaterial.SUNFLOWER.parseMaterial());
         ItemMeta itemMeta = backButton.getItemMeta();
         assert itemMeta != null;
         itemMeta.setDisplayName(ChatColor.YELLOW + langStringColor("lang_general_menu_back"));
@@ -140,30 +159,23 @@ public class IndividualMob extends TriggerTemplate implements Listener{
         return inventory;
     }
 
-
-    public ItemStack createButtonItem(String title, Material material) {
-        ItemStack itemStack = new ItemStack(material, 1);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        assert itemMeta != null;
-        itemMeta.setDisplayName(ChatColor.BLUE + title);
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
-    }
-
-    private String langStringColor(String string) {
-        return RedstoneProximitySensor.getInstance().langStringColor(string);
-    }
     @Override
-    public TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity e) {
-        return null;
+    public TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity entity) {
+        if(rps.getIndividualMobs().contains(entity.getType().toString()))
+        {
+            return TriggerCreator.TriggerResult.TRIGGERED;
+        }else
+        {
+            return TriggerCreator.TriggerResult.NOT_TRIGGERED;
+        }
     }
 
     @Override
     public boolean buttonPressed(Boolean is_on, RPS affectedRPS, Player player) {
         lastRPSSelected.put(player.getUniqueId(), affectedRPS);
-        Bukkit.getScheduler().runTaskLater(RedstoneProximitySensor.getInstance(), () -> player.openInventory(mainMobMenu), 1L);
+        Bukkit.getScheduler().runTaskLater(getInstance(), () -> player.openInventory(mainMobMenu), 1L);
         openMobInventory(player);
-        return false;
+        return (affectedRPS.getIndividualMobs().size() > 0);
     }
 
     @Override
@@ -175,4 +187,50 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     public void rpsRemoved(RPS affectedRPS) {
 
     }
+
+
+    public static boolean entityTypeContains(String test) {
+
+        for (EntityType entityType : EntityType.values()) {
+            if (entityType.name().equals(test)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+
+    public ItemMeta updateButtonLore(RPS selectedRPS, ItemMeta itemMeta) {
+        List<String> newLore = new ArrayList<>();
+        newLore.addAll(startingLore);
+        for (String individualMob : selectedRPS.getIndividualMobs()) {
+            String addedLore = ChatColor.GREEN + "- " + ChatColor.DARK_GREEN + WordUtils.capitalizeFully(individualMob).replace("_", " ");
+            newLore.add(addedLore);
+        }
+        itemMeta.setLore(newLore);
+
+        if(selectedRPS.getIndividualMobs().size() > 0) {
+            itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+
+        }
+            return itemMeta;
+    }
+    private RedstoneProximitySensor getInstance() {
+        return RedstoneProximitySensor.getInstance();
+    }
+
+
+    void playToggleSound(Player p) {
+        try {
+            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 1F);
+        } catch (NoSuchFieldError error) {
+            p.playSound(p.getLocation(), Sound.valueOf("ORB_PICKUP"), 0.5F, 1F);
+        }
+    }
+
+    private String langStringColor(String string) {
+        return getInstance().langStringColor(string);
+    }
+
 }

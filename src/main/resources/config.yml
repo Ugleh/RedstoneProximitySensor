@@ -1,7 +1,17 @@
 config:
   update_checker: true
   use_sqlite: false
+craft-settings:
+  enable-shaped-craftable: true
+  enable-shapeless-craftable: false
+  shaped-recipe:
+  - AIR,REDSTONE_TORCH,AIR
+  - AIR,REDSTONE_TORCH,AIR
+  - AIR,REDSTONE_TORCH,AIR
+  shapeless-recipe:
+    REDSTONE_TORCH: 3
 sensor_config:
+  tick_rate: 8
   use_particles: true
   max_range: 20
   default_range: 5

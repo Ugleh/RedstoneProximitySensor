@@ -6,15 +6,20 @@ import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
+import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InvisibleEntity extends TriggerTemplate {
@@ -81,6 +86,11 @@ public class InvisibleEntity extends TriggerTemplate {
     @Override
     public void rpsRemoved(RPS affectedRPS) {
 
+    }
+
+    @Override
+    public ItemMeta updateButtonLore(RPS selectedRPS, ItemMeta itemMeta) {
+        return itemMeta;
     }
 
     private RedstoneProximitySensor getInstance() {

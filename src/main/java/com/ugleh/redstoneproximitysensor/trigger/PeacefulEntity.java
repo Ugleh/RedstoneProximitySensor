@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
@@ -51,6 +52,10 @@ public class PeacefulEntity extends TriggerTemplate {
 
     }
 
+    @Override
+    public ItemMeta updateButtonLore(RPS selectedRPS, ItemMeta itemMeta) {
+        return itemMeta;
+    }
 
     private RedstoneProximitySensor getInstance() {
         return RedstoneProximitySensor.getInstance();

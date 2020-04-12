@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
@@ -53,6 +54,10 @@ public class VehicleEntity extends TriggerTemplate {
 
     }
 
+    @Override
+    public ItemMeta updateButtonLore(RPS selectedRPS, ItemMeta itemMeta) {
+        return itemMeta;
+    }
     private RedstoneProximitySensor getInstance() {
         return RedstoneProximitySensor.getInstance();
     }

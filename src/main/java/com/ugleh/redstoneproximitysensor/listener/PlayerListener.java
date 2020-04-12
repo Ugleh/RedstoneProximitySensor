@@ -1,5 +1,6 @@
 package com.ugleh.redstoneproximitysensor.listener;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.trigger.*;
@@ -68,7 +69,7 @@ public class PlayerListener implements Listener {
 
         //Setting button, Invert Power
         List<String> lore = WordWrapLore(langString("lang_button_invertpower_lore"));
-        createItem(invertedButton = new ItemStack(Material.RED_WOOL, 1, (short) 14), "button_invertpower", "lang_button_invertpower", lore, 0);
+        createItem(invertedButton = XMaterial.RED_WOOL.parseItem(), "button_invertpower", "lang_button_invertpower", lore, 0);
 
         //Setting button, Range
         lore = WordWrapLore(langString("lang_button_r_lore"));
@@ -84,7 +85,7 @@ public class PlayerListener implements Listener {
 
         //Setting button, Copy Settings Button
         lore = WordWrapLore(langString("lang_button_p_lore"));
-        createItem(new ItemStack(Material.INK_SAC, 1), "button_paste", "lang_button_paste", lore, 10);
+        createItem(XMaterial.INK_SAC.parseItem(), "button_paste", "lang_button_paste", lore, 10);
 
         //Initiation of Triggers
         triggerRunners.add(new DroppedItem(this));
@@ -96,7 +97,7 @@ public class PlayerListener implements Listener {
         triggerRunners.add(new PlayerEntity(this));
         triggerRunners.add(new ProjectileEntity(this));
         triggerRunners.add(new VehicleEntity(this));
-        //triggerRunners.add(new IndividualMob(this));
+        triggerRunners.add(new IndividualMob(this));
         triggerRunners.add(new Others(this));
     }
 
@@ -273,7 +274,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    private void showGUIMenu(Player p, RPS selectedRPS) {
+    public void showGUIMenu(Player p, RPS selectedRPS) {
         userSelectedRPS.put(p.getUniqueId(), selectedRPS);
         if (!userSelectedInventory.containsKey(p.getUniqueId())) {
             Inventory tempMenu = Bukkit.createInventory(null, menuSize, invName);
@@ -331,10 +332,10 @@ public class PlayerListener implements Listener {
     private void SetupInvertedButton(Inventory tempInv, RPS selectedRPS) {
         ItemMeta tempIBMeta = invertedButton.getItemMeta();
         if (selectedRPS.isInverted()) {
-            invertedButton.setType(Material.GRAY_WOOL);
+            invertedButton.setType(XMaterial.GRAY_WOOL.parseMaterial());
             Objects.requireNonNull(tempIBMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.GRAY + langString("lang_button_inverted"));
         } else {
-            invertedButton.setType(Material.RED_WOOL);
+            invertedButton.setType(XMaterial.RED_WOOL.parseMaterial());
             Objects.requireNonNull(tempIBMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.RED + langString("lang_button_notinverted"));
         }
 
