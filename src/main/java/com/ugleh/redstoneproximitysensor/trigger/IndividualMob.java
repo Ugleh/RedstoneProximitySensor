@@ -63,7 +63,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
 
     private void clickSubMenu(InventoryClickEvent e) {
 
-        if(e.getCurrentItem().hasItemMeta()) {
+        if(Objects.requireNonNull(e.getCurrentItem()).hasItemMeta()) {
             ItemMeta itemMeta = e.getCurrentItem().getItemMeta();
             assert itemMeta != null;
             String buttonPressed = itemMeta.getDisplayName();
@@ -76,7 +76,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
                     RPS sensor = lastRPSSelected.get(player.getUniqueId());
                     getInstance().getSensorConfig().toggleIndividualMobs(sensor, player, formattedButtonName);
                     playToggleSound(player);
-                    if(sensor.getIndividualMobs().size() > 0) {
+                    if(!sensor.getIndividualMobs().isEmpty()) {
                         ArrayList<String> newAcceptedTriggerFlags = sensor.getAcceptedTriggerFlags();
                         newAcceptedTriggerFlags.add(flagName);
                         sensor.setAcceptedTriggerFlags(newAcceptedTriggerFlags);
@@ -90,7 +90,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
         }
     }
     private void clickMainMenu(InventoryClickEvent e) {
-        if(e.getCurrentItem().hasItemMeta()) {
+        if(Objects.requireNonNull(e.getCurrentItem()).hasItemMeta()) {
             ItemMeta itemMeta = e.getCurrentItem().getItemMeta();
             assert itemMeta != null;
             String buttonPressed = itemMeta.getDisplayName();
@@ -137,7 +137,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     }
 
     private Inventory createSubMenu(Mobs.Nature nature) {
-        int invSize = (int) (9*(Math.ceil(Math.abs(Mobs.getMobs(nature).length/9)))) + 18;
+        int invSize = (int) (9* Math.ceil(Math.abs(Mobs.getMobs(nature).length/9))) + 18;
         Inventory inventory = Bukkit.createInventory(null, invSize, ChatColor.BLUE + nature.getTitle() + " " + langStringColor("lang_mobs_title_suffix"));
         for(Mobs mobs : Mobs.values()) {
 
@@ -150,7 +150,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
                 inventory.addItem(skull);
             }
         }
-        ItemStack backButton = new ItemStack(XMaterial.SUNFLOWER.parseMaterial());
+        ItemStack backButton = new ItemStack(Objects.requireNonNull(XMaterial.SUNFLOWER.parseMaterial()));
         ItemMeta itemMeta = backButton.getItemMeta();
         assert itemMeta != null;
         itemMeta.setDisplayName(ChatColor.YELLOW + langStringColor("lang_general_menu_back"));
@@ -171,11 +171,11 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     }
 
     @Override
-    public boolean buttonPressed(Boolean is_on, RPS affectedRPS, Player player) {
+    public boolean buttonPressed(Boolean isOn, RPS affectedRPS, Player player) {
         lastRPSSelected.put(player.getUniqueId(), affectedRPS);
         Bukkit.getScheduler().runTaskLater(getInstance(), () -> player.openInventory(mainMobMenu), 1L);
         openMobInventory(player);
-        return (affectedRPS.getIndividualMobs().size() > 0);
+        return (!affectedRPS.getIndividualMobs().isEmpty());
     }
 
     @Override
@@ -189,7 +189,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     }
 
 
-    public static boolean entityTypeContains(String test) {
+    private static boolean entityTypeContains(String test) {
 
         for (EntityType entityType : EntityType.values()) {
             if (entityType.name().equals(test)) {
@@ -210,7 +210,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
         }
         itemMeta.setLore(newLore);
 
-        if(selectedRPS.getIndividualMobs().size() > 0) {
+        if(!selectedRPS.getIndividualMobs().isEmpty()) {
             itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
 
         }
@@ -221,7 +221,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     }
 
 
-    void playToggleSound(Player p) {
+    private void playToggleSound(Player p) {
         try {
             p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 1F);
         } catch (NoSuchFieldError error) {
