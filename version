@@ -1,2 +1,2 @@
-#2.5.1
-^Updated SkullCreator to 1.16.X
+#2.5.2
+^Updated SkullCreator to 1.16.X and added spawn command for admins (which is just a setblock feature)
