@@ -18,6 +18,7 @@ public class TabCompleterRPS implements TabCompleter {
             list.add("give");
             list.add("list");
             list.add("reload");
+            list.add("spawn");
             list.add("ignore");
             return list;
         }
