@@ -13,6 +13,7 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_16_R3.command.CraftBlockCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -42,29 +43,43 @@ public class CommandRPS implements CommandExecutor {
     private boolean spawnCommand(CommandSender sender, String[] args) {
         if (!sender.hasPermission("rps.admin")) return notAllowed(sender);
         if (args.length <= 2) return notEnoughArgs(sender);
-        int x = Integer.parseInt(args[1]);
-        int y = Integer.parseInt(args[2]);
-        int z = Integer.parseInt(args[3]);
         Location location = null;
         UUID senderUUID = null;
         if(sender instanceof Player) {
             location = ((Player) sender).getLocation().clone();
             senderUUID = ((Player) sender).getUniqueId();
         }else if (sender instanceof BlockCommandSender) {
-            location = ((BlockCommandSender) sender).getBlock().getLocation().clone();
-            senderUUID = UUID.fromString(sender.getName());
+            location = ((CraftBlockCommandSender) sender).getBlock().getLocation().clone();
+            senderUUID = UUID.randomUUID();
         }else{
             location = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
             senderUUID = UUID.fromString(sender.getName());
         }
-        location.setX(x);
-        location.setY(y);
-        location.setZ(z);
+
+        double x = commandOffsetModifier(args[1], location.getX());
+        double y = commandOffsetModifier(args[2], location.getY());
+        double z = commandOffsetModifier(args[3], location.getZ());
+        location.setX((x));
+        location.setY((y));
+        location.setZ((z));
         location.getBlock().setType(Material.REDSTONE_TORCH);
         RPS sensor = getInstance().getSensorConfig().addSensor(RPSLocation.getRPSLoc(location.getBlock().getLocation()), senderUUID, UUID.randomUUID());
         return true;
     }
 
+    private double commandOffsetModifier(String value, double originalValue) {
+        if(value.startsWith("~")) {
+            if(value.substring(1).equalsIgnoreCase("")) {
+                return originalValue;
+            }else {
+                double doubleValue = Double.parseDouble(value.substring(1));
+                doubleValue += originalValue;
+                return doubleValue;
+            }
+        }else {
+            return Integer.parseInt(value);
+        }
+    }
 
     private boolean notAllowed(CommandSender sender) {
 		sender.sendMessage(prefixWithColor(RedstoneProximitySensor.ColorNode.NEGATIVE_MESSAGE) + getInstance().getLang().get("lang_restriction_permission_command"));
