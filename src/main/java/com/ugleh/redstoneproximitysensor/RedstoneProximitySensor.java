@@ -111,7 +111,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
     private void createSensorItemstack() {
         rpsItemStack = new ItemStack(Material.REDSTONE_TORCH, 1);
-        rpsItemStack.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+        rpsItemStack.addUnsafeEnchantment(Enchantment.POWER, 1);
         ItemMeta rpsMeta = rpsItemStack.getItemMeta();
         assert rpsMeta != null;
         rpsMeta.setDisplayName(ChatColor.RED + this.langStringColor("lang_main_itemname"));

@@ -1,10 +1,10 @@
 package com.ugleh.redstoneproximitysensor.addons;
 
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.RPS;
@@ -44,11 +44,11 @@ public class TownyTrigger extends TriggerTemplate {
         Location l = rps.getLocation();
         if (!rps.getAcceptedTriggerFlags().contains(flagName)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         if (!(e instanceof Player)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
-        if (TownyUniverse.isWilderness(l.getBlock())) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
+        if (TownyAPI.getInstance().isWilderness(l.getBlock())) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         try {
-            Resident r = TownyUniverse.getDataSource().getResident(e.getName());
+            Resident r = TownyAPI.getInstance().getResident(e.getName());
             Town rTown = r.getTown();
-            boolean isWild = TownyUniverse.isWilderness(l.getBlock());
+            boolean isWild = TownyAPI.getInstance().isWilderness(l.getBlock());
             if (isWild && rTown == null) {
                 return TriggerCreator.TriggerResult.TRIGGERED;
             } else if (!isWild && rTown == null) {
@@ -56,8 +56,8 @@ public class TownyTrigger extends TriggerTemplate {
             } else if (isWild && rTown != null) {
                 return TriggerCreator.TriggerResult.NOT_TRIGGERED;
             }
-            TownBlock townBlock = TownyUniverse.getTownBlock(l);
-            if (townBlock.getTown().getUID() == rTown.getUID()) return TriggerCreator.TriggerResult.TRIGGERED;
+            TownBlock townBlock = TownyAPI.getInstance().getTownBlock(l);
+            if (townBlock.getTown().getUUID() == rTown.getUUID()) return TriggerCreator.TriggerResult.TRIGGERED;
             else return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         } catch (NotRegisteredException e1) {
             e1.printStackTrace();
