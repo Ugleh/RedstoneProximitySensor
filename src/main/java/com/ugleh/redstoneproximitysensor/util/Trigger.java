@@ -72,7 +72,7 @@ public class Trigger{
             itemMeta.setLore(this.lore);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+//            itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             itemMeta.addItemFlags(ItemFlag.HIDE_DESTROYS);
             itemMeta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
             itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
@@ -102,11 +102,11 @@ public class Trigger{
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta != null) {
             if (selectedRPS.getAcceptedTriggerFlags().contains(flagName)) {
-                itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+                itemMeta.addEnchant(Enchantment.POWER, 1, true);
                 String suffix = (suffixOne == null) ? ("") : (": " + ChatColor.GREEN + suffixOne);
                 itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + suffix);
             } else {
-                itemMeta.removeEnchant(Enchantment.ARROW_DAMAGE);
+                itemMeta.removeEnchant(Enchantment.POWER);
                 String suffix = (suffixTwo == null) ? ("") : (": " + ChatColor.RED + suffixTwo);
                 itemMeta.setDisplayName(ChatColor.BLUE + displayNamePrefix + suffix);
             }

@@ -211,7 +211,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
         itemMeta.setLore(newLore);
 
         if(!selectedRPS.getIndividualMobs().isEmpty()) {
-            itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+            itemMeta.addEnchant(Enchantment.POWER, 1, true);
 
         }
             return itemMeta;

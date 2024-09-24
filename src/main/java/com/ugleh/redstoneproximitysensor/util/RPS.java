@@ -155,7 +155,7 @@ public class RPS {
         int green = 21;
         int blue = 133;
         Location loc2 = new Location(loc.getWorld(), d0, d1, d2);
-        Objects.requireNonNull(loc.getWorld(), "World could not be found in Sensor: " + this.getUniqueID()).spawnParticle(Particle.REDSTONE, loc2, 1, new Particle.DustOptions(Color.fromRGB(red, green, blue), 1));
+        Objects.requireNonNull(loc.getWorld(), "World could not be found in Sensor: " + this.getUniqueID()).spawnParticle(Particle.DUST, loc2, 1, new Particle.DustOptions(Color.fromRGB(red, green, blue), 1));
 
     }
 

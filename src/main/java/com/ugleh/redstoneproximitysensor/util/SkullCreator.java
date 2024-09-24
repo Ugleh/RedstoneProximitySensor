@@ -2,6 +2,7 @@ package com.ugleh.redstoneproximitysensor.util;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import net.minecraft.world.item.component.ResolvableProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -295,7 +296,9 @@ public class SkullCreator {
                     metaProfileField = meta.getClass().getDeclaredField("profile");
                     metaProfileField.setAccessible(true);
                 }
-                metaProfileField.set(meta, makeProfile(b64));
+                GameProfile gameProfile = makeProfile(b64);
+                ResolvableProfile resolveableProfile = new ResolvableProfile(gameProfile);
+                metaProfileField.set(meta, resolveableProfile);
 
             } catch (NoSuchFieldException | IllegalAccessException ex2) {
                 ex2.printStackTrace();

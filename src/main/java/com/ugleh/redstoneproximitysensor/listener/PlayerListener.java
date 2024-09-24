@@ -56,7 +56,7 @@ public class PlayerListener implements Listener {
         itemMeta.setLore(lore);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+//        itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         itemMeta.addItemFlags(ItemFlag.HIDE_DESTROYS);
         itemMeta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
         itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
@@ -295,12 +295,12 @@ public class PlayerListener implements Listener {
     private void toggleButton(Inventory tempInv, ItemStack button, boolean buttonStatus, String buttonText, int slot) {
         ItemMeta itemMeta = button.getItemMeta();
         if (buttonStatus) {
-            button.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+            button.addUnsafeEnchantment(Enchantment.POWER, 1);
             String suffix = langString("lang_button_true");
             suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
             Objects.requireNonNull(itemMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + buttonText + ChatColor.GREEN + suffix);
         } else {
-            button.removeEnchantment(Enchantment.ARROW_DAMAGE);
+            button.removeEnchantment(Enchantment.POWER);
             String suffix = langString("lang_button_false");
             suffix = suffix.substring(0, 1).toUpperCase() + suffix.substring(1);
             Objects.requireNonNull(itemMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + buttonText + ChatColor.RED + suffix);
