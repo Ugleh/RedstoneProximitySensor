@@ -1,9 +1,11 @@
 package com.ugleh.redstoneproximitysensor.addons;
 
+import com.palmergames.bukkit.towny.db.TownyFlatFileSource.elements;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
 import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.DataStore;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;
@@ -13,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.function.Supplier;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,11 +56,14 @@ public class GPTrigger extends TriggerTemplate {
         if (!rps.getAcceptedTriggerFlags().contains(flagName)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         if (!(e instanceof Player)) return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         Claim claim = getDataStore().getClaimAt(l, true, null);
-        if(claim != null && claim.allowBuild((Player) e, null) == null)
+        //if(claim != null && claim.allowBuild((Player) e, null) == null)
+        if(claim != null) {
+            Supplier<String> errorMessage = claim.checkPermission((Player)e, ClaimPermission.Build, null);
+            if (errorMessage == null || errorMessage.get() == null)
             return TriggerCreator.TriggerResult.TRIGGERED;
-        else
-            return TriggerCreator.TriggerResult.NOT_TRIGGERED;
-    }
+        }
+        return TriggerCreator.TriggerResult.NOT_TRIGGERED;
+}
 
     @Override
     public boolean buttonPressed(Boolean is_on, RPS affectedRPS, Player playerWhoClicked) {

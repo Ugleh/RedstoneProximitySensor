@@ -27,7 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
-public class IndividualMob extends TriggerTemplate implements Listener{
+public class IndividualMob extends TriggerTemplate implements Listener {
     private Inventory mainMobMenu;
     private HashMap<Mobs.Nature, Inventory> subMenus = new HashMap<>();
     public HashMap<UUID, RPS> lastRPSSelected = new HashMap<>();
@@ -42,68 +42,73 @@ public class IndividualMob extends TriggerTemplate implements Listener{
         int slotNumber = 13;
         String buttonTitle = "lang_button_individualmobtrigger";
         String triggerPermission = "button_individualmobtrigger";
-        Material buttonMaterial = XMaterial.CRAFTING_TABLE.parseMaterial();
-        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber, buttonTitle, flagName, null, null, startingLore, this));
+        Material buttonMaterial = XMaterial.CRAFTING_TABLE.get();
+        playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber,
+                buttonTitle, flagName, null, null, startingLore, this));
         createMainMenu();
     }
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent e) {
-        if (e.getClickedInventory() == null) return;
-        if (!e.getWhoClicked().hasPermission("rps.menu")) return;
-        if(e.getView().getTopInventory().equals(mainMobMenu)) {
+        if (e.getClickedInventory() == null)
+            return;
+        if (!e.getWhoClicked().hasPermission("rps.menu"))
+            return;
+        if (e.getView().getTopInventory().equals(mainMobMenu)) {
             clickMainMenu(e);
             e.setCancelled(true);
         }
-        if(subMenus.containsValue(e.getView().getTopInventory())) {
+        if (subMenus.containsValue(e.getView().getTopInventory())) {
             clickSubMenu(e);
             e.setCancelled(true);
         }
     }
 
     private void clickSubMenu(InventoryClickEvent e) {
-
-        if(Objects.requireNonNull(e.getCurrentItem()).hasItemMeta()) {
-            ItemMeta itemMeta = e.getCurrentItem().getItemMeta();
-            assert itemMeta != null;
-            String buttonPressed = itemMeta.getDisplayName();
-            Player player = (Player) e.getWhoClicked();
-            if(buttonPressed.equals(ChatColor.YELLOW + langStringColor("lang_general_menu_back"))) {
-                player.openInventory(mainMobMenu);
-            }else {
-                String formattedButtonName = buttonPressed.replace(" ", "_").toUpperCase();
-                if(Mobs.getMobNames().contains(formattedButtonName)) {
-                    RPS sensor = lastRPSSelected.get(player.getUniqueId());
-                    getInstance().getSensorConfig().toggleIndividualMobs(sensor, player, formattedButtonName);
-                    playToggleSound(player);
-                    if(!sensor.getIndividualMobs().isEmpty()) {
-                        ArrayList<String> newAcceptedTriggerFlags = sensor.getAcceptedTriggerFlags();
-                        newAcceptedTriggerFlags.add(flagName);
-                        sensor.setAcceptedTriggerFlags(newAcceptedTriggerFlags);
-                    }else {
-                        ArrayList<String> newAcceptedTriggerFlags = sensor.getAcceptedTriggerFlags();
-                        newAcceptedTriggerFlags.remove(flagName);
-                        sensor.setAcceptedTriggerFlags(newAcceptedTriggerFlags);
-                    }
+        ItemStack currentItem = e.getCurrentItem();
+        if (currentItem == null || !currentItem.hasItemMeta())
+            return;
+        ItemMeta itemMeta = currentItem.getItemMeta();
+        assert itemMeta != null;
+        String buttonPressed = itemMeta.getDisplayName();
+        Player player = (Player) e.getWhoClicked();
+        if (buttonPressed.equals(ChatColor.YELLOW + langStringColor("lang_general_menu_back"))) {
+            player.openInventory(mainMobMenu);
+        } else {
+            String formattedButtonName = buttonPressed.replace(" ", "_").toUpperCase();
+            if (Mobs.getMobNames().contains(formattedButtonName)) {
+                RPS sensor = lastRPSSelected.get(player.getUniqueId());
+                getInstance().getSensorConfig().toggleIndividualMobs(sensor, player, formattedButtonName);
+                playToggleSound(player);
+                if (!sensor.getIndividualMobs().isEmpty()) {
+                    ArrayList<String> newAcceptedTriggerFlags = sensor.getAcceptedTriggerFlags();
+                    newAcceptedTriggerFlags.add(flagName);
+                    sensor.setAcceptedTriggerFlags(newAcceptedTriggerFlags);
+                } else {
+                    ArrayList<String> newAcceptedTriggerFlags = sensor.getAcceptedTriggerFlags();
+                    newAcceptedTriggerFlags.remove(flagName);
+                    sensor.setAcceptedTriggerFlags(newAcceptedTriggerFlags);
                 }
             }
         }
     }
+
     private void clickMainMenu(InventoryClickEvent e) {
-        if(Objects.requireNonNull(e.getCurrentItem()).hasItemMeta()) {
-            ItemMeta itemMeta = e.getCurrentItem().getItemMeta();
-            assert itemMeta != null;
-            String buttonPressed = itemMeta.getDisplayName();
-            Player player = (Player) e.getWhoClicked();
-            if(buttonPressed.equals(ChatColor.YELLOW + langStringColor("lang_general_menu_back"))) {
-                player.openInventory(getInstance().playerListener.userSelectedInventory.get(player.getUniqueId()));
-                getInstance().playerListener.showGUIMenu(player, lastRPSSelected.get(player.getUniqueId()));
-            }else {
-                for(Mobs.Nature nature : Mobs.Nature.values()) {
-                    if(buttonPressed.equals(nature.getTitle())) {
-                        player.openInventory(subMenus.get(nature));
-                        break;
-                    }
+        ItemStack currentItem = e.getCurrentItem();
+        if (currentItem == null || !currentItem.hasItemMeta())
+            return;
+        ItemMeta itemMeta = currentItem.getItemMeta();
+        assert itemMeta != null;
+        String buttonPressed = itemMeta.getDisplayName();
+        Player player = (Player) e.getWhoClicked();
+        if (buttonPressed.equals(ChatColor.YELLOW + langStringColor("lang_general_menu_back"))) {
+            player.openInventory(getInstance().playerListener.userSelectedInventory.get(player.getUniqueId()));
+            getInstance().playerListener.showGUIMenu(player, lastRPSSelected.get(player.getUniqueId()));
+        } else {
+            for (Mobs.Nature nature : Mobs.Nature.values()) {
+                if (buttonPressed.equals(nature.getTitle())) {
+                    player.openInventory(subMenus.get(nature));
+                    break;
                 }
             }
         }
@@ -137,11 +142,12 @@ public class IndividualMob extends TriggerTemplate implements Listener{
     }
 
     private Inventory createSubMenu(Mobs.Nature nature) {
-        int invSize = (int) (9* Math.ceil(Math.abs(Mobs.getMobs(nature).length/9))) + 18;
-        Inventory inventory = Bukkit.createInventory(null, invSize, ChatColor.BLUE + nature.getTitle() + " " + langStringColor("lang_mobs_title_suffix"));
-        for(Mobs mobs : Mobs.values()) {
+        int invSize = (int) (9 * Math.ceil(Math.abs(Mobs.getMobs(nature).length / 9))) + 18;
+        Inventory inventory = Bukkit.createInventory(null, invSize,
+                ChatColor.BLUE + nature.getTitle() + " " + langStringColor("lang_mobs_title_suffix"));
+        for (Mobs mobs : Mobs.values()) {
 
-            if(entityTypeContains(mobs.getEntityTypeName()) && mobs.getNature() == nature) {
+            if (entityTypeContains(mobs.getEntityTypeName()) && mobs.getNature() == nature) {
                 ItemStack skull = SkullCreator.itemFromBase64(mobs.getSkullBase64());
                 ItemMeta skullMeta = skull.getItemMeta();
                 assert skullMeta != null;
@@ -150,7 +156,7 @@ public class IndividualMob extends TriggerTemplate implements Listener{
                 inventory.addItem(skull);
             }
         }
-        ItemStack backButton = new ItemStack(Objects.requireNonNull(XMaterial.SUNFLOWER.parseMaterial()));
+        ItemStack backButton = new ItemStack(Objects.requireNonNull(XMaterial.SUNFLOWER.get()));
         ItemMeta itemMeta = backButton.getItemMeta();
         assert itemMeta != null;
         itemMeta.setDisplayName(ChatColor.YELLOW + langStringColor("lang_general_menu_back"));
@@ -161,11 +167,9 @@ public class IndividualMob extends TriggerTemplate implements Listener{
 
     @Override
     public TriggerCreator.TriggerResult checkTrigger(RPS rps, Entity entity) {
-        if(rps.getIndividualMobs().contains(entity.getType().toString()))
-        {
+        if (rps.getIndividualMobs().contains(entity.getType().toString())) {
             return TriggerCreator.TriggerResult.TRIGGERED;
-        }else
-        {
+        } else {
             return TriggerCreator.TriggerResult.NOT_TRIGGERED;
         }
     }
@@ -188,7 +192,6 @@ public class IndividualMob extends TriggerTemplate implements Listener{
 
     }
 
-
     private static boolean entityTypeContains(String test) {
 
         for (EntityType entityType : EntityType.values()) {
@@ -205,21 +208,22 @@ public class IndividualMob extends TriggerTemplate implements Listener{
         List<String> newLore = new ArrayList<>();
         newLore.addAll(startingLore);
         for (String individualMob : selectedRPS.getIndividualMobs()) {
-            String addedLore = ChatColor.GREEN + "- " + ChatColor.DARK_GREEN + WordUtils.capitalizeFully(individualMob).replace("_", " ");
+            String addedLore = ChatColor.GREEN + "- " + ChatColor.DARK_GREEN
+                    + WordUtils.capitalizeFully(individualMob).replace("_", " ");
             newLore.add(addedLore);
         }
         itemMeta.setLore(newLore);
 
-        if(!selectedRPS.getIndividualMobs().isEmpty()) {
+        if (!selectedRPS.getIndividualMobs().isEmpty()) {
             itemMeta.addEnchant(Enchantment.POWER, 1, true);
 
         }
-            return itemMeta;
+        return itemMeta;
     }
+
     private RedstoneProximitySensor getInstance() {
         return RedstoneProximitySensor.getInstance();
     }
-
 
     private void playToggleSound(Player p) {
         try {

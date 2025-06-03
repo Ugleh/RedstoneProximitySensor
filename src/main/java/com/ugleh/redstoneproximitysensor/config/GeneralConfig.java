@@ -180,11 +180,12 @@ public class GeneralConfig extends YamlConfiguration {
     }
 
     private void determineRecipes() {
-        NamespacedKey namespacedKey = new NamespacedKey(getPlugin().getInstance(), getPlugin().getInstance().getDescription().getName());
+        NamespacedKey namespacedKey = new NamespacedKey(RedstoneProximitySensor.getInstance(), RedstoneProximitySensor.getInstance().getDescription().getName());
         if(isShapelessCraftable) {
-            ShapelessRecipe shapelessRecipe = new ShapelessRecipe(namespacedKey, getPlugin().getInstance().rpsItemStack);
+            getPlugin();
+            ShapelessRecipe shapelessRecipe = new ShapelessRecipe(namespacedKey, RedstoneProximitySensor.getInstance().rpsItemStack);
             for (String key : plugin.getConfig().getConfigurationSection("craft-settings.shapeless-recipe").getKeys(true)) {
-                shapelessRecipe.addIngredient(plugin.getConfig().getInt("craft-settings.shapeless-recipe." + key), Objects.requireNonNull(XMaterial.matchXMaterial(key).get().parseMaterial(), "Material in Shapeless Recipe can not be found."));
+                shapelessRecipe.addIngredient(plugin.getConfig().getInt("craft-settings.shapeless-recipe." + key), Objects.requireNonNull(XMaterial.matchXMaterial(key).get().get(), "Material in Shapeless Recipe can not be found."));
             }
             try {
                 Bukkit.getServer().addRecipe(shapelessRecipe);
@@ -194,14 +195,16 @@ public class GeneralConfig extends YamlConfiguration {
         }
 
         if(isShapedCraftable) {
-            ShapedRecipe shapedRecipe = new ShapedRecipe(namespacedKey, getPlugin().getInstance().rpsItemStack);
+            ShapedRecipe shapedRecipe = new ShapedRecipe(namespacedKey, RedstoneProximitySensor.getInstance().rpsItemStack);
             shapedRecipe.shape("abc", "def", "ghi");
-            List<String> list = (List<String>) plugin.getConfig().getList("craft-settings.shaped-recipe");
+            List<String> list = plugin.getConfig().getList("craft-settings.shaped-recipe").stream()
+                    .map(Object::toString)
+                    .toList();
             char letterIncrement = 'a';
             for (String line : list) {
                 String[] materialStrings = line.split(",");
                 for (String materialString : materialStrings) {
-                    Material material = XMaterial.matchXMaterial(materialString).get().parseMaterial();
+                    Material material = XMaterial.matchXMaterial(materialString).get().get();
                     if(material != null && (!material.equals(Material.matchMaterial("AIR")))) {
                         shapedRecipe.setIngredient(letterIncrement, material);
                     }

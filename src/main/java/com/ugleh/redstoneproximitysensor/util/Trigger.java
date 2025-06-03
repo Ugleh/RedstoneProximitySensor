@@ -4,7 +4,6 @@ import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
