@@ -13,7 +13,7 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_21_R4.command.CraftBlockCommandSender;
+import org.bukkit.craftbukkit.v1_21_R5.command.CraftBlockCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -63,7 +63,7 @@ public class CommandRPS implements CommandExecutor {
         location.setY((y));
         location.setZ((z));
         location.getBlock().setType(Material.REDSTONE_TORCH);
-        RPS sensor = getInstance().getSensorConfig().addSensor(RPSLocation.getRPSLoc(location.getBlock().getLocation()), senderUUID, UUID.randomUUID());
+        getInstance().getSensorConfig().addSensor(RPSLocation.getRPSLoc(location.getBlock().getLocation()), senderUUID, UUID.randomUUID());
         return true;
     }
 

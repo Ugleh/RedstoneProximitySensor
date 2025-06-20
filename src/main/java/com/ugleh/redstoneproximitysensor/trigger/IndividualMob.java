@@ -225,6 +225,7 @@ public class IndividualMob extends TriggerTemplate implements Listener {
         return RedstoneProximitySensor.getInstance();
     }
 
+    @SuppressWarnings("deprecation")
     private void playToggleSound(Player p) {
         try {
             p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 1F);

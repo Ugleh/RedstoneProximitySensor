@@ -41,6 +41,7 @@ public class SkullCreator {
     /**
      * Creates a player skull, should work in both legacy and new Bukkit APIs.
      */
+    @SuppressWarnings("deprecation")
     public static ItemStack createSkull() {
         checkLegacy();
 
@@ -227,6 +228,7 @@ public class SkullCreator {
         state.update(false, false);
     }
 
+    @SuppressWarnings("deprecation")
     private static void setToSkull(Block block) {
         checkLegacy();
 
