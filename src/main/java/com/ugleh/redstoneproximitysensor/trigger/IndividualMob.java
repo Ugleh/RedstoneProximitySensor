@@ -24,7 +24,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import java.util.*;
 
 public class IndividualMob extends TriggerTemplate implements Listener {
@@ -122,7 +121,12 @@ public class IndividualMob extends TriggerTemplate implements Listener {
         mainMobMenu = Bukkit.createInventory(null, 18, ChatColor.BLUE + langStringColor("lang_mobs_behavior_title"));
         int i = 0;
         for (Mobs.Nature nature : Mobs.Nature.values()) {
-            ItemStack skull = SkullCreator.itemFromBase64(Mobs.getMobs(nature)[0].getSkullBase64());
+            ItemStack skull;
+            try {
+                skull = SkullCreator.itemFromBase64(Mobs.getMobs(nature)[0].getSkullBase64());
+            } catch (Exception e) {
+                skull = new ItemStack(Material.SKELETON_SKULL);
+            }
             ItemMeta skullMeta = skull.getItemMeta();
             assert skullMeta != null;
             skullMeta.setDisplayName(nature.getTitle());
@@ -148,7 +152,12 @@ public class IndividualMob extends TriggerTemplate implements Listener {
         for (Mobs mobs : Mobs.values()) {
 
             if (entityTypeContains(mobs.getEntityTypeName()) && mobs.getNature() == nature) {
-                ItemStack skull = SkullCreator.itemFromBase64(mobs.getSkullBase64());
+                ItemStack skull;
+                try {
+                    skull = SkullCreator.itemFromBase64(mobs.getSkullBase64());
+                } catch (Exception e) {
+                    skull = new ItemStack(Material.SKELETON_SKULL);
+                }
                 ItemMeta skullMeta = skull.getItemMeta();
                 assert skullMeta != null;
                 skullMeta.setDisplayName(mobs.getName());
