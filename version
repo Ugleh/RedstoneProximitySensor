@@ -1,2 +1,2 @@
-#2.5.6
-^Support for 1.21.9/1.21.10
+#2.5.7
+^Fixed Spigot and Paper 26.1.1 compatibility, removed XSeries and NMS dependencies
