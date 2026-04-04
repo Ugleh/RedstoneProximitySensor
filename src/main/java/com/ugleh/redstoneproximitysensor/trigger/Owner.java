@@ -1,6 +1,5 @@
 package com.ugleh.redstoneproximitysensor.trigger;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public class Owner extends TriggerTemplate {
     public String flagName = "OWNER";
-    private Material buttonMaterial = XMaterial.PLAYER_HEAD.parseMaterial();
+    private Material buttonMaterial = Material.PLAYER_HEAD;
     private String triggerPermission = "button_ownertrigger";
     private String buttonTitle = "lang_button_ownertrigger";
     private String loreNode = "lang_button_ot_lore";

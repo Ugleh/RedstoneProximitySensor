@@ -1,6 +1,5 @@
 package com.ugleh.redstoneproximitysensor.addons;
 
-import com.palmergames.bukkit.towny.db.TownyFlatFileSource.elements;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.Trigger;

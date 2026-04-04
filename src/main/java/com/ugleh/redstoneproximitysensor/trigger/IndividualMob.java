@@ -1,6 +1,5 @@
 package com.ugleh.redstoneproximitysensor.trigger;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerCreator;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
@@ -9,7 +8,7 @@ import com.ugleh.redstoneproximitysensor.util.Mobs;
 import com.ugleh.redstoneproximitysensor.util.RPS;
 import com.ugleh.redstoneproximitysensor.util.SkullCreator;
 import com.ugleh.redstoneproximitysensor.util.Trigger;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,7 +40,7 @@ public class IndividualMob extends TriggerTemplate implements Listener {
         int slotNumber = 13;
         String buttonTitle = "lang_button_individualmobtrigger";
         String triggerPermission = "button_individualmobtrigger";
-        Material buttonMaterial = XMaterial.CRAFTING_TABLE.get();
+        Material buttonMaterial = Material.CRAFTING_TABLE;
         playerListener.addTrigger(new Trigger(triggerPermission, new ItemStack(buttonMaterial, 1), slotNumber,
                 buttonTitle, flagName, null, null, startingLore, this));
         createMainMenu();
@@ -136,7 +135,7 @@ public class IndividualMob extends TriggerTemplate implements Listener {
             i = i + 2;
             subMenus.put(nature, createSubMenu(nature));
         }
-        ItemStack backButton = XMaterial.SUNFLOWER.parseItem();
+        ItemStack backButton = new ItemStack(Material.SUNFLOWER);
         ItemMeta itemMeta = backButton.getItemMeta();
         assert itemMeta != null;
         itemMeta.setDisplayName(ChatColor.YELLOW + langStringColor("lang_general_menu_back"));
@@ -165,7 +164,7 @@ public class IndividualMob extends TriggerTemplate implements Listener {
                 inventory.addItem(skull);
             }
         }
-        ItemStack backButton = new ItemStack(Objects.requireNonNull(XMaterial.SUNFLOWER.get()));
+        ItemStack backButton = new ItemStack(Material.SUNFLOWER);
         ItemMeta itemMeta = backButton.getItemMeta();
         assert itemMeta != null;
         itemMeta.setDisplayName(ChatColor.YELLOW + langStringColor("lang_general_menu_back"));

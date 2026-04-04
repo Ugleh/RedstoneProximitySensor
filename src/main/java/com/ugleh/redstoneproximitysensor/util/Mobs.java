@@ -1,7 +1,7 @@
 package com.ugleh.redstoneproximitysensor.util;
 
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;

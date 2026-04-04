@@ -1,6 +1,5 @@
 package com.ugleh.redstoneproximitysensor.config;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
@@ -185,7 +184,7 @@ public class GeneralConfig extends YamlConfiguration {
             getPlugin();
             ShapelessRecipe shapelessRecipe = new ShapelessRecipe(namespacedKey, RedstoneProximitySensor.getInstance().rpsItemStack);
             for (String key : plugin.getConfig().getConfigurationSection("craft-settings.shapeless-recipe").getKeys(true)) {
-                shapelessRecipe.addIngredient(plugin.getConfig().getInt("craft-settings.shapeless-recipe." + key), Objects.requireNonNull(XMaterial.matchXMaterial(key).get().get(), "Material in Shapeless Recipe can not be found."));
+                shapelessRecipe.addIngredient(plugin.getConfig().getInt("craft-settings.shapeless-recipe." + key), Objects.requireNonNull(Material.matchMaterial(key), "Material in Shapeless Recipe can not be found."));
             }
             try {
                 Bukkit.getServer().addRecipe(shapelessRecipe);
@@ -204,7 +203,7 @@ public class GeneralConfig extends YamlConfiguration {
             for (String line : list) {
                 String[] materialStrings = line.split(",");
                 for (String materialString : materialStrings) {
-                    Material material = XMaterial.matchXMaterial(materialString).get().get();
+                    Material material = Material.matchMaterial(materialString);
                     if(material != null && (!material.equals(Material.matchMaterial("AIR")))) {
                         shapedRecipe.setIngredient(letterIncrement, material);
                     }

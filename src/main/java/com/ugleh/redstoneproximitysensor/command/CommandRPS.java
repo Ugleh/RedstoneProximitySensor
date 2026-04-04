@@ -13,7 +13,6 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_21_R6.command.CraftBlockCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -49,7 +48,7 @@ public class CommandRPS implements CommandExecutor {
             location = ((Player) sender).getLocation().clone();
             senderUUID = ((Player) sender).getUniqueId();
         }else if (sender instanceof BlockCommandSender) {
-            location = ((CraftBlockCommandSender) sender).getBlock().getLocation().clone();
+            location = ((BlockCommandSender) sender).getBlock().getLocation().clone();
             senderUUID = UUID.randomUUID();
         }else{
             location = Bukkit.getWorlds().get(0).getSpawnLocation().clone();

@@ -129,6 +129,7 @@ public class RedstoneProximitySensor extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (playerListener == null) return;
         for (Map.Entry<UUID, Inventory> playerInInventory : playerListener.userSelectedInventory.entrySet()) {
             HumanEntity humanEntityList[] = new HumanEntity[playerInInventory.getValue().getViewers().size()];
             humanEntityList = playerInInventory.getValue().getViewers().toArray(humanEntityList);

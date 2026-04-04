@@ -1,6 +1,5 @@
 package com.ugleh.redstoneproximitysensor.listener;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.addons.TriggerTemplate;
 import com.ugleh.redstoneproximitysensor.trigger.*;
@@ -69,7 +68,7 @@ public class PlayerListener implements Listener {
 
         //Setting button, Invert Power
         List<String> lore = WordWrapLore(langString("lang_button_invertpower_lore"));
-        createItem(invertedButton = XMaterial.RED_WOOL.parseItem(), "button_invertpower", "lang_button_invertpower", lore, 0);
+        createItem(invertedButton = new ItemStack(Material.RED_WOOL), "button_invertpower", "lang_button_invertpower", lore, 0);
 
         //Setting button, Range
         lore = WordWrapLore(langString("lang_button_r_lore"));
@@ -85,7 +84,7 @@ public class PlayerListener implements Listener {
 
         //Setting button, Copy Settings Button
         lore = WordWrapLore(langString("lang_button_p_lore"));
-        createItem(XMaterial.INK_SAC.parseItem(), "button_paste", "lang_button_paste", lore, 10);
+        createItem(new ItemStack(Material.INK_SAC), "button_paste", "lang_button_paste", lore, 10);
 
         //Initiation of Triggers
         triggerRunners.add(new DroppedItem(this));
@@ -332,10 +331,10 @@ public class PlayerListener implements Listener {
     private void SetupInvertedButton(Inventory tempInv, RPS selectedRPS) {
         ItemMeta tempIBMeta = invertedButton.getItemMeta();
         if (selectedRPS.isInverted()) {
-            invertedButton.setType(XMaterial.GRAY_WOOL.parseMaterial());
+            invertedButton.setType(Material.GRAY_WOOL);
             Objects.requireNonNull(tempIBMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.GRAY + langString("lang_button_inverted"));
         } else {
-            invertedButton.setType(XMaterial.RED_WOOL.parseMaterial());
+            invertedButton.setType(Material.RED_WOOL);
             Objects.requireNonNull(tempIBMeta, "ItemMeta doesn't exist for button.").setDisplayName(ChatColor.BLUE + langString("lang_button_invertpower") + ": " + ChatColor.RED + langString("lang_button_notinverted"));
         }
 

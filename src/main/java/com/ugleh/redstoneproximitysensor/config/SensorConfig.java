@@ -3,7 +3,7 @@ package com.ugleh.redstoneproximitysensor.config;
 import com.ugleh.redstoneproximitysensor.RedstoneProximitySensor;
 import com.ugleh.redstoneproximitysensor.listener.PlayerListener;
 import com.ugleh.redstoneproximitysensor.util.*;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
